@@ -48,13 +48,17 @@ class CheckRole
         $roleMatched = empty($allowedRoles) || in_array($userRole, $allowedRoles);
         $emailMatched = empty($allowedEmails) || in_array($user->email, $allowedEmails);
 
-        // If both are specified, we allow if either matches (OR logic)
-        // Adjust: If both are specified, it's actually an OR in this context for "Akademik OR specific admins"
-        // However, standard Laravel middleware usually treats multiple arguments as MUST match if any.
-        // Let's stick to the "any match is allowed" if we want to support this specific case.
-        
-        if (!$roleMatched && !$emailMatched) {
-            abort(404);
+        // Izinkan bila role ATAU email cocok saat keduanya dispesifikasi; bila hanya
+        // salah satu yang dispesifikasi, yang itu wajib cocok.
+        $roleSpecified = !empty($allowedRoles);
+        $emailSpecified = !empty($allowedEmails);
+
+        $allowed = ($roleSpecified && $emailSpecified)
+            ? ($roleMatched || $emailMatched)
+            : ($roleSpecified ? $roleMatched : $emailMatched);
+
+        if (!$allowed) {
+            abort(403);
         }
 
         return $next($request);

@@ -138,6 +138,17 @@
                     </a>
                 @endif
 
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.email-templates.index') }}" onclick="closeSidebar()"
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold transition-all
+                            {{ request()->routeIs('admin.email-templates.*') ? 'bg-orange-50 text-orange-600 shadow-sm ring-1 ring-orange-100' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
+                        <span
+                            class="iconify text-xl {{ request()->routeIs('admin.email-templates.*') ? 'text-orange-600' : 'text-slate-400' }}"
+                            data-icon="solar:letter-bold"></span>
+                        Kelola Email
+                    </a>
+                @endif
+
                 @if((auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || auth()->user()->role === 'akademik' || auth()->user()->role === 'palugada') && (in_array(auth()->user()->role, ['akademik', 'palugada']) || in_array(auth()->user()->email, ['dion@gmail.com', 'info@beasiswamncu.com'])))
                     <a href="{{ route('admin.beasiswa.index') }}" onclick="closeSidebar()"
                         class="flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold transition-all

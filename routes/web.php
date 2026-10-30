@@ -157,6 +157,15 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/admin/pengaturan/pendaftaran', [App\Http\Controllers\PengaturanController::class, 'edit'])->name('admin.pengaturan.pendaftaran.edit');
             Route::post('/admin/pengaturan/pendaftaran', [App\Http\Controllers\PengaturanController::class, 'update'])->name('admin.pengaturan.pendaftaran.update');
 
+            // Kelola template email — khusus admin (mengubah isi email ke user)
+            Route::middleware(['role:admin'])->prefix('admin/email-templates')->name('admin.email-templates.')->group(function () {
+                Route::get('/', [App\Http\Controllers\EmailTemplateController::class, 'index'])->name('index');
+                Route::get('/{key}/edit', [App\Http\Controllers\EmailTemplateController::class, 'edit'])->name('edit');
+                Route::post('/{key}/preview', [App\Http\Controllers\EmailTemplateController::class, 'preview'])->name('preview');
+                Route::post('/{key}', [App\Http\Controllers\EmailTemplateController::class, 'update'])->name('update');
+                Route::delete('/{key}', [App\Http\Controllers\EmailTemplateController::class, 'destroy'])->name('destroy');
+            });
+
             // Unified Seleksi Administrasi (Profil, Raport, Berkas)
             Route::prefix('admin/pendaftar')->name('admin.pendaftar.')->group(
                 function () {
