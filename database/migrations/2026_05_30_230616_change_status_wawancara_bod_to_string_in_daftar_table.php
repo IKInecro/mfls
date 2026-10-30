@@ -13,7 +13,10 @@ return new class extends Migration
     public function up(): void
     {
         // Use raw statement because changing ENUM requires doctrine/dbal which might not be fully supported
-        DB::statement("ALTER TABLE daftar MODIFY COLUMN status_wawancara_bod VARCHAR(255) NULL");
+        // Syntax MODIFY COLUMN hanya berlaku di MySQL/MariaDB
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE daftar MODIFY COLUMN status_wawancara_bod VARCHAR(255) NULL");
+        }
     }
 
     /**
@@ -21,6 +24,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE daftar MODIFY COLUMN status_wawancara_bod ENUM('Layak', 'Tidak Layak') NULL");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE daftar MODIFY COLUMN status_wawancara_bod ENUM('Layak', 'Tidak Layak') NULL");
+        }
     }
 };

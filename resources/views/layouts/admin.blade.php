@@ -127,6 +127,17 @@
                     </a>
                 @endif
 
+                @if(auth()->user()->role !== 'dosen')
+                    <a href="{{ route('admin.pengaturan.pendaftaran.edit') }}" onclick="closeSidebar()"
+                        class="flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold transition-all
+                            {{ request()->routeIs('admin.pengaturan.pendaftaran.*') ? 'bg-orange-50 text-orange-600 shadow-sm ring-1 ring-orange-100' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' }}">
+                        <span
+                            class="iconify text-xl {{ request()->routeIs('admin.pengaturan.pendaftaran.*') ? 'text-orange-600' : 'text-slate-400' }}"
+                            data-icon="solar:calendar-bold"></span>
+                        Pengaturan Pendaftaran
+                    </a>
+                @endif
+
                 @if((auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || auth()->user()->role === 'akademik' || auth()->user()->role === 'palugada') && (in_array(auth()->user()->role, ['akademik', 'palugada']) || in_array(auth()->user()->email, ['dion@gmail.com', 'info@beasiswamncu.com'])))
                     <a href="{{ route('admin.beasiswa.index') }}" onclick="closeSidebar()"
                         class="flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold transition-all

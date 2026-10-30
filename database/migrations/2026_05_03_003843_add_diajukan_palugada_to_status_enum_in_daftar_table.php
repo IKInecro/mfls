@@ -12,7 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE daftar MODIFY COLUMN status ENUM('menunggu', 'lulus', 'tidak_lulus', 'diajukan_palugada') NOT NULL DEFAULT 'menunggu'");
+        // Syntax MODIFY COLUMN hanya berlaku di MySQL/MariaDB; di SQLite enum tidak butuh diubah
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE daftar MODIFY COLUMN status ENUM('menunggu', 'lulus', 'tidak_lulus', 'diajukan_palugada') NOT NULL DEFAULT 'menunggu'");
+        }
     }
 
     /**
@@ -20,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE daftar MODIFY COLUMN status ENUM('menunggu', 'lulus', 'tidak_lulus') NOT NULL DEFAULT 'menunggu'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE daftar MODIFY COLUMN status ENUM('menunggu', 'lulus', 'tidak_lulus') NOT NULL DEFAULT 'menunggu'");
+        }
     }
 };

@@ -12,8 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 1. Alter role ENUM in akun table to include 'dosen'
-        DB::statement("ALTER TABLE akun MODIFY COLUMN role ENUM('admin', 'akademik', 'mentor', 'pendaftar', 'panitia', 'palugada', 'dosen') NOT NULL");
+        // 1. Alter role ENUM in akun table to include 'dosen' (hanya MySQL/MariaDB)
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE akun MODIFY COLUMN role ENUM('admin', 'akademik', 'mentor', 'pendaftar', 'panitia', 'palugada', 'dosen') NOT NULL");
+        }
 
         // 2. Add interviewer_id and ruangan to peserta table
         Schema::table('peserta', function (Blueprint $table) {
@@ -70,6 +72,8 @@ return new class extends Migration
             $table->dropColumn(['interviewer_id', 'ruangan']);
         });
 
-        DB::statement("ALTER TABLE akun MODIFY COLUMN role ENUM('admin', 'akademik', 'mentor', 'pendaftar', 'panitia', 'palugada') NOT NULL");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE akun MODIFY COLUMN role ENUM('admin', 'akademik', 'mentor', 'pendaftar', 'panitia', 'palugada') NOT NULL");
+        }
     }
 };

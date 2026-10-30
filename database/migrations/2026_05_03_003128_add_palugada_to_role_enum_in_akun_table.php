@@ -12,7 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE akun MODIFY COLUMN role ENUM('admin', 'akademik', 'mentor', 'pendaftar', 'panitia', 'palugada') NOT NULL");
+        // Syntax MODIFY COLUMN hanya berlaku di MySQL/MariaDB; di SQLite enum tidak butuh diubah
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE akun MODIFY COLUMN role ENUM('admin', 'akademik', 'mentor', 'pendaftar', 'panitia', 'palugada') NOT NULL");
+        }
     }
 
     /**
@@ -20,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE akun MODIFY COLUMN role ENUM('admin', 'akademik', 'mentor', 'pendaftar', 'panitia') NOT NULL");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE akun MODIFY COLUMN role ENUM('admin', 'akademik', 'mentor', 'pendaftar', 'panitia') NOT NULL");
+        }
     }
 };

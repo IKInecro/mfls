@@ -154,11 +154,11 @@
                 @error('kode_referral') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
             
-            <!-- Google reCAPTCHA -->
+            <!-- Cloudflare Turnstile -->
             <div class="col-span-full">
                 <label for="captcha" class="block text-xs font-bold text-gray-700 mb-2">Keamanan</label>
-                <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
-                @error('g-recaptcha-response') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <div class="cf-turnstile" data-sitekey="{{ env('TURNSTILE_SITE_KEY') }}"></div>
+                @error('cf-turnstile-response') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
         </div>
     </div>
@@ -176,7 +176,7 @@
     </button>
 </form>
 
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <p class="mt-10 text-center text-sm font-bold text-gray-500">
     Sudah punya akun? 

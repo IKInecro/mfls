@@ -100,7 +100,9 @@ Route::get('/', function () {
 //     //             'lokasi' => $p->kabupaten,
 //     //         ];
 //     //     });
-    return view('pendaftar.home', compact('beritas'));
+    $pengaturan = \App\Models\PengaturanPendaftaran::instance();
+
+    return view('pendaftar.home', compact('beritas', 'pengaturan'));
 
 });
 
@@ -150,6 +152,10 @@ Route::middleware(['auth'])->group(function () {
             // Admin / Staff Dashboard
             Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
             Route::get('/admin/activity-log', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('admin.activity_log.index');
+
+            // Pengaturan pembukaan & penutupan pendaftaran
+            Route::get('/admin/pengaturan/pendaftaran', [App\Http\Controllers\PengaturanController::class, 'edit'])->name('admin.pengaturan.pendaftaran.edit');
+            Route::post('/admin/pengaturan/pendaftaran', [App\Http\Controllers\PengaturanController::class, 'update'])->name('admin.pengaturan.pendaftaran.update');
 
             // Unified Seleksi Administrasi (Profil, Raport, Berkas)
             Route::prefix('admin/pendaftar')->name('admin.pendaftar.')->group(
@@ -261,18 +267,29 @@ Route::middleware(['auth'])->group(function () {
                     Route::get('/change-email/verify', [PendaftarController::class, 'showVerifyEmailChange'])->name('pendaftar.email.verify');
 
 
-                    // Semua POST/DELETE diblokir karena pendaftaran sudah ditutup
-                    $closedResponse = function () {
-                        return back()->with('error', 'Maaf, pendaftaran sudah ditutup. Anda tidak dapat mengubah data.');
+                    // Aksi tulis pendaftar: jalan hanya saat pendaftaran terbuka (lihat PengaturanPendaftaran::aktif)
+                    $gate = function (string $method) {
+                        return function (...$routeParams) use ($method) {
+                            if (!\App\Models\PengaturanPendaftaran::aktif()) {
+                                return back()->with('error', 'Maaf, pendaftaran sudah ditutup. Anda tidak dapat mengubah data.');
+                            }
+                            $controller = app(\App\Http\Controllers\PendaftarController::class);
+                            $firstParam = (new \ReflectionMethod($controller, $method))->getParameters()[0] ?? null;
+                            $args = $firstParam?->getType()?->getName() === \Illuminate\Http\Request::class
+                                ? [request(), ...$routeParams]
+                                : $routeParams;
+
+                            return $controller->{$method}(...$args);
+                        };
                     };
-                    Route::post('/biodata', $closedResponse)->name('pendaftar.biodata.store');
-                    Route::post('/berkas', $closedResponse)->name('pendaftar.berkas.store');
-                    Route::post('/twibbon', $closedResponse)->name('pendaftar.twibbon.store');
-                    Route::post('/nilai', $closedResponse)->name('pendaftar.nilai.store');
-                    Route::post('/berkas/delete-file', $closedResponse)->name('pendaftar.berkas.delete_file');
-                    Route::post('/berkas/delete-sertifikat/{id}', $closedResponse)->name('pendaftar.sertifikat.destroy');
-                    Route::post('/change-email/request', $closedResponse)->name('pendaftar.email.request');
-                    Route::post('/change-email/verify', $closedResponse)->name('pendaftar.email.verify.post');
+                    Route::post('/biodata', $gate('storeBiodata'))->name('pendaftar.biodata.store');
+                    Route::post('/berkas', $gate('storeBerkas'))->name('pendaftar.berkas.store');
+                    Route::post('/twibbon', $gate('storeTwibbon'))->name('pendaftar.twibbon.store');
+                    Route::post('/nilai', $gate('storeNilai'))->name('pendaftar.nilai.store');
+                    Route::post('/berkas/delete-file', $gate('deleteFile'))->name('pendaftar.berkas.delete_file');
+                    Route::post('/berkas/delete-sertifikat/{id}', $gate('destroySertifikat'))->name('pendaftar.sertifikat.destroy');
+                    Route::post('/change-email/request', $gate('requestEmailChange'))->name('pendaftar.email.request');
+                    Route::post('/change-email/verify', $gate('verifyEmailChange'))->name('pendaftar.email.verify.post');
                 }
             );
         }

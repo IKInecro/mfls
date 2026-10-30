@@ -22,6 +22,14 @@ class AuthController extends Controller
     {
         return view('auth.maintance');
     }
+    public function showRegister()
+    {
+        if (!\App\Models\PengaturanPendaftaran::aktif()) {
+            return redirect('/')->with('error', 'Maaf, pendaftaran sudah di tutup.');
+        }
+
+        return view('auth.register');
+    }
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -85,14 +93,11 @@ class AuthController extends Controller
         return back()->with('loginError', 'Kredensial salah atau tidak memiliki akses.');
     }
 
-    public function showRegister()
-    {
-        return redirect('/')->with('error', 'Maaf pendaftaran sudah di tutup.');
-    }
-
     public function register(Request $request)
     {
-        return redirect('/')->with('error', 'Maaf pendaftaran sudah di tutup.');
+        if (!\App\Models\PengaturanPendaftaran::aktif()) {
+            return redirect('/')->with('error', 'Maaf pendaftaran sudah di tutup.');
+        }
         
         $request->validate([
             'nama' => 'required|string|max:255',
@@ -109,13 +114,13 @@ class AuthController extends Controller
             'no_guru_bk' => 'nullable|string|max:30',
             'sumber_informasi' => 'required|string|max:100',
             'kode_referral' => 'nullable|string|max:50',
-            'g-recaptcha-response' => 'required',
+            'cf-turnstile-response' => 'required',
         ], [
             'email.unique' => 'Email ini sudah terdaftar. Gunakan email lain atau silakan login.',
             'nisn.unique' => 'NISN ini sudah terdaftar dalam sistem. Hubungi admin jika ini kesalahan.',
             'no_whatsapp.unique' => 'Nomor WhatsApp ini sudah digunakan oleh pendaftar lain.',
             'sumber_informasi.required' => 'Wajib memilih sumber informasi.',
-            'g-recaptcha-response.required' => 'Wajib mencentang reCAPTCHA.',
+            'cf-turnstile-response.required' => 'Wajib menyelesaikan verifikasi keamanan.',
         ]);
 
         // --- Device-based Rate Limiting (Anti-Spam) ---
@@ -126,14 +131,15 @@ class AuthController extends Controller
         }
         RateLimiter::hit($throttleKey, 3600); // Ban for 1 hour
 
-        // Verify Google reCAPTCHA
-        $secretKey = env('RECAPTCHA_SECRET_KEY');
-        $response = $request->input('g-recaptcha-response');
-        $verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secretKey}&response={$response}");
-        $responseData = json_decode($verifyResponse);
+        // Verify Cloudflare Turnstile
+        $verifyResponse = \Illuminate\Support\Facades\Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+            'secret' => env('TURNSTILE_SECRET_KEY'),
+            'response' => $request->input('cf-turnstile-response'),
+            'remoteip' => $request->ip(),
+        ]);
 
-        if (!$responseData->success) {
-            return back()->withErrors(['g-recaptcha-response' => 'Verifikasi robot gagal, silakan coba lagi.'])->withInput();
+        if (!$verifyResponse->json('success')) {
+            return back()->withErrors(['cf-turnstile-response' => 'Verifikasi robot gagal, silakan coba lagi.'])->withInput();
         }
 
         $email = $request->email;

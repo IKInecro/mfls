@@ -1,6 +1,7 @@
 @extends('layouts.user')
 
 @section('content')
+@php $buka = \App\Models\PengaturanPendaftaran::aktif(); @endphp
 <style>
 /* Consistent section heading system for home.blade.php */
 .section-label {
@@ -28,6 +29,14 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             <!-- Left Column: Text Content -->
             <div class="text-center lg:text-left space-y-4 sm:space-y-6 md:space-y-8 scroll-fade-left px-2 sm:px-0">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-black uppercase tracking-widest {{ $buka ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                    <span class="w-2 h-2 rounded-full {{ $buka ? 'bg-green-500 animate-pulse' : 'bg-red-500' }}"></span>
+                    @if($buka)
+                        Pendaftaran Dibuka @if($pengaturan->pendaftaran_selesai) s/d {{ $pengaturan->pendaftaran_selesai->format('d/m/Y H:i') }} @endif
+                    @else
+                        Pendaftaran Ditutup
+                    @endif
+                </div>
                 <h1 class="hero-title font-extrabold text-dark-navy leading-tight">
                   MNCU 
                     <span class="text-primary-yellow">Future</span> Leader
@@ -40,10 +49,17 @@
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
-                    <a href="#" class="bg-gray-400 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base font-bold shadow-lg cursor-not-allowed transition-all duration-300"> 
-                        <i class="fas fa-lock me-2"></i>
-                        Pendaftaran Ditutup
-                    </a>
+                    @if($buka)
+                        <a href="{{ route('register') }}" class="bg-orange-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base font-bold shadow-lg hover:bg-orange-600 transition-all duration-300">
+                            <i class="fas fa-user-plus me-2"></i>
+                            Daftar Sekarang
+                        </a>
+                    @else
+                        <a href="#" class="bg-gray-400 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base font-bold shadow-lg cursor-not-allowed transition-all duration-300"> 
+                            <i class="fas fa-lock me-2"></i>
+                            Pendaftaran Ditutup
+                        </a>
+                    @endif
                     <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" target="_blank" class="flex items-center justify-center gap-2 text-dark-navy text-sm sm:text-base font-semibold hover:text-primary-yellow transition-colors">
                         Gabung Saluran WhatsApp
                         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
@@ -253,10 +269,17 @@ Melalui beasiswa ini, penerima tidak hanya mendapatkan dukungan finansial, tetap
                 <div class="mt-12 text-center p-8 bg-gradient-to-r from-primary-yellow/10 to-primary-yellow/5 rounded-2xl border border-primary-yellow/20">
                     <h4 class="text-xl font-bold text-dark-navy mb-4">Tertarik dengan Program Studi di Atas?</h4>
                     <p class="text-gray-600 mb-6">Daftar sekarang dan raih kesempatan mendapatkan beasiswa penuh!</p>
-                    <a href="#" class="inline-flex items-center gap-2 bg-gray-400 text-white px-8 py-3 rounded-full font-bold shadow-lg cursor-not-allowed transition-all">
-                        <i class="fas fa-lock me-2"></i>
-                        Pendaftaran Ditutup
-                    </a>
+                    @if($buka)
+                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 bg-orange-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-orange-600 transition-all">
+                            <i class="fas fa-user-plus me-2"></i>
+                            Daftar Sekarang
+                        </a>
+                    @else
+                        <a href="#" class="inline-flex items-center gap-2 bg-gray-400 text-white px-8 py-3 rounded-full font-bold shadow-lg cursor-not-allowed transition-all">
+                            <i class="fas fa-lock me-2"></i>
+                            Pendaftaran Ditutup
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -490,10 +513,17 @@ Melalui beasiswa ini, penerima tidak hanya mendapatkan dukungan finansial, tetap
         
         <!-- CTA Button -->
         <div class="text-center mt-16 fade-in">
-            <a href="#" class="inline-flex items-center gap-3 bg-gray-400 text-white px-10 py-4 rounded-full text-lg font-bold shadow-lg cursor-not-allowed transition-all duration-300">
-                <i class="fas fa-lock me-2"></i>
-                Pendaftaran Ditutup
-            </a>
+            @if($buka)
+                <a href="{{ route('register') }}" class="inline-flex items-center gap-3 bg-orange-500 text-white px-10 py-4 rounded-full text-lg font-bold shadow-lg hover:bg-orange-600 transition-all duration-300">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Daftar Sekarang
+                </a>
+            @else
+                <a href="#" class="inline-flex items-center gap-3 bg-gray-400 text-white px-10 py-4 rounded-full text-lg font-bold shadow-lg cursor-not-allowed transition-all duration-300">
+                    <i class="fas fa-lock me-2"></i>
+                    Pendaftaran Ditutup
+                </a>
+            @endif
             <p class="text-sm text-gray-500 mt-4">Gratis dan tanpa biaya apapun</p>
         </div>
     </div>
@@ -1192,7 +1222,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Real-time Countdown Timer
 (function() {
-    const targetDate = new Date("2026-05-04T23:59:59+07:00").getTime();
+    const targetDate = new Date("{{ $pengaturan->pendaftaran_selesai ? $pengaturan->pendaftaran_selesai->format('Y-m-d\TH:i:s') . '+07:00' : '2000-01-01T00:00:00+07:00' }}").getTime();
     
     function updateCountdown() {
         const now = new Date().getTime();
