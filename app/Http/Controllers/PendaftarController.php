@@ -659,9 +659,19 @@ class PendaftarController extends Controller
 
         // 4. Kirim Mail
         try {
-            Mail::send('emails.email_change_otp', ['otp' => $otpCode, 'user' => $user], function($message) use($email){
+            Mail::send('emails.email_change_otp', [
+                'otp' => $otpCode,
+                'user' => $user,
+                'templateBody' => \App\Models\EmailTemplate::renderBody('email_change_otp', [
+                    'nama' => $user->nama,
+                    'otp' => $otpCode,
+                ]),
+            ], function($message) use($email){
                 $message->to($email);
-                $message->subject('Kode Verifikasi Ubah Email MNCU Future Leader Scholarship');
+                $message->subject(\App\Models\EmailTemplate::subjectOrDefault('email_change_otp', 'Kode Verifikasi Ubah Email MNCU Future Leader Scholarship', [
+                    'nama' => $user->nama,
+                    'otp' => $otpCode,
+                ]));
             });
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Gagal kirim OTP Ganti Email: ' . $e->getMessage());

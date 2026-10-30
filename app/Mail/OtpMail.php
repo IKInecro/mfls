@@ -30,7 +30,10 @@ class OtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Kode OTP Verifikasi Pendaftaran MNCU Future Leader Scholarship',
+            subject: \App\Models\EmailTemplate::subjectOrDefault('otp', 'Kode OTP Verifikasi Pendaftaran MNCU Future Leader Scholarship', [
+                'nama' => $this->nama,
+                'otp' => $this->otp,
+            ]),
         );
     }
 
@@ -41,6 +44,12 @@ class OtpMail extends Mailable
     {
         return new Content(
             view: 'emails.otp',
+            with: [
+                'templateBody' => \App\Models\EmailTemplate::renderBody('otp', [
+                    'nama' => $this->nama,
+                    'otp' => $this->otp,
+                ]),
+            ],
         );
     }
 

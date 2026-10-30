@@ -31,7 +31,9 @@ class CertificateMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Sertifikat Partisipasi MNCU Future Leader Scholarship - {$this->nama}",
+            subject: \App\Models\EmailTemplate::subjectOrDefault('certificate', "Sertifikat Partisipasi MNCU Future Leader Scholarship - {$this->nama}", [
+                'nama' => $this->nama,
+            ]),
         );
     }
 
@@ -42,6 +44,11 @@ class CertificateMail extends Mailable
     {
         return new Content(
             view: 'emails.certificate',
+            with: [
+                'templateBody' => \App\Models\EmailTemplate::renderBody('certificate', [
+                    'nama' => $this->nama,
+                ]),
+            ],
         );
     }
 

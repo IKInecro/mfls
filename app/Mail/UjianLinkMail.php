@@ -25,7 +25,10 @@ class UjianLinkMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Undangan Ujian Online MNCU Future Leader Scholarship 2026',
+            subject: \App\Models\EmailTemplate::subjectOrDefault('ujian_link', 'Undangan Ujian Online MNCU Future Leader Scholarship 2026', [
+                'nama' => $this->nama,
+                'linkUjian' => $this->linkUjian,
+            ]),
         );
     }
 
@@ -33,6 +36,12 @@ class UjianLinkMail extends Mailable
     {
         return new Content(
             view: 'emails.ujian_link',
+            with: [
+                'templateBody' => \App\Models\EmailTemplate::renderBody('ujian_link', [
+                    'nama' => $this->nama,
+                    'linkUjian' => $this->linkUjian,
+                ]),
+            ],
         );
     }
 

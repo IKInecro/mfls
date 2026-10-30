@@ -53,10 +53,12 @@ class SendLolosUjianEmailJob implements ShouldQueue
             
             \Illuminate\Support\Facades\Mail::mailer('hostinger')
                 ->send('emails.lolos_seleksi_ujian',
-                    compact('nama', 'asalSekolah'),
+                    array_merge(compact('nama', 'asalSekolah'), [
+                        'templateBody' => \App\Models\EmailTemplate::renderBody('lolos_seleksi_ujian', compact('nama', 'asalSekolah')),
+                    ]),
                     function ($message) use ($emailTujuan, $nama) {
                         $message->to($emailTujuan, $nama)
-                                ->subject('🎉 Selamat! Anda Lolos Seleksi Ujian MNCU Future Leader Scholarship 2026');
+                                ->subject(\App\Models\EmailTemplate::subjectOrDefault('lolos_seleksi_ujian', '🎉 Selamat! Anda Lolos Seleksi Ujian MNCU Future Leader Scholarship 2026', compact('nama', 'asalSekolah')));
                     }
                 );
 

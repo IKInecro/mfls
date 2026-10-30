@@ -76,9 +76,15 @@ class EmailTemplate extends Model
         return static::query()->where('key', $key)->first();
     }
 
-    public static function subjectOrDefault(string $key, string $default): string
+    /**
+     * Subject dari admin (placeholder {nama} dsb ikut disubstitusi bila $data
+     * dikirim), atau subject default dari kode bila belum diedit.
+     */
+    public static function subjectOrDefault(string $key, string $default, array $data = []): string
     {
-        return static::get($key)?->subject ?: $default;
+        $subject = static::get($key)?->subject ?: $default;
+
+        return $data === [] ? $subject : static::render($key, $subject, $data);
     }
 
     public static function body(string $key): ?string

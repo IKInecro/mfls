@@ -825,10 +825,12 @@ class AdminController extends Controller
         try {
             \Illuminate\Support\Facades\Mail::mailer('hostinger')
                 ->send('emails.lolos_seleksi_ujian',
-                    compact('nama', 'asalSekolah'),
+                    array_merge(compact('nama', 'asalSekolah'), [
+                        'templateBody' => \App\Models\EmailTemplate::renderBody('lolos_seleksi_ujian', compact('nama', 'asalSekolah')),
+                    ]),
                     function ($message) use ($emailTujuan, $nama) {
                         $message->to($emailTujuan, $nama)
-                                ->subject('🎉 Selamat! Anda Lolos Seleksi Ujian MNCU Future Leader Scholarship 2026');
+                                ->subject(\App\Models\EmailTemplate::subjectOrDefault('lolos_seleksi_ujian', '🎉 Selamat! Anda Lolos Seleksi Ujian MNCU Future Leader Scholarship 2026', compact('nama', 'asalSekolah')));
                     }
                 );
 
@@ -1461,19 +1463,31 @@ class AdminController extends Controller
             
             // Kirim ke email BARU
             \Illuminate\Support\Facades\Mail::send('emails.admin_changed_email', 
-                ['nama' => $nama, 'oldEmail' => $oldEmail, 'newEmail' => $newEmail], 
+                array_merge(['nama' => $nama, 'oldEmail' => $oldEmail, 'newEmail' => $newEmail], [
+                    'templateBody' => \App\Models\EmailTemplate::renderBody('admin_changed_email', [
+                        'nama' => $nama, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail,
+                    ]),
+                ]), 
                 function($message) use($newEmail) {
                     $message->to($newEmail);
-                    $message->subject('Pembaruan Alamat Email Akun - MNCU Future Leader Scholarship');
+                    $message->subject(\App\Models\EmailTemplate::subjectOrDefault('admin_changed_email', 'Pembaruan Alamat Email Akun - MNCU Future Leader Scholarship', [
+                        'nama' => $nama, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail,
+                    ]));
                 }
             );
 
             // Kirim ke email LAMA (sebagai notifikasi keamanan)
             \Illuminate\Support\Facades\Mail::send('emails.admin_changed_email', 
-                ['nama' => $nama, 'oldEmail' => $oldEmail, 'newEmail' => $newEmail], 
+                array_merge(['nama' => $nama, 'oldEmail' => $oldEmail, 'newEmail' => $newEmail], [
+                    'templateBody' => \App\Models\EmailTemplate::renderBody('admin_changed_email', [
+                        'nama' => $nama, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail,
+                    ]),
+                ]), 
                 function($message) use($oldEmail) {
                     $message->to($oldEmail);
-                    $message->subject('Pemberitahuan Perubahan Email Akun - MNCU Future Leader Scholarship');
+                    $message->subject(\App\Models\EmailTemplate::subjectOrDefault('admin_changed_email', 'Pemberitahuan Perubahan Email Akun - MNCU Future Leader Scholarship', [
+                        'nama' => $nama, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail,
+                    ]));
                 }
             );
         } catch (\Exception $e) {

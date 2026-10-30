@@ -335,9 +335,19 @@ class AuthController extends Controller
 
         // Send Mail
         try {
-            Mail::send('emails.reset_password', ['token' => $token, 'user' => $user], function($message) use($email){
+            Mail::send('emails.reset_password', [
+                'token' => $token,
+                'user' => $user,
+                'templateBody' => \App\Models\EmailTemplate::renderBody('reset_password', [
+                    'nama' => $user->nama,
+                    'linkReset' => url('reset-password/'.$token.'?email='.urlencode($user->email)),
+                ]),
+            ], function($message) use($email){
                 $message->to($email);
-                $message->subject('Reset Password MNCU Future Leader Scholarship');
+                $message->subject(\App\Models\EmailTemplate::subjectOrDefault('reset_password', 'Reset Password MNCU Future Leader Scholarship', [
+                    'nama' => $user->nama,
+                    'linkReset' => url('reset-password/'.$token.'?email='.urlencode($user->email)),
+                ]));
             });
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Gagal kirim Reset Link: ' . $e->getMessage());
