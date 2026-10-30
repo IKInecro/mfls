@@ -36,6 +36,9 @@
                     {{-- Main Content --}}
                     <tr>
                         <td style="padding:20px 40px 40px 40px;">
+                            @if(!empty($templateBody))
+                                {!! $templateBody !!}
+                            @else
                             <h2
                                 style="color:#1a365d; font-size:24px; font-weight:800; margin:0 0 6px 0; font-family:'Segoe UI', Arial, sans-serif;">
                                 Selamat! Anda Lolos Seleksi Ujian!
@@ -124,6 +127,7 @@
                             <p style="color:#1a365d; font-size:15px; font-weight:700; margin:0 0 30px 0;">
                                 Panitia MNCU Future Leader Scholarship
                             </p>
+                            @endif
 
                             {{-- Divider --}}
                             <div style="border-top:1px solid #e2e8f0; margin-bottom:20px;"></div>

@@ -21,15 +21,19 @@
             @endif
         </div>
         <div class="content">
-            <h1>Verifikasi Akun MNCU Future Leader Scholarship</h1>
-            <p>Halo <strong>{{ $nama }}</strong>,</p>
-            <p>Terima kasih telah mendaftar di program <strong>MNCU Future Leader Scholarship</strong>. Silakan gunakan kode OTP berikut untuk memverifikasi akun Anda:</p>
-            <div class="otp-box">
-                <div class="otp-code">{{ $otp }}</div>
-            </div>
-            <p>Kode ini berlaku selama 10 menit. Mohon untuk tidak memberitahukan kode ini kepada siapapun demi keamanan akun Anda.</p>
-            <p>Terima kasih atas semangat dan antusiasme Anda!</p>
-            <p>Salam hangat,<br><strong>Panitia MNCU Future Leader Scholarship</strong></p>
+            @if(!empty($templateBody))
+                {!! $templateBody !!}
+            @else
+                <h1>Verifikasi Akun MNCU Future Leader Scholarship</h1>
+                <p>Halo <strong>{{ $nama }}</strong>,</p>
+                <p>Terima kasih telah mendaftar di program <strong>MNCU Future Leader Scholarship</strong>. Silakan gunakan kode OTP berikut untuk memverifikasi akun Anda:</p>
+                <div class="otp-box">
+                    <div class="otp-code">{{ $otp }}</div>
+                </div>
+                <p>Kode ini berlaku selama 10 menit. Mohon untuk tidak memberitahukan kode ini kepada siapapun demi keamanan akun Anda.</p>
+                <p>Terima kasih atas semangat dan antusiasme Anda!</p>
+                <p>Salam hangat,<br><strong>Panitia MNCU Future Leader Scholarship</strong></p>
+            @endif
         </div>
         <div class="footer">
             &reg; 2026 MNC University. All rights reserved.<br>

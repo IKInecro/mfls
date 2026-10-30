@@ -19,13 +19,17 @@
             @endif
         </div>
         <div class="content">
-            <h1>Selamat! Pendaftaran Terverifikasi</h1>
-            <p>Halo <strong>{{ $nama }}</strong>,</p>
-            <p>Kami dengan senang hati menginformasikan bahwa pendaftaran Anda di program <strong>MNCU Future Leader Scholarship</strong> telah berhasil diverifikasi.</p>
-            <p>Sebagai bentuk apresiasi atas partisipasi awal Anda, kami melampirkan <strong>Sertifikat Partisipasi</strong> dalam format PDF pada email ini. Silakan unduh dan simpan sertifikat tersebut.</p>
-            <p>Tahap selanjutnya akan diinformasikan melalui dashboard pendaftar dan email resmi kami. Mohon pantau secara berkala.</p>
-            <p>Terima kasih atas semangat dan antusiasme Anda untuk bergabung dengan MNC University.</p>
-            <p>Salam hangat,<br><strong>Panitia MNCU Future Leader Scholarship</strong></p>
+            @if(!empty($templateBody))
+                {!! $templateBody !!}
+            @else
+                <h1>Selamat! Pendaftaran Terverifikasi</h1>
+                <p>Halo <strong>{{ $nama }}</strong>,</p>
+                <p>Kami dengan senang hati menginformasikan bahwa pendaftaran Anda di program <strong>MNCU Future Leader Scholarship</strong> telah berhasil diverifikasi.</p>
+                <p>Sebagai bentuk apresiasi atas partisipasi awal Anda, kami melampirkan <strong>Sertifikat Partisipasi</strong> dalam format PDF pada email ini. Silakan unduh dan simpan sertifikat tersebut.</p>
+                <p>Tahap selanjutnya akan diinformasikan melalui dashboard pendaftar dan email resmi kami. Mohon pantau secara berkala.</p>
+                <p>Terima kasih atas semangat dan antusiasme Anda untuk bergabung dengan MNC University.</p>
+                <p>Salam hangat,<br><strong>Panitia MNCU Future Leader Scholarship</strong></p>
+            @endif
         </div>
         <div class="footer">
             &reg; 2026 MNC University. All rights reserved.<br>

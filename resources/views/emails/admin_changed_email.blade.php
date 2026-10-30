@@ -20,21 +20,25 @@
             @endif
         </div>
         <div class="content">
-            <h1 style="color: #001f3f; font-size: 24px; margin-top: 0;">Pembaruan Alamat Email</h1>
-            <h3>Halo, {{ $nama }}!</h3>
-            <p>Kami ingin menginformasikan bahwa administrator **MNCU Future Leader Scholarship** telah memperbarui alamat email akun Anda sesuai permintaan atau keperluan verifikasi.</p>
-            
-            <div class="info-box">
-                <p style="margin: 5px 0;"><strong>Email Lama:</strong> {{ $oldEmail }}</p>
-                <p style="margin: 5px 0; color: #f97316;"><strong>Email Baru:</strong> {{ $newEmail }}</p>
-            </div>
+            @if(!empty($templateBody))
+                {!! $templateBody !!}
+            @else
+                <h1 style="color: #001f3f; font-size: 24px; margin-top: 0;">Pembaruan Alamat Email</h1>
+                <h3>Halo, {{ $nama }}!</h3>
+                <p>Kami ingin menginformasikan bahwa administrator **MNCU Future Leader Scholarship** telah memperbarui alamat email akun Anda sesuai permintaan atau keperluan verifikasi.</p>
 
-            <p>Mulai saat ini, silakan gunakan <strong>Email Baru</strong> Anda untuk masuk (Login) ke portal pendaftar.</p>
-            
-            <p>Jika Anda tidak merasa meminta perubahan ini atau mengalami kendala, silakan segera hubungi pusat bantuan kami.</p>
-            
-            <p>Terima kasih atas perhatiannya.</p>
-            <p>Salam hangat,<br><strong>Panitia MNCU Future Leader Scholarship</strong></p>
+                <div class="info-box">
+                    <p style="margin: 5px 0;"><strong>Email Lama:</strong> {{ $oldEmail }}</p>
+                    <p style="margin: 5px 0; color: #f97316;"><strong>Email Baru:</strong> {{ $newEmail }}</p>
+                </div>
+
+                <p>Mulai saat ini, silakan gunakan <strong>Email Baru</strong> Anda untuk masuk (Login) ke portal pendaftar.</p>
+
+                <p>Jika Anda tidak merasa meminta perubahan ini atau mengalami kendala, silakan segera hubungi pusat bantuan kami.</p>
+
+                <p>Terima kasih atas perhatiannya.</p>
+                <p>Salam hangat,<br><strong>Panitia MNCU Future Leader Scholarship</strong></p>
+            @endif
         </div>
         <div class="footer">
             &reg; 2026 MNC University. All rights reserved.<br>

@@ -19,15 +19,19 @@
             @endif
         </div>
         <div class="content">
-            <h2 style="color: #001f3f; margin-top: 0;">Verifikasi Ganti Email</h2>
-            <h3>Halo, {{ $user->nama }}!</h3>
-            <p>Kami menerima permintaan untuk mengubah alamat email akun MNCU Future Leader Scholarship Anda. Silakan masukkan kode verifikasi berikut untuk melanjutkan:</p>
-            <div class="otp-box">
-                {{ $otp }}
-            </div>
-            <p style="margin-top: 30px; color: #666; font-size: 14px;">Kode ini hanya berlaku selama 15 menit. <br>Jangan berikan kode ini kepada siapa pun karena bersifat rahasia.</p>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
-            <p style="font-size: 13px; color: #888;">Permintaan ini berasal dari portal pendaftar MNCU Future Leader Scholarship. Jika Anda tidak merasa melakukan permintaan ini, silakan abaikan pesan ini.</p>
+            @if(!empty($templateBody))
+                {!! $templateBody !!}
+            @else
+                <h2 style="color: #001f3f; margin-top: 0;">Verifikasi Ganti Email</h2>
+                <h3>Halo, {{ $user->nama }}!</h3>
+                <p>Kami menerima permintaan untuk mengubah alamat email akun MNCU Future Leader Scholarship Anda. Silakan masukkan kode verifikasi berikut untuk melanjutkan:</p>
+                <div class="otp-box">
+                    {{ $otp }}
+                </div>
+                <p style="margin-top: 30px; color: #666; font-size: 14px;">Kode ini hanya berlaku selama 15 menit. <br>Jangan berikan kode ini kepada siapa pun karena bersifat rahasia.</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+                <p style="font-size: 13px; color: #888;">Permintaan ini berasal dari portal pendaftar MNCU Future Leader Scholarship. Jika Anda tidak merasa melakukan permintaan ini, silakan abaikan pesan ini.</p>
+            @endif
         </div>
         <div class="footer">
             &copy; {{ date('Y') }} MNC University - Mata Garuda Scholarship. Official Portal.

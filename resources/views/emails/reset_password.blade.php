@@ -22,16 +22,20 @@
             @endif
         </div>
         <div class="content">
-            <h1 style="color: #001f3f; font-size: 24px; margin-top: 0;">Atur Ulang Kata Sandi</h1>
-            <h3>Halo, {{ $user->nama }}!</h3>
-            <p>Kami menerima permintaan untuk mengatur ulang kata sandi akun MNCU Future Leader Scholarship Anda. Silakan klik tombol di bawah ini untuk melanjutkan:</p>
-            <div style="text-align: center;">
-                <a href="{{ url('reset-password/'.$token.'?email='.urlencode($user->email)) }}" class="btn">Atur Ulang Password</a>
-            </div>
-            <p style="margin-top: 30px;">Tautan ini akan kedaluwarsa dalam 60 menit. Jika Anda tidak merasa melakukan permintaan ini, abaikan saja email ini.</p>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
-            <p style="font-size: 13px; color: #888;">Jika mengalami masalah saat menekan tombol, salin dan tempel URL berikut di browser Anda:<br>
-            <span style="color: #001f3f;">{{ url('reset-password/'.$token.'?email='.urlencode($user->email)) }}</span></p>
+            @if(!empty($templateBody))
+                {!! $templateBody !!}
+            @else
+                <h1 style="color: #001f3f; font-size: 24px; margin-top: 0;">Atur Ulang Kata Sandi</h1>
+                <h3>Halo, {{ $user->nama }}!</h3>
+                <p>Kami menerima permintaan untuk mengatur ulang kata sandi akun MNCU Future Leader Scholarship Anda. Silakan klik tombol di bawah ini untuk melanjutkan:</p>
+                <div style="text-align: center;">
+                    <a href="{{ url('reset-password/'.$token.'?email='.urlencode($user->email)) }}" class="btn">Atur Ulang Password</a>
+                </div>
+                <p style="margin-top: 30px;">Tautan ini akan kedaluwarsa dalam 60 menit. Jika Anda tidak merasa melakukan permintaan ini, abaikan saja email ini.</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+                <p style="font-size: 13px; color: #888;">Jika mengalami masalah saat menekan tombol, salin dan tempel URL berikut di browser Anda:<br>
+                <span style="color: #001f3f;">{{ url('reset-password/'.$token.'?email='.urlencode($user->email)) }}</span></p>
+            @endif
         </div>
         <div class="footer">
             &copy; {{ date('Y') }} MNC University - Mata Garuda Scholarship. Official Portal.

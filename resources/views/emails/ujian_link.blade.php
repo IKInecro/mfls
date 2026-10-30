@@ -9,6 +9,9 @@
             <img src="{{ $message->embed(public_path('icon/logoo.png')) }}" alt="MNCU Logo" style="max-width: 120px;">
         </div>
         <div style="padding: 30px;">
+        @if(!empty($templateBody))
+            {!! $templateBody !!}
+        @else
         <h2 style="color: #111827;">Halo, {{ $nama }}!</h2>
         <p style="color: #555; line-height: 1.6;">
             Selamat! Berkas pendaftaran Anda telah lolos verifikasi administrasi. Tahap selanjutnya adalah <strong>Ujian Online (Seleksi Potensi Akademik)</strong>.
@@ -25,6 +28,7 @@
         <p style="color: #aaa; font-size: 12px; text-align: center;">
             Panitia Seleksi MNCU Future Leader Scholarship 2026
         </p>
+        @endif
     </div>
 </body>
 </html>
