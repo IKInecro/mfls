@@ -342,7 +342,7 @@ class AuthController extends Controller
                     'nama' => $user->nama,
                     'linkReset' => url('reset-password/'.$token.'?email='.urlencode($user->email)),
                 ]),
-            ], function($message) use($email){
+            ], function($message) use($email, $user, $token){
                 $message->to($email);
                 $message->subject(\App\Models\EmailTemplate::subjectOrDefault('reset_password', 'Reset Password MNCU Future Leader Scholarship', [
                     'nama' => $user->nama,

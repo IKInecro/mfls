@@ -56,7 +56,7 @@ class SendLolosUjianEmailJob implements ShouldQueue
                     array_merge(compact('nama', 'asalSekolah'), [
                         'templateBody' => \App\Models\EmailTemplate::renderBody('lolos_seleksi_ujian', compact('nama', 'asalSekolah')),
                     ]),
-                    function ($message) use ($emailTujuan, $nama) {
+                    function ($message) use ($emailTujuan, $nama, $asalSekolah) {
                         $message->to($emailTujuan, $nama)
                                 ->subject(\App\Models\EmailTemplate::subjectOrDefault('lolos_seleksi_ujian', '🎉 Selamat! Anda Lolos Seleksi Ujian MNCU Future Leader Scholarship 2026', compact('nama', 'asalSekolah')));
                     }

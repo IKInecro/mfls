@@ -666,7 +666,7 @@ class PendaftarController extends Controller
                     'nama' => $user->nama,
                     'otp' => $otpCode,
                 ]),
-            ], function($message) use($email){
+            ], function($message) use($email, $user, $otpCode){
                 $message->to($email);
                 $message->subject(\App\Models\EmailTemplate::subjectOrDefault('email_change_otp', 'Kode Verifikasi Ubah Email MNCU Future Leader Scholarship', [
                     'nama' => $user->nama,

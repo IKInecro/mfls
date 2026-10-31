@@ -828,7 +828,7 @@ class AdminController extends Controller
                     array_merge(compact('nama', 'asalSekolah'), [
                         'templateBody' => \App\Models\EmailTemplate::renderBody('lolos_seleksi_ujian', compact('nama', 'asalSekolah')),
                     ]),
-                    function ($message) use ($emailTujuan, $nama) {
+                    function ($message) use ($emailTujuan, $nama, $asalSekolah) {
                         $message->to($emailTujuan, $nama)
                                 ->subject(\App\Models\EmailTemplate::subjectOrDefault('lolos_seleksi_ujian', '🎉 Selamat! Anda Lolos Seleksi Ujian MNCU Future Leader Scholarship 2026', compact('nama', 'asalSekolah')));
                     }
@@ -1468,7 +1468,7 @@ class AdminController extends Controller
                         'nama' => $nama, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail,
                     ]),
                 ]), 
-                function($message) use($newEmail) {
+                function($message) use($newEmail, $nama, $oldEmail) {
                     $message->to($newEmail);
                     $message->subject(\App\Models\EmailTemplate::subjectOrDefault('admin_changed_email', 'Pembaruan Alamat Email Akun - MNCU Future Leader Scholarship', [
                         'nama' => $nama, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail,
@@ -1483,7 +1483,7 @@ class AdminController extends Controller
                         'nama' => $nama, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail,
                     ]),
                 ]), 
-                function($message) use($oldEmail) {
+                function($message) use($oldEmail, $nama, $newEmail) {
                     $message->to($oldEmail);
                     $message->subject(\App\Models\EmailTemplate::subjectOrDefault('admin_changed_email', 'Pemberitahuan Perubahan Email Akun - MNCU Future Leader Scholarship', [
                         'nama' => $nama, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail,
