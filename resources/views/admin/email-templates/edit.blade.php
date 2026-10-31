@@ -24,7 +24,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         <!-- Editor -->
-        <form action="{{ route('admin.email-templates.update', $key) }}" method="POST" class="bg-white rounded-2xl border border-slate-200 p-6 space-y-5 shadow-sm self-start">
+        <form action="{{ route('admin.email-templates.update', $key) }}" method="POST" id="saveForm" class="bg-white rounded-2xl border border-slate-200 p-6 space-y-5 shadow-sm self-start">
             @csrf
 
             <div>
@@ -38,24 +38,25 @@
 
             <div>
                 <div class="flex items-center justify-between mb-2">
-                    <label for="body" class="block text-xs font-black text-slate-500 uppercase tracking-widest">Isi Email (HTML bagian dalam)</label>
-                    <span class="text-[11px] text-slate-400 font-semibold">Kosongkan = tampilan bawaan</span>
+                    <span class="block text-xs font-black text-slate-500 uppercase tracking-widest">Isi Email</span>
+                    <span class="text-[11px] text-slate-400 font-semibold">Kosongkan = tampilan bawaan sistem</span>
                 </div>
 
                 @if(count($placeholders))
-                <div class="flex flex-wrap gap-2 mb-2">
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                    <span class="text-[11px] text-slate-400 font-black uppercase">Sisipkan:</span>
                     @foreach($placeholders as $ph)
                     <button type="button" onclick="insertPlaceholder('{{ '{' . $ph . '}' }}')"
+                        title="Akan diganti otomatis oleh sistem saat email dikirim"
                         class="px-3 py-1.5 rounded-full bg-orange-50 text-orange-700 text-xs font-black border border-orange-200 hover:bg-orange-100 transition-colors">
-                        {<span class="select-none">{{ $ph }}</span>}
+                        {{ $ph }}
                     </button>
                     @endforeach
                 </div>
                 @endif
 
-                <textarea id="body" name="body" rows="18" maxlength="65000"
-                    placeholder="<p>Halo {nama}, ...</p>"
-                    class="w-full px-4 py-3 bg-slate-900 text-slate-100 border {{ $errors->has('body') ? 'border-red-500' : 'border-slate-700' }} rounded-xl text-xs font-mono leading-relaxed outline-none focus:ring-4 focus:ring-orange-100">{{ old('body', $template?->body) }}</textarea>
+                <div id="editor" class="bg-white border {{ $errors->has('body') ? 'border-red-500' : 'border-slate-200' }} rounded-xl overflow-hidden"></div>
+                <input type="hidden" name="body" id="body" value="{{ old('body', $template?->body) }}">
                 @error('body') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
             </div>
 
@@ -96,19 +97,39 @@
     </div>
 </div>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.css">
+<script src="https://cdn.jsdelivr.net/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.js"></script>
+
 <script>
+const editor = new ToastUIEditor({
+    el: document.getElementById('editor'),
+    initialEditType: 'wysiwyg',
+    previewStyle: 'vertical',
+    height: '560px',
+    initialValue: document.getElementById('body').value,
+});
+
+// HTML kosong dari editor = kosong beneran (fallback ke tampilan bawaan)
+function editorValue() {
+    const html = editor.getHTML().trim();
+    return (html === '' || html === '<p></p>' || html === '<p><br></p>') ? '' : html;
+}
+
+// editor → hidden input sebelum form Simpan dikirim
+document.getElementById('saveForm').addEventListener('submit', function () {
+    document.getElementById('body').value = editorValue();
+});
+
+// chip placeholder: sisipkan di kursor editor
 function insertPlaceholder(ph) {
-    const ta = document.getElementById('body');
-    const start = ta.selectionStart;
-    ta.value = ta.value.slice(0, start) + ph + ta.value.slice(ta.selectionEnd);
-    ta.focus();
-    ta.selectionStart = ta.selectionEnd = start + ph.length;
+    editor.insertText(ph);
+    editor.focus();
 }
 
 // sync draft ke form preview sebelum submit ke iframe
 document.getElementById('previewForm').addEventListener('submit', function () {
     document.getElementById('previewSubject').value = document.getElementById('subject').value;
-    document.getElementById('previewBody').value = document.getElementById('body').value;
+    document.getElementById('previewBody').value = editorValue();
 });
 
 function confirmReset() {
