@@ -69,7 +69,7 @@
             
             <!-- Right Column: Hero Image -->
             <div class="relative w-full scroll-fade-right mt-6 lg:mt-0 max-w-md mx-auto lg:max-w-none overflow-hidden rounded-2xl sm:rounded-[2.5rem]">
-                <img loading="lazy" src="{{ asset('icon/newlogo.png') }}" alt="MNCU Future Leader Scholarship" class="w-full h-auto rounded-2xl sm:rounded-[2.5rem] hover:scale-[1.05] transition-transform duration-500">
+                <img loading="lazy" src="{{ asset('icon/newlogo.webp') }}" alt="MNCU Future Leader Scholarship" class="w-full h-auto rounded-2xl sm:rounded-[2.5rem] hover:scale-[1.05] transition-transform duration-500">
             </div>
         </div>
     </div>
@@ -163,22 +163,22 @@ Melalui beasiswa ini, penerima tidak hanya mendapatkan dukungan finansial, tetap
                 <div class="grid grid-cols-2 gap-4">
                     <!-- Top Right -->
                     <div class="col-start-2">
-                        <img loading="lazy" src="{{ asset('icon/Student1.png') }}" alt="Students Photo 1" class="rounded-2xl shadow-lg w-full h-64 object-cover">
+                        <img loading="lazy" src="{{ asset('icon/Student1.webp') }}" alt="Students Photo 1" class="rounded-2xl shadow-lg w-full h-64 object-cover">
                     </div>
                     
                     <!-- Middle Left -->
                     <div class="col-start-1 row-start-2">
-                        <img loading="lazy" src="{{ asset('icon/seminar2.jpeg') }}" alt="Seminar Photo 2" class="rounded-2xl shadow-lg w-full h-48 object-cover">
+                        <img loading="lazy" src="{{ asset('icon/seminar2.webp') }}" alt="Seminar Photo 2" class="rounded-2xl shadow-lg w-full h-48 object-cover">
                     </div>
                     
                     <!-- Middle Right -->
                     <div class="col-start-2 row-start-2">
-                        <img loading="lazy" src="{{ asset('icon/group3.jpeg') }}" alt="Group Photo 3" class="rounded-2xl shadow-lg w-full h-48 object-cover">
+                        <img loading="lazy" src="{{ asset('icon/group3.webp') }}" alt="Group Photo 3" class="rounded-2xl shadow-lg w-full h-48 object-cover">
                     </div>
                     
                     <!-- Bottom Left -->
                     <div class="col-start-1 row-start-3">
-                        <img loading="lazy" src="{{ asset('icon/student4.jpeg') }}" alt="Students Photo 4" class="rounded-2xl shadow-lg w-full h-64 object-cover">
+                        <img loading="lazy" src="{{ asset('icon/student4.webp') }}" alt="Students Photo 4" class="rounded-2xl shadow-lg w-full h-64 object-cover">
                     </div>
                 </div>
             </div>
@@ -421,7 +421,7 @@ Melalui beasiswa ini, penerima tidak hanya mendapatkan dukungan finansial, tetap
             
             <!-- Right: Image -->
             <div class="relative order-1 lg:order-2">
-                <img loading="lazy" src="{{ asset('icon/Keuntungan.png') }}" alt="Benefit Keuntungan" class="  ">
+                <img loading="lazy" src="{{ asset('icon/keuntungan.webp') }}" alt="Benefit Keuntungan" class="  ">
             </div>
         </div>
     </div>
@@ -558,7 +558,7 @@ Melalui beasiswa ini, penerima tidak hanya mendapatkan dukungan finansial, tetap
             
             <!-- Right: Portrait Photo -->
             <div>
-<img loading="lazy" src="{{ asset('icon/scholarr.png') }}" alt="Scholar Portrait" class="w-full">            </div>
+<img loading="lazy" src="{{ asset('icon/scholarr.webp') }}" alt="Scholar Portrait" class="w-full">            </div>
         </div>
     </div>
 </div>
@@ -617,24 +617,24 @@ Melalui beasiswa ini, penerima tidak hanya mendapatkan dukungan finansial, tetap
         <div class="relative max-w-5xl mx-auto">
             @php
                 $testimonials = [
-                    ['name' => 'Irfan Syahfutra', 'batch' => 'MFLS 2025', 'major' => 'Sistem informasi', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman yang luar biasa.Selama kegiatan ini, kami belajar banyak hal baru yang melatih mental, tanggung jawab, dan kepemimpinan. Pengalaman ini menjadi momen berharga dan sangat menginspirasi kami untuk terus berkembang.', 'photo' => 'Irfan.png'],
-                    ['name' => 'Satria Pambudi Attur Rohman', 'batch' => 'MFLS 2025', 'major' => 'Desain Komunikasi Visual', 'quote' => 'Terimakasih banyak untuk MNCU Future Leader Scholarship buat kesempatan, ilmu, dan pengalaman baru yang bener bener luar biasa. Di sini, aku nggak cuma sekedar belajar teori, tapi juga dilatih buat jadi pribadi yang punya jiwa leadership atau kepemimpinan yang kuat. Banyak hal baru yang aku dapet dan pastinya sangat menginspirasi untuk lebih semangat ke depannya.', 'photo' => 'Satria.png'],
-                    ['name' => 'Cellindia Vanesa Heriyandu', 'batch' => 'MFLS 2025', 'major' => 'Pendidikan Bahasa Inggris', 'quote' => 'Terima kasih kepada MNCU Future Leader Scholarship atas program yang luar biasa ini. Melalui rangkaian kegiatan, saya belajar nilai kepemimpinan, kerja sama, dan keberanian untuk terus berkembang. Dipertemukan dengan teman, kakak pembimbing, serta dosen-dosen inspiratif menjadi pengalaman berharga yang membentuk cara berpikir saya sampai dengan detik ini.', 'photo' => 'cellin.png'],
-                    ['name' => 'Sandy Arif Saputra', 'batch' => 'MFLS 2025', 'major' => 'Ilmu Komputer', 'quote' => 'Mengikuti MNCU Future Leader Scholarship jadi salah satu pengalaman paling berkesan buat aku. Bertemu teman-teman hebat, para mentor yang inspiring, serta dosen-dosen dengan kualitas yang really next level adalah hal yang nggak akan aku lupain. Failure is part of the journey, and trying is always the first win.', 'photo' => 'Sandy.png'],
-                    ['name' => 'Silvi Melani Putri', 'batch' => 'MFLS 2025', 'major' => 'Pendidikan Matematika', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas ilmu, pengalaman, dan kesempatan yang sangat berharga. Program ini memberikan berbagai wawasan dan pengalaman baru yang sangat menginspirasi serta menjadi bekal berharga bagi kami untuk pengembangan diri di masa depan.', 'photo' => 'Silvi.png'],
-                    ['name' => 'Kirania Rizma Az-Zahra', 'batch' => 'MFLS 2025', 'major' => 'Akuntansi', 'quote' => 'Long story short I survived! Terima kasih MNCU Future Leader Scholarship atas beasiswa 100%. Dalam program ini, bukan hanya memberi aku beasiswa, namun juga memberi ruang untuk tumbuh, belajar, dan bermimpi lebih jauh.', 'photo' => 'Kirania.png'],
-                    ['name' => 'Innez Putria Abidin', 'batch' => 'MFLS 2025', 'major' => ' Manajemen', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman dan pembelajaran yang luar biasa. Selama mengikuti program ini, saya banyak belajar hal baru dan menginspirasi terutama tentang leadership, kerja sama, dan pengembangan diri yang akan berguna di masa depan. Terima kasih juga untuk para mentor yang telah memberikan banyak ilmu dan support kepada teman-teman semua.', 'photo' => 'Innez.png'],
-                    ['name' => 'Rizki', 'batch' => 'MFLS 2025', 'major' => 'Sistem Informasi', 'quote' => 'Terima kasih kepada MNC University yang telah memberikan harapan bagi generasi muda Indonesia melalui Beasiswa 100% MNCU Future Leader Scholarship. Kesempatan ini menjadi jembatan untuk anak desa bisa menggapai masa depan yang lebih baik.', 'photo' => 'Rizki.png'],
-                    ['name' => 'Andini Raissa', 'batch' => 'MFLS 2025', 'major' => 'Manajemen', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas kesempatan luar biasa yang membuka ruang tumbuh, membentuk karakter, dan menguatkan jiwa kepemimpinan kami, setiap prosesnya menjadi pijakan untuk melangkah lebih berani, berpikir lebih visioner, dan berdampak lebih nyata,semoga MNC University terus melahirkan pemimpin masa depan yang berintegritas dan berpengaruh. May MNC University continue to inspire future leaders💫.', 'photo' => 'andini.png'],
-                    ['name' => 'Alfiah Wirda Lukmansyah', 'batch' => 'MFLS 2025', 'major' => 'Akuntansi', 'quote' => 'MFLS bukan hanya memberikan beasiswa, tapi juga keluarga baru dan pengalaman yang luar biasa. Terima kasih atas kesempatan ini!', 'photo' => 'alfiah.png'],
-                    ['name' => 'Dzakiyah Febriyanti', 'batch' => 'MFLS 2025', 'major' => 'Ilmu Komputer', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman luar biasa ini. Sit in class yang saya ikuti menjadi ruang belajar yang sangat berharga, di sana saya dilatih untuk mengasah leadership, memperluas wawasan, dan mendapatkan banyak inspirasi baru. Program ini tidak hanya menambah wawasan, tetapi juga membentuk mindset saya untuk terus berkembang dan berani mengambil peran di masa depan.', 'photo' => 'dzakiyah.png'],
-                    ['name' => 'Gavino Pasha Putra', 'batch' => 'MFLS 2025', 'major' => 'Ilmu Komputer', 'quote' => 'Terima kasih atas MNCU Future Leader Scholarship Atas program beasiswa yang sudah diselenggarakan, bagi saya ini bukanlah akhir, tetapi ini adalah awal untuk kita mencapai level yang lebih tinggi lagi kedepannya.', 'photo' => 'gavino.png'],
-                    ['name' => 'Rahmalia Putri', 'batch' => 'MFLS 2025', 'major' => 'Desain Komunikasi Visual', 'quote' => 'saya sangat mengucapkan terimakasih sebesar-besar nya kepada MNC University karena telah memberikan kesempatan dan tanggung jawab sebagai penerima beasiswa 100%, dan saya sangat berterimakasih kepada orang tua serta kerabat-kerabat saya yang sudah mendukung saya. Dengan BEASISWA 100% yang di berikan MNC University ini merupakan langkah awal atau permulaan bagi saya untuk menggapai apa yang saya impikan, apa yang saya rencanakan dan memberikan kesempatan serta wadah bagi kami yang MAU BERJUANG DAN BERUSAHA. Terimakasih banyak kepada MNC University dan sukses selalu kedepannya🌟', 'photo' => 'raput.png'],
-                    ['name' => 'Muhamad  Rifatur Seva Kuswara', 'batch' => 'MFLS 2025', 'major' => 'Sistem Informasi', 'quote' => 'Saya sangat berterimakasih banyak kepada MNCU Future Leader Scholarship telah mengadakan program ini, karena dari sini saya belajar banyak sekali, saya bertemu teman-teman yang hebat, kaka yang keren, dosen-dosen yang sangat LUAR BIASA dan sebuah pengalaman yang sangat berharga, yang tidak pernah saya bayangkan sukses selalu untuk MNC Group dan MNC University, dimana para mimpi anak bangsa tersalurkan dengan program-program yang sangat luar biasa dan di dukung dengan banyaknya kemajuan teknologi, "tiada kesuksesan tanpa kegagalan, dan kegagalan adalah awal batu loncatan menuju kesuksesan", you never know, if you never try.', 'photo' => 'Rifatur.png'],
-                    ['name' => 'Rini Manda', 'batch' => 'MFLS 2025', 'major' => 'Sains Komunikasi', 'quote' => 'Kesan: Mengikuti program MNCU Future Leader Scholarship merupakan pengalaman yang sangat berharga bagi saya. Program ini tidak hanya memberikan bantuan pendidikan, tetapi juga membentuk karakter, rasa percaya diri, serta semangat untuk terus berkembang dan berprestasi. Saya merasa bangga dan bersyukur bisa menjadi bagian dari program ini. Pesan: Terima kasih kepada seluruh pihak MNC University dan penyelenggara MNCU Future Leader Scholarship atas kesempatan luar biasa yang telah diberikan. Semoga program ini terus berlanjut dan dapat menjangkau lebih banyak generasi muda agar semakin banyak calon pemimpin masa depan yang lahir, berintegritas, dan membawa dampak positif bagi masyarakat.', 'photo' => 'rini.png'],
-                    ['name' => 'Risky Zuliansyah', 'batch' => 'MFLS 2025', 'major' => 'Sains Komunikasi', 'quote' => 'Saya menghaturkan apresiasi dan rasa terima kasih yang setulus-tulusnya kepada MNC University atas hadirnya program MNCU Future Leader Scholarship, sebuah ikhtiar nyata yang tidak sekadar membuka peluang, tetapi juga menyalakan asa bagi saya untuk melangkah ke jenjang pendidikan tinggi. Program ini menjadikan impian saya bukan lagi sekadar wacana, melainkan tujuan yang kini memiliki arah dan kemungkinan. Ketertarikan saya memilih MNC University berangkat dari keyakinan bahwa kampus ini berdiri sebagai institusi pendidikan dengan ekosistem media yang sangat luas di tingkat Asia, serta berada di bawah naungan MNC Group yang bereputasi global. Di sinilah saya melihat pendidikan tidak hanya dimaknai sebagai proses akademik semata, melainkan juga sebagai ruang pembentukan jejaring, penguatan kapasitas diri, dan penempaan kepemimpinan untuk menghadapi tantangan masa depan.', 'photo' => 'Risky.png'],
-                    ['name' => 'Ibrahimovic', 'batch' => 'MFLS 2025', 'major' => 'Sains Komunikasi', 'quote' => 'Terimakasih atas kesempatan yang telah diberikan kepada saya, pada program ini saya mendapatkan banyak pelajaran dan kegiatan yang menarik selama program berlangsung. Seperti mentoring/bimbingan, leadership dan membuka lembaran baru lagi dalam hidup ku, yang bukan hanya sekedar teori tetapi praktek langsung. Semoga ini bisa membawa kebaikan kedepannya dan tempat untuk bertumbuh lebih baik.', 'photo' => 'baim.png'],
-                    ['name' => 'Gracia Lamtiar Yosefine Sagala', 'batch' => 'MFLS 2025', 'major' => 'Akuntansi', 'quote' => 'Terima kasih yang sebesar-besarnya kepada MNC University melalui program MNCU Future Leader Scholarship atas kesempatan dan kepercayaan yang diberikan. Beasiswa ini bukan hanya menjadi dukungan dalam perjalanan pendidikan saya, tetapi juga menjadi sumber motivasi untuk terus belajar, berkembang, dan mempersiapkan diri sebagai calon pemimpin masa depan. Saya sangat bersyukur atas kesempatan berharga ini dan berharap dapat memanfaatkannya dengan sebaik-baiknya serta memberikan dampak positif bagi lingkungan kampus dan masyarakat.', 'photo' => 'grace.png']
+                    ['name' => 'Irfan Syahfutra', 'batch' => 'MFLS 2025', 'major' => 'Sistem informasi', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman yang luar biasa.Selama kegiatan ini, kami belajar banyak hal baru yang melatih mental, tanggung jawab, dan kepemimpinan. Pengalaman ini menjadi momen berharga dan sangat menginspirasi kami untuk terus berkembang.', 'photo' => 'Irfan.webp'],
+                    ['name' => 'Satria Pambudi Attur Rohman', 'batch' => 'MFLS 2025', 'major' => 'Desain Komunikasi Visual', 'quote' => 'Terimakasih banyak untuk MNCU Future Leader Scholarship buat kesempatan, ilmu, dan pengalaman baru yang bener bener luar biasa. Di sini, aku nggak cuma sekedar belajar teori, tapi juga dilatih buat jadi pribadi yang punya jiwa leadership atau kepemimpinan yang kuat. Banyak hal baru yang aku dapet dan pastinya sangat menginspirasi untuk lebih semangat ke depannya.', 'photo' => 'Satria.webp'],
+                    ['name' => 'Cellindia Vanesa Heriyandu', 'batch' => 'MFLS 2025', 'major' => 'Pendidikan Bahasa Inggris', 'quote' => 'Terima kasih kepada MNCU Future Leader Scholarship atas program yang luar biasa ini. Melalui rangkaian kegiatan, saya belajar nilai kepemimpinan, kerja sama, dan keberanian untuk terus berkembang. Dipertemukan dengan teman, kakak pembimbing, serta dosen-dosen inspiratif menjadi pengalaman berharga yang membentuk cara berpikir saya sampai dengan detik ini.', 'photo' => 'cellin.webp'],
+                    ['name' => 'Sandy Arif Saputra', 'batch' => 'MFLS 2025', 'major' => 'Ilmu Komputer', 'quote' => 'Mengikuti MNCU Future Leader Scholarship jadi salah satu pengalaman paling berkesan buat aku. Bertemu teman-teman hebat, para mentor yang inspiring, serta dosen-dosen dengan kualitas yang really next level adalah hal yang nggak akan aku lupain. Failure is part of the journey, and trying is always the first win.', 'photo' => 'Sandy.webp'],
+                    ['name' => 'Silvi Melani Putri', 'batch' => 'MFLS 2025', 'major' => 'Pendidikan Matematika', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas ilmu, pengalaman, dan kesempatan yang sangat berharga. Program ini memberikan berbagai wawasan dan pengalaman baru yang sangat menginspirasi serta menjadi bekal berharga bagi kami untuk pengembangan diri di masa depan.', 'photo' => 'Silvi.webp'],
+                    ['name' => 'Kirania Rizma Az-Zahra', 'batch' => 'MFLS 2025', 'major' => 'Akuntansi', 'quote' => 'Long story short I survived! Terima kasih MNCU Future Leader Scholarship atas beasiswa 100%. Dalam program ini, bukan hanya memberi aku beasiswa, namun juga memberi ruang untuk tumbuh, belajar, dan bermimpi lebih jauh.', 'photo' => 'Kirania.webp'],
+                    ['name' => 'Innez Putria Abidin', 'batch' => 'MFLS 2025', 'major' => ' Manajemen', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman dan pembelajaran yang luar biasa. Selama mengikuti program ini, saya banyak belajar hal baru dan menginspirasi terutama tentang leadership, kerja sama, dan pengembangan diri yang akan berguna di masa depan. Terima kasih juga untuk para mentor yang telah memberikan banyak ilmu dan support kepada teman-teman semua.', 'photo' => 'Innez.webp'],
+                    ['name' => 'Rizki', 'batch' => 'MFLS 2025', 'major' => 'Sistem Informasi', 'quote' => 'Terima kasih kepada MNC University yang telah memberikan harapan bagi generasi muda Indonesia melalui Beasiswa 100% MNCU Future Leader Scholarship. Kesempatan ini menjadi jembatan untuk anak desa bisa menggapai masa depan yang lebih baik.', 'photo' => 'Rizki.webp'],
+                    ['name' => 'Andini Raissa', 'batch' => 'MFLS 2025', 'major' => 'Manajemen', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas kesempatan luar biasa yang membuka ruang tumbuh, membentuk karakter, dan menguatkan jiwa kepemimpinan kami, setiap prosesnya menjadi pijakan untuk melangkah lebih berani, berpikir lebih visioner, dan berdampak lebih nyata,semoga MNC University terus melahirkan pemimpin masa depan yang berintegritas dan berpengaruh. May MNC University continue to inspire future leaders💫.', 'photo' => 'Andini.webp'],
+                    ['name' => 'Alfiah Wirda Lukmansyah', 'batch' => 'MFLS 2025', 'major' => 'Akuntansi', 'quote' => 'MFLS bukan hanya memberikan beasiswa, tapi juga keluarga baru dan pengalaman yang luar biasa. Terima kasih atas kesempatan ini!', 'photo' => 'Alfiah.webp'],
+                    ['name' => 'Dzakiyah Febriyanti', 'batch' => 'MFLS 2025', 'major' => 'Ilmu Komputer', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman luar biasa ini. Sit in class yang saya ikuti menjadi ruang belajar yang sangat berharga, di sana saya dilatih untuk mengasah leadership, memperluas wawasan, dan mendapatkan banyak inspirasi baru. Program ini tidak hanya menambah wawasan, tetapi juga membentuk mindset saya untuk terus berkembang dan berani mengambil peran di masa depan.', 'photo' => 'Dzakiyah.webp'],
+                    ['name' => 'Gavino Pasha Putra', 'batch' => 'MFLS 2025', 'major' => 'Ilmu Komputer', 'quote' => 'Terima kasih atas MNCU Future Leader Scholarship Atas program beasiswa yang sudah diselenggarakan, bagi saya ini bukanlah akhir, tetapi ini adalah awal untuk kita mencapai level yang lebih tinggi lagi kedepannya.', 'photo' => 'Gavino.webp'],
+                    ['name' => 'Rahmalia Putri', 'batch' => 'MFLS 2025', 'major' => 'Desain Komunikasi Visual', 'quote' => 'saya sangat mengucapkan terimakasih sebesar-besar nya kepada MNC University karena telah memberikan kesempatan dan tanggung jawab sebagai penerima beasiswa 100%, dan saya sangat berterimakasih kepada orang tua serta kerabat-kerabat saya yang sudah mendukung saya. Dengan BEASISWA 100% yang di berikan MNC University ini merupakan langkah awal atau permulaan bagi saya untuk menggapai apa yang saya impikan, apa yang saya rencanakan dan memberikan kesempatan serta wadah bagi kami yang MAU BERJUANG DAN BERUSAHA. Terimakasih banyak kepada MNC University dan sukses selalu kedepannya🌟', 'photo' => 'raput.webp'],
+                    ['name' => 'Muhamad  Rifatur Seva Kuswara', 'batch' => 'MFLS 2025', 'major' => 'Sistem Informasi', 'quote' => 'Saya sangat berterimakasih banyak kepada MNCU Future Leader Scholarship telah mengadakan program ini, karena dari sini saya belajar banyak sekali, saya bertemu teman-teman yang hebat, kaka yang keren, dosen-dosen yang sangat LUAR BIASA dan sebuah pengalaman yang sangat berharga, yang tidak pernah saya bayangkan sukses selalu untuk MNC Group dan MNC University, dimana para mimpi anak bangsa tersalurkan dengan program-program yang sangat luar biasa dan di dukung dengan banyaknya kemajuan teknologi, "tiada kesuksesan tanpa kegagalan, dan kegagalan adalah awal batu loncatan menuju kesuksesan", you never know, if you never try.', 'photo' => 'Rifatur.webp'],
+                    ['name' => 'Rini Manda', 'batch' => 'MFLS 2025', 'major' => 'Sains Komunikasi', 'quote' => 'Kesan: Mengikuti program MNCU Future Leader Scholarship merupakan pengalaman yang sangat berharga bagi saya. Program ini tidak hanya memberikan bantuan pendidikan, tetapi juga membentuk karakter, rasa percaya diri, serta semangat untuk terus berkembang dan berprestasi. Saya merasa bangga dan bersyukur bisa menjadi bagian dari program ini. Pesan: Terima kasih kepada seluruh pihak MNC University dan penyelenggara MNCU Future Leader Scholarship atas kesempatan luar biasa yang telah diberikan. Semoga program ini terus berlanjut dan dapat menjangkau lebih banyak generasi muda agar semakin banyak calon pemimpin masa depan yang lahir, berintegritas, dan membawa dampak positif bagi masyarakat.', 'photo' => 'rini.webp'],
+                    ['name' => 'Risky Zuliansyah', 'batch' => 'MFLS 2025', 'major' => 'Sains Komunikasi', 'quote' => 'Saya menghaturkan apresiasi dan rasa terima kasih yang setulus-tulusnya kepada MNC University atas hadirnya program MNCU Future Leader Scholarship, sebuah ikhtiar nyata yang tidak sekadar membuka peluang, tetapi juga menyalakan asa bagi saya untuk melangkah ke jenjang pendidikan tinggi. Program ini menjadikan impian saya bukan lagi sekadar wacana, melainkan tujuan yang kini memiliki arah dan kemungkinan. Ketertarikan saya memilih MNC University berangkat dari keyakinan bahwa kampus ini berdiri sebagai institusi pendidikan dengan ekosistem media yang sangat luas di tingkat Asia, serta berada di bawah naungan MNC Group yang bereputasi global. Di sinilah saya melihat pendidikan tidak hanya dimaknai sebagai proses akademik semata, melainkan juga sebagai ruang pembentukan jejaring, penguatan kapasitas diri, dan penempaan kepemimpinan untuk menghadapi tantangan masa depan.', 'photo' => 'Risky.webp'],
+                    ['name' => 'Ibrahimovic', 'batch' => 'MFLS 2025', 'major' => 'Sains Komunikasi', 'quote' => 'Terimakasih atas kesempatan yang telah diberikan kepada saya, pada program ini saya mendapatkan banyak pelajaran dan kegiatan yang menarik selama program berlangsung. Seperti mentoring/bimbingan, leadership dan membuka lembaran baru lagi dalam hidup ku, yang bukan hanya sekedar teori tetapi praktek langsung. Semoga ini bisa membawa kebaikan kedepannya dan tempat untuk bertumbuh lebih baik.', 'photo' => 'Baim.webp'],
+                    ['name' => 'Gracia Lamtiar Yosefine Sagala', 'batch' => 'MFLS 2025', 'major' => 'Akuntansi', 'quote' => 'Terima kasih yang sebesar-besarnya kepada MNC University melalui program MNCU Future Leader Scholarship atas kesempatan dan kepercayaan yang diberikan. Beasiswa ini bukan hanya menjadi dukungan dalam perjalanan pendidikan saya, tetapi juga menjadi sumber motivasi untuk terus belajar, berkembang, dan mempersiapkan diri sebagai calon pemimpin masa depan. Saya sangat bersyukur atas kesempatan berharga ini dan berharap dapat memanfaatkannya dengan sebaik-baiknya serta memberikan dampak positif bagi lingkungan kampus dan masyarakat.', 'photo' => 'grace.webp']
                 ];
             @endphp
             
@@ -756,7 +756,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/MNCU Future Leader Scholarship_20260316_040958_0000.png') }}?v={{ time() }}" alt="MAJU BERSAMA OSIS" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/MNCU Future Leader Scholarship_20260316_040958_0000.webp') }}?v={{ time() }}" alt="MAJU BERSAMA OSIS" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">Maju Bersama Osis</h4>
                 </div>
@@ -766,7 +766,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/Logo FON .png') }}?v={{ time() }}" alt="FORUM OSIS NASIONAL" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/Logo FON .webp') }}?v={{ time() }}" alt="FORUM OSIS NASIONAL" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">Forum OSIS Nasional</h4>
                 </div>
@@ -776,7 +776,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/Logo_MudaBerdaya - Square Primary.png') }}?v={{ time() }}" alt="MUDA BERDAYA" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/Logo_MudaBerdaya - Square Primary.webp') }}?v={{ time() }}" alt="MUDA BERDAYA" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">Muda Berdaya</h4>
                 </div>
@@ -786,7 +786,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/zeekend.png') }}?v={{ time() }}" alt="ZEEKEND" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/zeekend.webp') }}?v={{ time() }}" alt="ZEEKEND" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">ZEEKEND</h4>
                 </div>
@@ -796,7 +796,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/gensmart.jpeg') }}?v={{ time() }}" alt="GENSMART INDONESIA" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/gensmart.webp') }}?v={{ time() }}" alt="GENSMART INDONESIA" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">GENSMART INDONESIA</h4>
                 </div>
@@ -806,7 +806,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum osis bogor.png') }}?v={{ time() }}" alt="FORUM OSIS KABUPATEN BOGOR" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/forum osis bogor.webp') }}?v={{ time() }}" alt="FORUM OSIS KABUPATEN BOGOR" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM OSIS KABUPATEN BOGOR</h4>
                 </div>
@@ -816,7 +816,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum pemuda beraksi jawa barat.jpeg') }}?v={{ time() }}" alt="FORUM PEMUDA BERAKSI JABAR" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/forum pemuda beraksi jawa barat.webp') }}?v={{ time() }}" alt="FORUM PEMUDA BERAKSI JABAR" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM PEMUDA BERAKSI JABAR</h4>
                 </div>
@@ -826,7 +826,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum osis banten.png') }}?v={{ time() }}" alt="FORUM PEMUDA BERAKSI BANTEN" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/forum osis banten.webp') }}?v={{ time() }}" alt="FORUM PEMUDA BERAKSI BANTEN" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM PEMUDA BERAKSI BANTEN</h4>
                 </div>
@@ -836,7 +836,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/tunas satria sriwijaya.jpeg') }}?v={{ time() }}" alt="TUNAS SATRIA WIJAYA" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/tunas satria sriwijaya.webp') }}?v={{ time() }}" alt="TUNAS SATRIA WIJAYA" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">TUNAS SATRIA WIJAYA</h4>
                 </div>
@@ -846,7 +846,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum osis sekolah islam terpadu.png') }}?v={{ time() }}" alt="FORUM SEKOLAH ISLAM TERPADU" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/forum osis sekolah islam terpadu.webp') }}?v={{ time() }}" alt="FORUM SEKOLAH ISLAM TERPADU" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM SEKOLAH ISLAM TERPADU</h4>
                 </div>
@@ -856,7 +856,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum osis jakarta pusat.png') }}?v={{ time() }}" alt="FORUM OSIS DAERAH JAKARTA PUSAT" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/forum osis jakarta pusat.webp') }}?v={{ time() }}" alt="FORUM OSIS DAERAH JAKARTA PUSAT" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM OSIS DAERAH JAKARTA PUSAT</h4>
                 </div>
@@ -866,7 +866,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum osis kota sukabumi.png') }}?v={{ time() }}" alt="FORUM OSIS KOTA SUKABUMI" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/forum osis kota sukabumi.webp') }}?v={{ time() }}" alt="FORUM OSIS KOTA SUKABUMI" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM OSIS KOTA SUKABUMI</h4>
                 </div>
@@ -876,7 +876,7 @@ autoSlideInterval = setInterval(autoSlide, 5000);
             <div class="group transform hover:-translate-y-1 transition-all duration-300">
                 <div class="flex flex-col items-center justify-center p-4">
                     <div class="w-full h-28 flex items-center justify-center mb-3 bg-white rounded-xl">
-                        <img loading="lazy" src="{{ asset('icon/FORUM OSIS SMK DAERAH KHUSUS JAKARTA.png') }}?v={{ time() }}" alt="FORUM OSIS SMK DAERAH KHUSUS JAKARTA" class="max-w-full max-h-full object-contain">
+                        <img loading="lazy" src="{{ asset('icon/FORUM OSIS SMK DAERAH KHUSUS JAKARTA.webp') }}?v={{ time() }}" alt="FORUM OSIS SMK DAERAH KHUSUS JAKARTA" class="max-w-full max-h-full object-contain">
                     </div>
                     <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM OSIS SMK DAERAH KHUSUS JAKARTA</h4>
                 </div>

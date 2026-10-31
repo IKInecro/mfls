@@ -61,7 +61,7 @@
     <div class="flex min-h-screen">
         <!-- Left Side: Image & Quote -->
         <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-dark-navy">
-            <img src="{{ asset('icon/login.png') }}" class="absolute inset-0 w-full h-full object-cover opacity-60"
+            <img src="{{ asset('icon/login.webp') }}" class="absolute inset-0 w-full h-full object-cover opacity-60"
                 alt="Login Background">
             <div class="absolute inset-0 bg-gradient-to-tr from-dark-navy/90 via-dark-navy/40 to-primary-gold/20"></div>
 

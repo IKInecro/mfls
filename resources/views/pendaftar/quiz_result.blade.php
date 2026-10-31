@@ -10,7 +10,7 @@
             <!-- Arion Mascot -->
             <div class="shrink-0 relative group">
                 <div class="absolute -inset-4 bg-primary-gold/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
-                <img src="{{ asset('icon/scholarr.png') }}" alt="Arion Mascot" class="w-40 h-40 md:w-56 md:h-56 object-contain relative z-10 drop-shadow-[0_20px_50px_rgba(212,175,55,0.3)] transform hover:scale-110 transition-transform duration-700">
+                <img src="{{ asset('icon/scholarr.webp') }}" alt="Arion Mascot" class="w-40 h-40 md:w-56 md:h-56 object-contain relative z-10 drop-shadow-[0_20px_50px_rgba(212,175,55,0.3)] transform hover:scale-110 transition-transform duration-700">
             </div>
 
             <div class="text-center md:text-left flex-1 items-center md:items-start flex flex-col">

@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let dragStartX = 0;
     let dragStartY = 0;
 
-    twibonFrame.src = '{{ asset("icon/twiibon.png") }}';
+    twibonFrame.src = '{{ asset("icon/twiibon.webp") }}';
     twibonFrame.onload = function() {
         drawCanvas();
     };
