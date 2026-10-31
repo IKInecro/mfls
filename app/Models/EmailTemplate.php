@@ -128,6 +128,44 @@ class EmailTemplate extends Model
     }
 
     /**
+     * Body full document (<!DOCTYPE / <html>) = admin mengedit seluruh HTML email
+     * (cangkang ikut diedit). Fragment = isi dalam cangkang Blade (mode lama).
+     */
+    public static function isFullDocument(string $body): bool
+    {
+        return (bool) preg_match('/^\s*<(!DOCTYPE|html)/i', $body);
+    }
+
+    /**
+     * Peta data placeholder → variabel view. Sebagian view memakai $user->nama /
+     * $oldEmail, bukan nama placeholder-nya, jadi preview & prefill butuh pemetaan ini.
+     */
+    public static function viewData(string $key, array $values, array $extra = []): array
+    {
+        if ($key === 'reset_password') {
+            $values['user'] = (object) [
+                'nama' => $values['nama'],
+                'email' => $extra['email'] ?? 'budi@example.com',
+            ];
+            $values['token'] = $extra['token'] ?? 'abc123';
+        }
+
+        if ($key === 'email_change_otp') {
+            $values['user'] = (object) [
+                'nama' => $values['nama'],
+                'email' => $extra['email'] ?? 'budi@example.com',
+            ];
+        }
+
+        if ($key === 'admin_changed_email') {
+            $values['oldEmail'] = $values['emailLama'];
+            $values['newEmail'] = $values['emailBaru'];
+        }
+
+        return $values;
+    }
+
+    /**
      * Placeholder wajib yang tidak ada di body — untuk peringatan lembut di UI.
      */
     public function missingRequired(): array

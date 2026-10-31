@@ -1,3 +1,6 @@
+@if(!empty($templateBody) && \App\Models\EmailTemplate::isFullDocument($templateBody))
+{!! $templateBody !!}
+@else
 <!DOCTYPE html>
 <html lang="id">
 
@@ -151,3 +154,4 @@
 </body>
 
 </html>
+@endif

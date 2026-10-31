@@ -26,9 +26,46 @@ class EmailTemplateController extends Controller
             'key' => $key,
             'label' => EmailTemplate::LABELS[$key],
             'template' => EmailTemplate::get($key),
+            'prefill' => EmailTemplate::body($key) ?? $this->defaultFullHtml($key),
             'placeholders' => array_keys(EmailTemplate::SAMPLES[$key]),
             'missing' => EmailTemplate::get($key)?->missingRequired() ?? [],
         ]);
+    }
+
+    /**
+     * HTML lengkap tampilan default (dgn placeholder literal {nama} dsb) sebagai
+     * titik awal edit — admin mulai dari kode email yang berlaku, bukan dari kosong.
+     */
+    private function defaultFullHtml(string $key): string
+    {
+        $message = new class
+        {
+            public function embed($path)
+            {
+                return asset('icon/logoo.png');
+            }
+        };
+
+        // Setiap nilai = placeholder literal-nya sendiri, jadi hasil render memuat
+        // {nama}/{otp}/dst yang nanti disubstitusi saat email benar-benar dikirim.
+        $data = EmailTemplate::viewData(
+            $key,
+            array_map(fn ($ph) => '{'.$ph.'}', EmailTemplate::SAMPLES[$key]),
+            ['token' => '{linkReset}', 'email' => '{email}']
+        );
+
+        $html = view('emails.'.$key, array_merge($data, [
+            'message' => $message,
+            'templateBody' => null,
+        ]))->render();
+
+        if ($key === 'reset_password') {
+            // url() menghasilkan URL konkret dari token contoh → kembalikan ke {linkReset}
+            $link = url('reset-password/{linkReset}?email='.urlencode('{email}'));
+            $html = str_replace($link, '{linkReset}', $html);
+        }
+
+        return $html;
     }
 
     /**
@@ -38,7 +75,7 @@ class EmailTemplateController extends Controller
     {
         abort_unless(in_array($key, EmailTemplate::KEYS, true), 404);
 
-        $data = EmailTemplate::SAMPLES[$key];
+        $data = EmailTemplate::viewData($key, EmailTemplate::SAMPLES[$key]);
         $draft = $request->input('body');
 
         $message = new class

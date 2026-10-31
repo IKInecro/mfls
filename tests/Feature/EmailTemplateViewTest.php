@@ -89,4 +89,16 @@ class EmailTemplateViewTest extends TestCase
         $this->assertStringContainsString('All rights reserved.', $html);
         $this->assertStringNotContainsString('Selamat! Anda Lolos Seleksi Ujian!', $html);
     }
+
+    public function test_body_full_document_menggantikan_seluruh_email(): void
+    {
+        $full = "<!DOCTYPE html>\n<html><body><p>FULL SENDIRI</p></body></html>";
+
+        foreach (\App\Models\EmailTemplate::KEYS as $key) {
+            $html = $this->render($key, $this->baseData($key), $full);
+
+            $this->assertStringContainsString('FULL SENDIRI', $html, "view {$key}");
+            $this->assertStringNotContainsString('MNC Tower, Jakarta, Indonesia', $html, "view {$key}");
+        }
+    }
 }

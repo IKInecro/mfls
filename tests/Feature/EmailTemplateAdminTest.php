@@ -15,7 +15,7 @@ class EmailTemplateAdminTest extends TestCase
     {
         return Akun::create([
             'nama' => 'Staf Tes',
-            'email' => "{$role}-tes@example.com",
+            'email' => "{$role}-".uniqid().'-tes@example.com',
             'password' => 'password',
             'role' => $role,
             'email_verified_at' => now(),
@@ -118,5 +118,54 @@ class EmailTemplateAdminTest extends TestCase
         $this->actingAs($this->akun('admin'))
             ->get('/admin/email-templates/otp/edit')
             ->assertSee('{otp}');
+    }
+
+    public function test_form_edit_prefill_dari_tampilan_default_lengkap(): void
+    {
+        // Belum ada override → textarea berisi HTML lengkap default + placeholder literal
+        $resp = $this->actingAs($this->akun('admin'))->get('/admin/email-templates/otp/edit');
+
+        $resp->assertOk();
+        $resp->assertSee('&lt;!DOCTYPE html&gt;', false); // DOCTYPE sebagai kode di textarea
+        $resp->assertSee('{nama}', false);
+        $resp->assertSee('{otp}', false);
+        // shell/logo nampak sebagai KODE di textarea (ter-escape), bukan render
+        $resp->assertSee('&lt;div class=&quot;content&quot;&gt;', false);
+    }
+
+    public function test_form_edit_reset_password_prefill_pakai_placeholder_link(): void
+    {
+        $resp = $this->actingAs($this->akun('admin'))->get('/admin/email-templates/reset_password/edit');
+
+        $resp->assertOk();
+        $resp->assertSee('{linkReset}', false);
+        // URL contoh tidak boleh bocor jadi tautan mati
+        $resp->assertDontSee('reset-password/abc123', false);
+    }
+
+    public function test_form_edit_prefill_pakai_body_tersimpan(): void
+    {
+        EmailTemplate::create(['key' => 'otp', 'body' => '<!DOCTYPE html><html><body>SUDAH DIEDIT</body></html>']);
+
+        $this->actingAs($this->akun('admin'))
+            ->get('/admin/email-templates/otp/edit')
+            ->assertSee('SUDAH DIEDIT', false);
+    }
+
+    public function test_simpan_body_full_document_dan_preview(): void
+    {
+        $full = "<!DOCTYPE html>\n<html><body><p>Halo {nama}, kode {otp}</p></body></html>";
+
+        $this->actingAs($this->akun('admin'))->post('/admin/email-templates/otp', [
+            'subject' => 'Full Doc',
+            'body' => $full,
+        ])->assertSessionHas('success');
+
+        $this->assertTrue(\App\Models\EmailTemplate::isFullDocument((string) \App\Models\EmailTemplate::body('otp')));
+
+        $this->actingAs($this->akun('admin'))
+            ->post('/admin/email-templates/otp/preview', ['subject' => 'Full Doc', 'body' => $full])
+            ->assertOk()
+            ->assertSee('Halo Budi Santoso, kode 123456', false);
     }
 }

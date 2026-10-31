@@ -7,7 +7,7 @@
         <div>
             <a href="{{ route('admin.email-templates.index') }}" class="text-xs font-black text-orange-600 hover:underline">&larr; Kembali ke daftar</a>
             <h1 class="text-2xl font-black text-slate-800 mt-1">Edit: {{ $label }}</h1>
-            <p class="text-sm text-slate-500 font-semibold mt-1">Hanya isi bagian dalam email yang bisa diubah — logo, tampilan, dan bagian bawah tetap bawaan sistem.</p>
+            <p class="text-sm text-slate-500 font-semibold mt-1">Kode HTML email tampil lengkap (dari DOCTYPE sampai penutup) — sunting langsung seperti kode biasa, lalu Muat Preview untuk melihat hasilnya.</p>
         </div>
     </div>
 
@@ -38,7 +38,7 @@
 
             <div>
                 <div class="flex items-center justify-between mb-2">
-                    <span class="block text-xs font-black text-slate-500 uppercase tracking-widest">Isi Email</span>
+                    <span class="block text-xs font-black text-slate-500 uppercase tracking-widest">Kode HTML Email (lengkap)</span>
                     <span class="text-[11px] text-slate-400 font-semibold">Kosongkan = tampilan bawaan sistem</span>
                 </div>
 
@@ -55,8 +55,9 @@
                 </div>
                 @endif
 
-                <div id="editor" class="bg-white border {{ $errors->has('body') ? 'border-red-500' : 'border-slate-200' }} rounded-xl overflow-hidden"></div>
-                <input type="hidden" name="body" id="body" value="{{ old('body', $template?->body) }}">
+                <textarea id="body" name="body" rows="26" spellcheck="false"
+                    placeholder="&lt;!DOCTYPE html&gt; ..."
+                    class="w-full px-4 py-3 bg-slate-900 text-slate-100 border {{ $errors->has('body') ? 'border-red-500' : 'border-slate-700' }} rounded-xl text-xs font-mono leading-relaxed outline-none focus:ring-4 focus:ring-orange-100">{{ old('body', $prefill) }}</textarea>
                 @error('body') <p class="text-red-500 text-xs mt-1 font-semibold">{{ $message }}</p> @enderror
             </div>
 
@@ -97,39 +98,20 @@
     </div>
 </div>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.css">
-<script src="https://cdn.jsdelivr.net/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.js"></script>
-
 <script>
-const editor = new ToastUIEditor({
-    el: document.getElementById('editor'),
-    initialEditType: 'wysiwyg',
-    previewStyle: 'vertical',
-    height: '560px',
-    initialValue: document.getElementById('body').value,
-});
-
-// HTML kosong dari editor = kosong beneran (fallback ke tampilan bawaan)
-function editorValue() {
-    const html = editor.getHTML().trim();
-    return (html === '' || html === '<p></p>' || html === '<p><br></p>') ? '' : html;
-}
-
-// editor → hidden input sebelum form Simpan dikirim
-document.getElementById('saveForm').addEventListener('submit', function () {
-    document.getElementById('body').value = editorValue();
-});
-
-// chip placeholder: sisipkan di kursor editor
+// chip placeholder: sisipkan di kursor textarea
 function insertPlaceholder(ph) {
-    editor.insertText(ph);
-    editor.focus();
+    const ta = document.getElementById('body');
+    const start = ta.selectionStart;
+    ta.value = ta.value.slice(0, start) + ph + ta.value.slice(ta.selectionEnd);
+    ta.focus();
+    ta.selectionStart = ta.selectionEnd = start + ph.length;
 }
 
 // sync draft ke form preview sebelum submit ke iframe
 document.getElementById('previewForm').addEventListener('submit', function () {
     document.getElementById('previewSubject').value = document.getElementById('subject').value;
-    document.getElementById('previewBody').value = editorValue();
+    document.getElementById('previewBody').value = document.getElementById('body').value;
 });
 
 function confirmReset() {
