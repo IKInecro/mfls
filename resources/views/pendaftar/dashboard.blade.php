@@ -89,6 +89,23 @@
             </div>
         </div>
 
+        <!-- Akses Ujian Online -->
+        <a href="{{ route('ujian.index') }}" class="block group">
+            <div class="relative overflow-hidden bg-navy-mnc p-6 rounded-[2rem] border border-primary-orange/30 shadow-xl hover:shadow-2xl transition-all mb-8">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-primary-orange/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:scale-125 transition-transform duration-700"></div>
+                <div class="relative flex items-center gap-4">
+                    <div class="w-12 h-12 bg-primary-orange text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-primary-orange/30">
+                        <span class="iconify text-2xl" data-icon="solar:monitor-smartphone-bold"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-white font-black text-sm uppercase tracking-tight">Ujian Online (CBT)</h3>
+                        <p class="text-orange-100/60 text-xs font-medium leading-relaxed mt-1">Lihat daftar test, jadwal, dan kerjakan ujian yang sudah dibuka panitia.</p>
+                    </div>
+                    <span class="px-5 py-2.5 bg-primary-orange text-white rounded-xl font-black text-[10px] uppercase tracking-widest group-hover:bg-white group-hover:text-navy-mnc transition-all whitespace-nowrap shadow-lg">Buka &rarr;</span>
+                </div>
+            </div>
+        </a>
+
         <!-- Welcome Banner Professional -->
         <div class="relative group">
             <div class="relative overflow-hidden bg-navy-mnc p-8 md:p-14 rounded-[3rem] shadow-2xl border border-white/5">

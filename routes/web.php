@@ -223,6 +223,17 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/admin/user/{id}/reset-password', [App\Http\Controllers\AdminController::class, 'resetPassword'])->name('admin.user.reset_password');
             Route::delete('/admin/user/{id}', [App\Http\Controllers\AdminController::class, 'destroyUser'])->name('admin.user.destroy');
 
+            // Panel Ujian — jadwal, buka/tutup, CRUD test (admin & akademik)
+            Route::middleware(['role:admin,akademik'])->prefix('admin/panel-ujian')->name('admin.panel_ujian.')->group(function () {
+                Route::get('/', [App\Http\Controllers\PanelUjianController::class, 'index'])->name('index');
+                Route::post('/', [App\Http\Controllers\PanelUjianController::class, 'store'])->name('store');
+                Route::put('/{id}/jadwal', [App\Http\Controllers\PanelUjianController::class, 'updateJadwal'])->name('jadwal');
+                Route::put('/{id}/override', [App\Http\Controllers\PanelUjianController::class, 'setOverride'])->name('override');
+                Route::put('/{id}', [App\Http\Controllers\PanelUjianController::class, 'update'])->name('update');
+                Route::delete('/{id}', [App\Http\Controllers\PanelUjianController::class, 'destroy'])->name('destroy');
+                Route::post('/{id}/kirim-undangan', [App\Http\Controllers\PanelUjianController::class, 'kirimUndangan'])->name('kirim_undangan');
+            });
+
             // Manajemen Soal
             Route::post('/admin/soal/delete-all', [App\Http\Controllers\AdminController::class, 'deleteAllSoal'])->name('admin.soal.deleteAll');
             Route::get('/admin/soal', [App\Http\Controllers\AdminController::class, 'indexSoal'])->name('admin.soal.index');
@@ -274,6 +285,13 @@ Route::middleware(['auth'])->group(function () {
                     Route::get('/nilai', [PendaftarController::class, 'nilai'])->name('pendaftar.nilai');
                     Route::get('/change-email', [PendaftarController::class, 'showChangeEmail'])->name('pendaftar.email.change');
                     Route::get('/change-email/verify', [PendaftarController::class, 'showVerifyEmailChange'])->name('pendaftar.email.verify');
+
+                    // Ujian online (CBT) — daftar test, pengerjaan, autosave draft
+                    Route::get('/ujian', [\App\Http\Controllers\UjianPesertaController::class, 'index'])->name('ujian.index');
+                    Route::get('/ujian/{id}', [\App\Http\Controllers\UjianPesertaController::class, 'show'])->name('ujian.show');
+                    Route::post('/ujian/{id}/draft', [\App\Http\Controllers\UjianPesertaController::class, 'draft'])->name('ujian.draft');
+                    Route::post('/ujian/{id}/selesai', [\App\Http\Controllers\UjianPesertaController::class, 'selesai'])->name('ujian.selesai');
+                    Route::post('/ujian/{id}/submit', [\App\Http\Controllers\UjianPesertaController::class, 'submit'])->name('ujian.submit');
 
 
                     // Aksi tulis pendaftar: jalan hanya saat pendaftaran terbuka (lihat PengaturanPendaftaran::aktif)

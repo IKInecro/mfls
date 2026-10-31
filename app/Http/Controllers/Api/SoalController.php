@@ -25,10 +25,13 @@ class SoalController extends Controller
             $pesertaId = $user->peserta->id;
         }
         
-        $ujians = Ujian::select('id', 'nama', 'durasi')
+        // Pilih kolom jadwal/is_active juga — dibutuhkan isOpen() (return JSON
+        // tetap dibatasi map() di bawah).
+        $ujians = Ujian::select('id', 'nama', 'durasi', 'is_active', 'override_status', 'jadwal_mulai', 'jadwal_selesai')
             ->where('is_active', true)
             ->withCount('soals as jumlah_soal') // Count questions
             ->get()
+            ->filter(fn ($ujian) => $ujian->isOpen()) // jadwal/override panel admin
             ->map(function ($ujian) use ($pesertaId) {
                 $data = [
                     'id' => $ujian->id,
@@ -78,6 +81,18 @@ class SoalController extends Controller
         }
 
         $ujian = Ujian::findOrFail($ujianId);
+
+        // Gate jadwal panel admin — peserta yang sesi web-nya sudah jalan tetap
+        // boleh ambil soal (resume), selain itu hanya saat ujian terbuka.
+        $user = $request->user('sanctum') ?? $request->user();
+        $pesertaIdAwal = ($user && $user->role === 'pendaftar' && $user->peserta) ? $user->peserta->id : null;
+        $sesiJalan = $pesertaIdAwal
+            ? \App\Models\SesiUjian::where('ujian_id', $ujianId)->where('peserta_id', $pesertaIdAwal)->exists()
+            : false;
+        if (!$ujian->isOpen() && !$sesiJalan) {
+            return response()->json(['status' => 'error', 'message' => 'Ujian belum dibuka oleh panitia.'], 403);
+        }
+
         $soals = Soal::where('ujian_id', $ujianId)
             ->orderBy('id', 'asc') // Urutan tetap berdasarkan ID
             ->get(['id', 'ujian_id', 'pertanyaan', 'gambar', 'opsi_a', 'opsi_a_image', 'opsi_b', 'opsi_b_image', 'opsi_c', 'opsi_c_image', 'opsi_d', 'opsi_d_image', 'opsi_e', 'opsi_e_image', 'kategori', 'bobot'])
@@ -173,6 +188,15 @@ class SoalController extends Controller
         $ujianId = $request->ujian_id;
         $ujian = Ujian::findOrFail($ujianId);
         $submittedAnswers = $request->answers;
+
+        // Gate jadwal panel admin: yang sesi web-nya sudah jalan boleh finalkan
+        // draft kapan pun; yang belum mulai hanya saat ujian terbuka.
+        $sesiAda = \App\Models\SesiUjian::where('ujian_id', $ujianId)
+            ->where('peserta_id', $peserta->id)
+            ->exists();
+        if (!$ujian->isOpen() && !$sesiAda) {
+            return response()->json(['status' => 'error', 'message' => 'Ujian belum dibuka oleh panitia.'], 403);
+        }
         
         // Get all questions for this exam to calculate score
         $soals = Soal::where('ujian_id', $ujianId)->get();
@@ -405,6 +429,11 @@ class SoalController extends Controller
         if ($dispensasi) {
             $dispensasi->delete();
         }
+
+        // Sesi pengerjaan web selesai → hapus (jawaban final sudah tersimpan)
+        \App\Models\SesiUjian::where('ujian_id', $ujianId)
+            ->where('peserta_id', $peserta->id)
+            ->delete();
 
         return response()->json([
             'status' => 'success',

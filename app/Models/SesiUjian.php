@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class SesiUjian extends Model
+{
+    use HasFactory;
+
+    protected $table = 'sesi_ujian';
+
+    protected $fillable = [
+        'ujian_id',
+        'peserta_id',
+        'mulai_pada',
+        'jawaban',
+    ];
+
+    protected $casts = [
+        'mulai_pada' => 'datetime',
+    ];
+
+    public function ujian()
+    {
+        return $this->belongsTo(Ujian::class, 'ujian_id');
+    }
+
+    public function peserta()
+    {
+        return $this->belongsTo(Peserta::class, 'peserta_id');
+    }
+
+    /** Draft jawaban JSON → array. */
+    public function draft(): array
+    {
+        return json_decode((string) $this->jawaban, true) ?: [];
+    }
+}
