@@ -20,7 +20,7 @@ Admin bisa mengubah **isi body (bagian dalam) dan subject** ketujuh email transa
 | `otp` | Kode OTP Pendaftaran | `Kode OTP Verifikasi Pendaftaran MNCU Future Leader Scholarship` (`app/Mail/OtpMail.php`) | `emails.otp` | `{nama}`, `{otp}` |
 | `reset_password` | Reset Password | `Reset Password MNCU Future Leader Scholarship` (`AuthController`) | `emails.reset_password` | `{nama}`, `{linkReset}` |
 | `email_change_otp` | OTP Ubah Email | `Kode Verifikasi Ubah Email MNCU Future Leader Scholarship` (`PendaftarController`) | `emails.email_change_otp` | `{nama}`, `{otp}` |
-| `admin_changed_email` | Notif Perubahan Email oleh Admin | `Pembaruan Alamat Email Akun - …` dan `Pemberitahuan Perubahan Email Akun - …` (`AdminController`, 2 call site) | `emails.admin_changed_email` | `{nama}`, `{namaBaru}` |
+| `admin_changed_email` | Notif Perubahan Email oleh Admin | `Pembaruan Alamat Email Akun - …` dan `Pemberitahuan Perubahan Email Akun - …` (`AdminController`, 2 call site) | `emails.admin_changed_email` | `{nama}`, `{emailLama}`, `{emailBaru}` |
 | `lolos_seleksi_ujian` | Pengumuman Lolos Seleksi Ujian | `🎉 Selamat! Anda Lolos Seleksi Ujian MNCU Future Leader Scholarship 2026` (`AdminController` + `SendLolosUjianEmailJob`) | `emails.lolos_seleksi_ujian` | `{nama}`, `{asalSekolah}` |
 | `certificate` | Sertifikat Partisipasi | `Sertifikat Partisipasi MNCU Future Leader Scholarship - {nama}` (`app/Mail/CertificateMail.php`) | `emails.certificate` | `{nama}` |
 | `ujian_link` | Undangan Ujian Online | `Undangan Ujian Online MNCU Future Leader Scholarship 2026` (`app/Mail/UjianLinkMail.php`) | `emails.ujian_link` | `{nama}`, `{linkUjian}` |
@@ -37,6 +37,20 @@ Variabel final per key diverifikasi dari kode saat implementasi; whitelist per k
 - Editor visual (WYSIWYG). Textarea HTML + preview.
 
 ---
+
+## 2.3 Placeholder per key (final, diverifikasi dari kode)
+
+| key | placeholder | nilai saat kirim |
+|---|---|---|
+| `otp` | `{nama}`, `{otp}` | `$nama`, `$otp` |
+| `reset_password` | `{nama}`, `{linkReset}` | `$user->nama`, `url('reset-password/'.$token.'?email='.urlencode($user->email))` |
+| `email_change_otp` | `{nama}`, `{otp}` | `$user->nama`, `$otpCode` |
+| `admin_changed_email` | `{nama}`, `{emailLama}`, `{emailBaru}` | `$nama`, `$oldEmail`, `$newEmail` |
+| `lolos_seleksi_ujian` | `{nama}`, `{asalSekolah}` | `$nama`, `$asalSekolah` |
+| `certificate` | `{nama}` | `$this->nama` |
+| `ujian_link` | `{nama}`, `{linkUjian}` | `$this->nama`, `$this->linkUjian` |
+
+Placeholder wajib (peringatan lembut bila hilang dari body tersimpan): `otp`→`{otp}`, `email_change_otp`→`{otp}`, `reset_password`→`{linkReset}`, `certificate`→`{nama}`, `lolos_seleksi_ujian`→`{nama}`, `ujian_link`→`{linkUjian}`, `admin_changed_email`→`{emailBaru}`.
 
 ## 3. Model Data
 
