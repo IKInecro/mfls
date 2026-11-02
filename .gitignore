@@ -17,3 +17,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# kerjaan internal agent — jangan masuk repo
+docs/superpowers/
+.impeccable/
