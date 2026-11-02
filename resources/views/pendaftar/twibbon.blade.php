@@ -234,7 +234,7 @@ function initTwibbonStudio() {
 
     const twibonFrame = new Image();
     twibonFrame.crossOrigin = 'anonymous';
-    twibonFrame.src = '{{ asset('icon/twiibon.png') }}';
+    twibonFrame.src = '{{ asset('icon/twiibon.webp') }}';
     twibonFrame.onload = () => drawCanvas();
 
     if (photoUpload) {
