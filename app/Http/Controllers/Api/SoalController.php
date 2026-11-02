@@ -154,7 +154,7 @@ class SoalController extends Controller
     {
         $request->validate([
             'ujian_id' => 'required|exists:ujian,id',
-            'answers' => 'required|array', // Structure: { "soal_id": "a", "soal_id_2": "b" }
+            'answers' => 'nullable|array', // Structure: { "soal_id": "a", "soal_id_2": "b" }
         ]);
 
         $user = $request->user();
@@ -187,7 +187,7 @@ class SoalController extends Controller
 
         $ujianId = $request->ujian_id;
         $ujian = Ujian::findOrFail($ujianId);
-        $submittedAnswers = $request->answers;
+        $submittedAnswers = $request->input('answers', []);
 
         // Gate jadwal panel admin: yang sesi web-nya sudah jalan boleh finalkan
         // draft kapan pun; yang belum mulai hanya saat ujian terbuka.
@@ -202,20 +202,26 @@ class SoalController extends Controller
         $soals = Soal::where('ujian_id', $ujianId)->get();
         
         $totalScore = 0;
-        $maxScore = $soals->sum('bobot');
+        $maxScore = (float) $soals->sum('bobot');
         $correctCount = 0;
         $totalCount = $soals->count();
 
+        // Effective max score (fallback ke total jumlah butir jika bobot belum diset/0)
+        $effectiveMaxScore = $maxScore > 0 ? $maxScore : ($totalCount > 0 ? (float) $totalCount : 0);
+
         foreach ($soals as $soal) {
             $userAnswer = $submittedAnswers[$soal->id] ?? null;
-            if ($userAnswer && strtolower($userAnswer) === strtolower($soal->kunci_jawaban)) {
-                $totalScore += $soal->bobot;
+            $cleanUserAns = trim(strtolower((string)$userAnswer));
+            $cleanKunci = trim(strtolower((string)$soal->kunci_jawaban));
+
+            if ($cleanKunci !== '' && $cleanUserAns !== '' && $cleanUserAns === $cleanKunci) {
+                $totalScore += ($maxScore > 0 ? (float)$soal->bobot : 1.0);
                 $correctCount++;
             }
         }
 
         // Calculate final score out of 100 based on weight
-        $finalScore = $maxScore > 0 ? round(($totalScore / $maxScore) * 100, 2) : 0;
+        $finalScore = $effectiveMaxScore > 0 ? round(($totalScore / $effectiveMaxScore) * 100, 2) : 0;
 
         // Handle AI Analysis for Pemetaan Diri
         $kesimpulanAi = null;
@@ -228,16 +234,40 @@ class SoalController extends Controller
                 'GM' => 0,
                 'LP' => 0,
             ];
+
+            // Hitung jumlah butir per dimensi secara dinamis
+            $dimensionCounts = [
+                'SA' => 0,
+                'SC' => 0,
+                'SS' => 0,
+                'SM' => 0,
+                'GM' => 0,
+                'LP' => 0,
+            ];
             
             // Map values: A=1, B=2, C=3, D=4, E=5
             $valMap = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5];
             
             foreach ($soals as $soal) {
-                $userAns = strtolower($submittedAnswers[$soal->id] ?? '');
+                $cat = strtolower($soal->kategori ?? '');
+                if (str_contains($cat, 'awareness') || str_contains($cat, 'sa')) {
+                    $dimensionCounts['SA']++;
+                } elseif (str_contains($cat, 'confidence') || str_contains($cat, 'sc')) {
+                    $dimensionCounts['SC']++;
+                } elseif (str_contains($cat, 'social') || str_contains($cat, 'ss')) {
+                    $dimensionCounts['SS']++;
+                } elseif (str_contains($cat, 'management') || str_contains($cat, 'sm')) {
+                    $dimensionCounts['SM']++;
+                } elseif (str_contains($cat, 'growth') || str_contains($cat, 'gm')) {
+                    $dimensionCounts['GM']++;
+                } elseif (str_contains($cat, 'leadership') || str_contains($cat, 'lp')) {
+                    $dimensionCounts['LP']++;
+                }
+
+                $userAns = trim(strtolower((string)($submittedAnswers[$soal->id] ?? '')));
                 $val = $valMap[$userAns] ?? 0;
                 
                 if ($val > 0) {
-                    $cat = strtolower($soal->kategori ?? '');
                     if (str_contains($cat, 'awareness') || str_contains($cat, 'sa')) {
                         $dimensionScores['SA'] += $val;
                     } elseif (str_contains($cat, 'confidence') || str_contains($cat, 'sc')) {
@@ -273,13 +303,17 @@ class SoalController extends Controller
             };
 
             foreach ($dimensionScores as $key => $score) {
-                $pct[$key] = round(($score / 30) * 100, 2);
+                $maxDim = ($dimensionCounts[$key] > 0 ? $dimensionCounts[$key] : 6) * 5;
+                $pct[$key] = round(($score / $maxDim) * 100, 2);
                 $kategoriDimensi[$key] = $getCategory($pct[$key])[0];
             }
 
-            // Hitung total skor akhir
+            // Hitung total skor akhir & persentase
             $totalSkor = array_sum($dimensionScores);
-            $totalPercentage = round(($totalSkor / 180) * 100, 2);
+            $totalDimItems = array_sum($dimensionCounts);
+            $maxPossibleTotal = $totalDimItems > 0 ? ($totalDimItems * 5) : 180;
+            $totalPercentage = round(($totalSkor / $maxPossibleTotal) * 100, 2);
+
             $finalCategoryInfo = $getCategory($totalPercentage);
             $finalKategori = $finalCategoryInfo[0];
             $finalDeskripsi = $finalCategoryInfo[1];
@@ -365,15 +399,15 @@ class SoalController extends Controller
             $kesimpulanAi .= "📅 **Tanggal Ujian:** " . now()->translatedFormat('d F Y') . "\n\n";
             
             $kesimpulanAi .= "📈 **PENCAPAIAN SKOR DIMENSI:**\n";
-            $kesimpulanAi .= "1. **Self Awareness (SA):** " . $dimensionScores['SA'] . "/30 (" . $pct['SA'] . "%) - " . $kategoriDimensi['SA'] . "\n";
-            $kesimpulanAi .= "2. **Self Confidence (SC):** " . $dimensionScores['SC'] . "/30 (" . $pct['SC'] . "%) - " . $kategoriDimensi['SC'] . "\n";
-            $kesimpulanAi .= "3. **Social Skill (SS):** " . $dimensionScores['SS'] . "/30 (" . $pct['SS'] . "%) - " . $kategoriDimensi['SS'] . "\n";
-            $kesimpulanAi .= "4. **Self Management (SM):** " . $dimensionScores['SM'] . "/30 (" . $pct['SM'] . "%) - " . $kategoriDimensi['SM'] . "\n";
-            $kesimpulanAi .= "5. **Growth Mindset (GM):** " . $dimensionScores['GM'] . "/30 (" . $pct['GM'] . "%) - " . $kategoriDimensi['GM'] . "\n";
-            $kesimpulanAi .= "6. **Leadership Potential (LP):** " . $dimensionScores['LP'] . "/30 (" . $pct['LP'] . "%) - " . $kategoriDimensi['LP'] . "\n\n";
+            $kesimpulanAi .= "1. **Self Awareness (SA):** " . $dimensionScores['SA'] . "/" . (($dimensionCounts['SA'] > 0 ? $dimensionCounts['SA'] : 6) * 5) . " (" . $pct['SA'] . "%) - " . $kategoriDimensi['SA'] . "\n";
+            $kesimpulanAi .= "2. **Self Confidence (SC):** " . $dimensionScores['SC'] . "/" . (($dimensionCounts['SC'] > 0 ? $dimensionCounts['SC'] : 6) * 5) . " (" . $pct['SC'] . "%) - " . $kategoriDimensi['SC'] . "\n";
+            $kesimpulanAi .= "3. **Social Skill (SS):** " . $dimensionScores['SS'] . "/" . (($dimensionCounts['SS'] > 0 ? $dimensionCounts['SS'] : 6) * 5) . " (" . $pct['SS'] . "%) - " . $kategoriDimensi['SS'] . "\n";
+            $kesimpulanAi .= "4. **Self Management (SM):** " . $dimensionScores['SM'] . "/" . (($dimensionCounts['SM'] > 0 ? $dimensionCounts['SM'] : 6) * 5) . " (" . $pct['SM'] . "%) - " . $kategoriDimensi['SM'] . "\n";
+            $kesimpulanAi .= "5. **Growth Mindset (GM):** " . $dimensionScores['GM'] . "/" . (($dimensionCounts['GM'] > 0 ? $dimensionCounts['GM'] : 6) * 5) . " (" . $pct['GM'] . "%) - " . $kategoriDimensi['GM'] . "\n";
+            $kesimpulanAi .= "6. **Leadership Potential (LP):** " . $dimensionScores['LP'] . "/" . (($dimensionCounts['LP'] > 0 ? $dimensionCounts['LP'] : 6) * 5) . " (" . $pct['LP'] . "%) - " . $kategoriDimensi['LP'] . "\n\n";
             
             $kesimpulanAi .= "🎯 **SKOR KESELURUHAN & KESIAPAN:**\n";
-            $kesimpulanAi .= "* **Total Skor:** " . $totalSkor . "/180\n";
+            $kesimpulanAi .= "* **Total Skor:** " . $totalSkor . "/{$maxPossibleTotal}\n";
             $kesimpulanAi .= "* **Persentase Akhir:** " . $totalPercentage . "%\n";
             $kesimpulanAi .= "* **Kategori Kesiapan:** **" . $finalKategori . "**\n";
             $kesimpulanAi .= "* *Deskripsi:* " . $finalDeskripsi . "\n\n";
@@ -389,6 +423,10 @@ class SoalController extends Controller
             $kesimpulanAi .= "--------------------------------------------------\n";
             $kesimpulanAi .= "🤖 **INTERPRETASI PSIKOLOGIS (ARION AI):**\n";
             $kesimpulanAi .= $narasiAi;
+
+            // Untuk Pemetaan Diri, skor akhir adalah persentase kesiapan keseluruhan
+            $finalScore = $totalPercentage;
+            $totalScore = $totalSkor;
         }
 
         // Save or update jawaban_ujian (Detailed JSON)
@@ -401,12 +439,13 @@ class SoalController extends Controller
             $result = $existing;
 
             // Update nilai_ujian (Official Score Summary)
-            \App\Models\NilaiUjian::where('ujian_id', $ujianId)
-                ->where('peserta_id', $peserta->id)
-                ->update([
+            \App\Models\NilaiUjian::updateOrCreate(
+                ['ujian_id' => $ujianId, 'peserta_id' => $peserta->id],
+                [
                     'skor_asli' => $totalScore,
                     'skor_rata' => $finalScore
-                ]);
+                ]
+            );
         } else {
             $result = JawabanUjian::create([
                 'ujian_id' => $ujianId,
@@ -417,12 +456,13 @@ class SoalController extends Controller
             ]);
 
             // Save to nilai_ujian (Official Score Summary)
-            \App\Models\NilaiUjian::create([
-                'ujian_id' => $ujianId,
-                'peserta_id' => $peserta->id,
-                'skor_asli' => $totalScore,
-                'skor_rata' => $finalScore
-            ]);
+            \App\Models\NilaiUjian::updateOrCreate(
+                ['ujian_id' => $ujianId, 'peserta_id' => $peserta->id],
+                [
+                    'skor_asli' => $totalScore,
+                    'skor_rata' => $finalScore
+                ]
+            );
         }
 
         // Clean up dispensation since it is now used

@@ -157,6 +157,11 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/admin/pengaturan/pendaftaran', [App\Http\Controllers\PengaturanController::class, 'edit'])->name('admin.pengaturan.pendaftaran.edit');
             Route::post('/admin/pengaturan/pendaftaran', [App\Http\Controllers\PengaturanController::class, 'update'])->name('admin.pengaturan.pendaftaran.update');
 
+            // Pengaturan jadwal & linimasa seleksi
+            Route::get('/admin/pengaturan/timeline', [App\Http\Controllers\PengaturanController::class, 'timeline'])->name('admin.pengaturan.timeline.index');
+            Route::post('/admin/pengaturan/timeline', [App\Http\Controllers\PengaturanController::class, 'updateTimeline'])->name('admin.pengaturan.timeline.update');
+            Route::post('/admin/pengaturan/timeline/reset', [App\Http\Controllers\PengaturanController::class, 'resetTimeline'])->name('admin.pengaturan.timeline.reset');
+
             // Kelola template email — khusus admin (mengubah isi email ke user)
             Route::middleware(['role:admin'])->prefix('admin/email-templates')->name('admin.email-templates.')->group(function () {
                 Route::get('/', [App\Http\Controllers\EmailTemplateController::class, 'index'])->name('index');
@@ -286,12 +291,13 @@ Route::middleware(['auth'])->group(function () {
                     Route::get('/change-email', [PendaftarController::class, 'showChangeEmail'])->name('pendaftar.email.change');
                     Route::get('/change-email/verify', [PendaftarController::class, 'showVerifyEmailChange'])->name('pendaftar.email.verify');
 
-                    // Ujian online (CBT) — daftar test, pengerjaan, autosave draft
+                    // Ujian online (CBT) — daftar test, pengerjaan, autosave draft, reset pelanggaran
                     Route::get('/ujian', [\App\Http\Controllers\UjianPesertaController::class, 'index'])->name('ujian.index');
                     Route::get('/ujian/{id}', [\App\Http\Controllers\UjianPesertaController::class, 'show'])->name('ujian.show');
                     Route::post('/ujian/{id}/draft', [\App\Http\Controllers\UjianPesertaController::class, 'draft'])->name('ujian.draft');
                     Route::post('/ujian/{id}/selesai', [\App\Http\Controllers\UjianPesertaController::class, 'selesai'])->name('ujian.selesai');
                     Route::post('/ujian/{id}/submit', [\App\Http\Controllers\UjianPesertaController::class, 'submit'])->name('ujian.submit');
+                    Route::post('/ujian/{id}/reset-pelanggaran', [\App\Http\Controllers\UjianPesertaController::class, 'resetPelanggaran'])->name('ujian.reset_pelanggaran');
 
 
                     // Aksi tulis pendaftar: jalan hanya saat pendaftaran terbuka (lihat PengaturanPendaftaran::aktif)

@@ -47,7 +47,7 @@
 
             <div class="flex flex-wrap gap-2">
                 <button type="submit"
-                    class="bg-indigo-600 text-white px-8 py-4 rounded-2xl text-[10px] font-black hover:bg-indigo-700 transition-all uppercase tracking-[0.2em] shadow-lg shadow-indigo-100 flex items-center gap-2">
+                    class="bg-[#0870B8] text-white px-8 py-4 rounded-2xl text-[10px] font-black hover:bg-[#065A96] transition-all uppercase tracking-[0.2em] shadow-xs flex items-center gap-2 cursor-pointer">
                     <span class="iconify" data-icon="solar:magnifer-bold"></span>
                     Cari Peserta
                 </button>

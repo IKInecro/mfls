@@ -178,4 +178,94 @@ class PengaturanPendaftaranTest extends TestCase
             'mode' => 'buka_paksa', // mode tidak valid + tanggal kosong
         ])->assertSessionHasErrors(['pendaftaran_mulai', 'pendaftaran_selesai', 'mode']);
     }
+
+    public function test_admin_bisa_akses_halaman_timeline(): void
+    {
+        $this->actingAs($this->admin())
+            ->get('/admin/pengaturan/timeline')
+            ->assertOk()
+            ->assertSee('Linimasa Seleksi Batch 3')
+            ->assertSee('Pratinjau Langsung');
+    }
+
+    public function test_admin_bisa_simpan_dan_update_timeline(): void
+    {
+        $admin = $this->admin();
+
+        $steps = [
+            [
+                'step' => '01',
+                'title' => 'Tahap Uji Coba Kustom',
+                'date' => '01 - 10 Juni 2026',
+                'desc' => 'Deskripsi tahapan uji coba kustom admin',
+                'status' => 'Sedang Berlangsung',
+            ],
+            [
+                'step' => '02',
+                'title' => 'Pengumuman Final Kustom',
+                'date' => '25 Juni 2026',
+                'desc' => 'Deskripsi pengumuman final',
+                'status' => 'Mendatang',
+            ]
+        ];
+
+        $response = $this->actingAs($admin)->post('/admin/pengaturan/timeline', [
+            'steps' => $steps,
+            'active_index' => 0,
+        ]);
+
+        $response->assertSessionHas('success');
+
+        $pengaturan = PengaturanPendaftaran::instance();
+        $this->assertCount(2, $pengaturan->timeline);
+        $this->assertEquals('Tahap Uji Coba Kustom', $pengaturan->timeline[0]['title']);
+        $this->assertTrue($pengaturan->timeline[0]['active']);
+        $this->assertFalse($pengaturan->timeline[1]['active']);
+
+        // Check landing page renders this updated timeline
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('Tahap Uji Coba Kustom')
+            ->assertSee('Pengumuman Final Kustom');
+    }
+
+    public function test_admin_bisa_reset_timeline_ke_default(): void
+    {
+        $admin = $this->admin();
+
+        // Save custom
+        $this->actingAs($admin)->post('/admin/pengaturan/timeline', [
+            'steps' => [
+                [
+                    'step' => '99',
+                    'title' => 'Tahap Khusus',
+                    'date' => '31 Desember 2026',
+                    'desc' => 'Testing',
+                    'status' => 'Mendatang',
+                ]
+            ],
+        ]);
+
+        // Reset
+        $this->actingAs($admin)->post('/admin/pengaturan/timeline/reset')
+            ->assertSessionHas('success');
+
+        $pengaturan = PengaturanPendaftaran::instance();
+        $this->assertCount(7, $pengaturan->timeline);
+        $this->assertEquals('Pembukaan Pendaftaran Akun', $pengaturan->timeline[0]['title']);
+    }
+
+    public function test_homepage_tidak_ada_tawk_to_dan_memiliki_widget_bantuan_mandiri(): void
+    {
+        $response = $this->get('/');
+        $response->assertOk();
+
+        // Pastikan script Tawk.to ("we are here") sudah bersih
+        $response->assertDontSee('embed.tawk.to');
+
+        // Pastikan widget helpdesk mandiri ada
+        $response->assertSee('mfls-help-widget');
+        $response->assertSee('Helpdesk MFLS Batch 3');
+        $response->assertSee('Butuh Bantuan?');
+    }
 }

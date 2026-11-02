@@ -144,7 +144,7 @@
     <img src="{{ asset('icon/loog.png') }}" class="header-logo" alt="Logo MFLS">
     <div class="header-text">
         <h1>MNC UNIVERSITY</h1>
-        <p class="text-orange-500">MNC FUTURE LEADER SCHOLARSHIP (MFLS) 2026</p>
+        <p class="text-orange-500">MNC FUTURE LEADER SCHOLARSHIP (MFLS) AJARAN 2027</p>
         <p>Kompleks MNC Studios, Jl. Perjuangan, Kebon Jeruk, Jakarta Barat 11530</p>
         <div class="mt-2 text-[11pt] font-black uppercase text-slate-800">Rekapitulasi Hasil Seleksi Beasiswa</div>
     </div>
@@ -467,8 +467,6 @@
                     <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest ml-2">Skema Beasiswa</label>
                     <select name="nominal_beasiswa" required class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 text-sm font-bold text-white outline-none focus:border-yellow-400 appearance-none shadow-sm">
                         <option value="">-- Pilih Skema --</option>
-                        <option value="25%" {{ $user->peserta->daftar->nominal_beasiswa == '25%' ? 'selected' : '' }}>Beasiswa 25% </option>
-                        <option value="50%" {{ $user->peserta->daftar->nominal_beasiswa == '50%' ? 'selected' : '' }}>Beasiswa 50% </option>
                         <option value="75%" {{ $user->peserta->daftar->nominal_beasiswa == '75%' ? 'selected' : '' }}>Beasiswa 75% </option>
                         <option value="100%" {{ $user->peserta->daftar->nominal_beasiswa == '100%' ? 'selected' : '' }}>Beasiswa 100% </option>
                     </select>
@@ -533,7 +531,7 @@
 <div class="print-only mt-12 px-10 border-t border-slate-100 pt-10">
     <div class="flex justify-end">
         <div class="text-center w-64">
-            <p class="text-[9pt] mb-20">Jakarta, {{ date('d F Y') }}<br>Mengajukan,<br>Panitia Beasiswa MFLS 2026</p>
+            <p class="text-[9pt] mb-20">Jakarta, {{ date('d F Y') }}<br>Mengajukan,<br>Panitia Beasiswa MFLS Ajaran 2027</p>
             <div class="border-b-2 border-slate-900 w-full mb-2"></div>
             <p class="text-[9pt] font-black uppercase tracking-widest text-slate-900">TIM ADMISI MNC UNIVERSITY</p>
         </div>

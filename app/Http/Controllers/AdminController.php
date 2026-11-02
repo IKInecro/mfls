@@ -404,7 +404,15 @@ class AdminController extends Controller
             $nama = strtolower($n->ujian->nama ?? '');
             return !str_contains($nama, 'pemetaan diri');
         });
-        $rataRataCbt = $cbtUjians->avg('skor_rata') ?? 0;
+        if ($cbtUjians->isNotEmpty()) {
+            $rataRataCbt = $cbtUjians->avg('skor_rata') ?? 0;
+        } else {
+            $cbtJawaban = $user->peserta->jawabanUjians->filter(function($j) {
+                $nama = strtolower($j->ujian->nama ?? '');
+                return !str_contains($nama, 'pemetaan diri');
+            });
+            $rataRataCbt = $cbtJawaban->avg('nilai') ?? 0;
+        }
 
         return view('admin.beasiswa.show', compact('user', 'rataRataAkademik', 'rataRataMentor', 'rataRataAkademikFinal', 'rataRataCbt'));
     }
@@ -466,24 +474,27 @@ class AdminController extends Controller
                 $query->whereHas('ujian', function($q) {
                     $q->where('nama', 'LIKE', '%Pemetaan Diri%');
                 });
-            } elseif ($request->type === 'tba') {
+            } elseif ($request->type === 'tba' || $request->type === 'tpa') {
                 $query->whereHas('ujian', function($q) {
-                    $q->where('nama', 'LIKE', '%Potensi Akademik%');
+                    $q->where('nama', 'LIKE', '%Potensi Akademik%')
+                      ->orWhere('nama', 'LIKE', '%TPA%')
+                      ->orWhere('nama', 'LIKE', '%TBA%')
+                      ->orWhere('nama', 'LIKE', '%Akademik%');
                 });
             } elseif ($request->type === 'tbi') {
                 $query->whereHas('ujian', function($q) {
-                    $q->where('nama', 'LIKE', '%Inggris%');
+                    $q->where('nama', 'LIKE', '%Inggris%')
+                      ->orWhere('nama', 'LIKE', '%TBI%')
+                      ->orWhere('nama', 'LIKE', '%English%');
                 });
             }
         }
 
-        $hasilUjians = $query->latest()->get()->map(function($hasil) {
+        $hasilUjians = $query->with('peserta.nilaiUjians')->latest()->get()->map(function($hasil) {
             // Override nilai dengan skor_rata dari NilaiUjian (skala 100) jika ada
-            $nilaiAsli = \App\Models\NilaiUjian::where('ujian_id', $hasil->ujian_id)
-                ->where('peserta_id', $hasil->peserta_id)
-                ->first();
-            if ($nilaiAsli) {
-                $hasil->nilai = $nilaiAsli->skor_rata;
+            $nilaiAsli = $hasil->peserta->nilaiUjians->firstWhere('ujian_id', $hasil->ujian_id);
+            if ($nilaiAsli && $nilaiAsli->skor_rata !== null) {
+                $hasil->nilai = (float) $nilaiAsli->skor_rata;
             }
             return $hasil;
         });
@@ -543,16 +554,16 @@ class AdminController extends Controller
         }
 
         $pesertas = $query->get()->map(function ($peserta) {
-            // Temukan nilai TBA
+            // Temukan nilai TBA / TPA
             $tbaRecord = $peserta->nilaiUjians->filter(function ($n) {
                 $nama = strtolower($n->ujian->nama ?? '');
-                return str_contains($nama, 'tba') || str_contains($nama, 'potensi') || str_contains($nama, 'akademik');
+                return str_contains($nama, 'tpa') || str_contains($nama, 'tba') || str_contains($nama, 'potensi') || str_contains($nama, 'akademik');
             })->first();
             
             if (!$tbaRecord) {
                 $tbaJawaban = $peserta->jawabanUjians->filter(function ($j) {
                     $nama = strtolower($j->ujian->nama ?? '');
-                    return str_contains($nama, 'tba') || str_contains($nama, 'potensi') || str_contains($nama, 'akademik');
+                    return str_contains($nama, 'tpa') || str_contains($nama, 'tba') || str_contains($nama, 'potensi') || str_contains($nama, 'akademik');
                 })->first();
                 $peserta->score_tba = $tbaJawaban ? ($tbaJawaban->nilai ?? 0) : null;
             } else {
@@ -562,13 +573,13 @@ class AdminController extends Controller
             // Temukan nilai TBI
             $tbiRecord = $peserta->nilaiUjians->filter(function ($n) {
                 $nama = strtolower($n->ujian->nama ?? '');
-                return str_contains($nama, 'tbi') || str_contains($nama, 'inggris');
+                return str_contains($nama, 'tbi') || str_contains($nama, 'inggris') || str_contains($nama, 'english');
             })->first();
             
             if (!$tbiRecord) {
                 $tbiJawaban = $peserta->jawabanUjians->filter(function ($j) {
                     $nama = strtolower($j->ujian->nama ?? '');
-                    return str_contains($nama, 'tbi') || str_contains($nama, 'inggris');
+                    return str_contains($nama, 'tbi') || str_contains($nama, 'inggris') || str_contains($nama, 'english');
                 })->first();
                 $peserta->score_tbi = $tbiJawaban ? ($tbiJawaban->nilai ?? 0) : null;
             } else {
@@ -676,16 +687,16 @@ class AdminController extends Controller
         }
 
         $pesertas = $query->get()->map(function ($peserta) {
-            // Temukan nilai TBA
+            // Temukan nilai TBA / TPA
             $tbaRecord = $peserta->nilaiUjians->filter(function ($n) {
                 $nama = strtolower($n->ujian->nama ?? '');
-                return str_contains($nama, 'tba') || str_contains($nama, 'potensi') || str_contains($nama, 'akademik');
+                return str_contains($nama, 'tpa') || str_contains($nama, 'tba') || str_contains($nama, 'potensi') || str_contains($nama, 'akademik');
             })->first();
             
             if (!$tbaRecord) {
                 $tbaJawaban = $peserta->jawabanUjians->filter(function ($j) {
                     $nama = strtolower($j->ujian->nama ?? '');
-                    return str_contains($nama, 'tba') || str_contains($nama, 'potensi') || str_contains($nama, 'akademik');
+                    return str_contains($nama, 'tpa') || str_contains($nama, 'tba') || str_contains($nama, 'potensi') || str_contains($nama, 'akademik');
                 })->first();
                 $peserta->score_tba = $tbaJawaban ? ($tbaJawaban->nilai ?? 0) : null;
             } else {
@@ -695,13 +706,13 @@ class AdminController extends Controller
             // Temukan nilai TBI
             $tbiRecord = $peserta->nilaiUjians->filter(function ($n) {
                 $nama = strtolower($n->ujian->nama ?? '');
-                return str_contains($nama, 'tbi') || str_contains($nama, 'inggris');
+                return str_contains($nama, 'tbi') || str_contains($nama, 'inggris') || str_contains($nama, 'english');
             })->first();
             
             if (!$tbiRecord) {
                 $tbiJawaban = $peserta->jawabanUjians->filter(function ($j) {
                     $nama = strtolower($j->ujian->nama ?? '');
-                    return str_contains($nama, 'tbi') || str_contains($nama, 'inggris');
+                    return str_contains($nama, 'tbi') || str_contains($nama, 'inggris') || str_contains($nama, 'english');
                 })->first();
                 $peserta->score_tbi = $tbiJawaban ? ($tbiJawaban->nilai ?? 0) : null;
             } else {
@@ -727,7 +738,7 @@ class AdminController extends Controller
             'Expires' => '0'
         ];
 
-        $columns = ['No', 'Nama Lengkap', 'Asal Sekolah', 'Status Seleksi'];
+        $columns = ['No', 'Nama Lengkap', 'NISN', 'Asal Sekolah', 'Nilai TPA', 'Nilai TBI', 'Rata-rata CBT', 'Status Seleksi'];
 
         $callback = function() use ($pesertas, $columns) {
             $file = fopen('php://output', 'w');
@@ -784,10 +795,19 @@ class AdminController extends Controller
                     $asalSekolah = trim($asalSekolah);
                 }
 
+                $scoreTbaFormatted = $peserta->score_tba !== null ? number_format($peserta->score_tba, 2) : '-';
+                $scoreTbiFormatted = $peserta->score_tbi !== null ? number_format($peserta->score_tbi, 2) : '-';
+                $cbtScores = array_filter([$peserta->score_tba, $peserta->score_tbi], fn($v) => $v !== null);
+                $rataCbt = count($cbtScores) > 0 ? number_format(array_sum($cbtScores) / count($cbtScores), 2) : '-';
+
                 fputcsv($file, [
                     $no++,
                     $namaLengkap,
+                    $peserta->nisn ?? '-',
                     $asalSekolah,
+                    $scoreTbaFormatted,
+                    $scoreTbiFormatted,
+                    $rataCbt,
                     $statusText
                 ], ';');
             }

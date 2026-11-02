@@ -17,9 +17,9 @@
             </form>
 
             <!-- Tombol Ekspor Excel -->
-            <a href="{{ route('admin.seleksi_ujian.export', ['search' => request('search'), 'sort' => request('sort')]) }}" class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-4 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-black uppercase tracking-widest rounded-3xl shadow-md transition-all whitespace-nowrap cursor-pointer">
-                <span class="iconify text-lg" data-icon="solar:document-bold"></span>
-                Ekspor Excel 📊
+            <a href="{{ route('admin.seleksi_ujian.export', ['search' => request('search'), 'sort' => request('sort')]) }}" class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-2xl shadow-xs transition-all whitespace-nowrap cursor-pointer">
+                <span class="iconify text-base" data-icon="solar:file-download-bold"></span>
+                <span>Ekspor Excel</span>
             </a>
 
             @php
@@ -110,7 +110,7 @@
                         <input type="checkbox" id="selectAllCheckbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer">
                     </th>
                     <th class="px-6 py-5">Peserta</th>
-                    <th class="px-6 py-5 text-center">Nilai TBA</th>
+                    <th class="px-6 py-5 text-center">Nilai TPA</th>
                     <th class="px-6 py-5 text-center">Nilai TBI</th>
                     <th class="px-6 py-5 text-center">Pemetaan Diri (AI)</th>
                     <th class="px-6 py-5 text-center">Status Seleksi</th>

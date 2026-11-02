@@ -405,7 +405,7 @@
                                 <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Rekomendasi Skema Beasiswa</label>
                                 <select name="rekomendasi_beasiswa" required class="w-full px-5 py-4 bg-white border border-orange-100 rounded-2xl focus:border-orange-500 focus:ring-4 focus:ring-orange-100 outline-none font-bold text-slate-700 transition-all shadow-sm">
                                     <option value="" disabled selected>Pilih Skema</option>
-                                    @foreach(['Beasiswa 100%', 'Beasiswa 75%', 'Beasiswa 50%', 'Beasiswa 25%', 'Mandiri'] as $option)
+                                    @foreach(['Beasiswa 100%', 'Beasiswa 75%', 'Mandiri'] as $option)
                                         <option value="{{ $option }}" {{ ($myDosenEval->rekomendasi_beasiswa ?? '') === $option ? 'selected' : '' }}>{{ $option }}</option>
                                     @endforeach
                                 </select>

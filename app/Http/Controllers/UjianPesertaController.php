@@ -52,6 +52,11 @@ class UjianPesertaController extends Controller
                 $nilai = NilaiUjian::where('ujian_id', $ujian->id)
                     ->where('peserta_id', $peserta->id)
                     ->value('skor_rata');
+                if ($nilai === null) {
+                    $nilai = JawabanUjian::where('ujian_id', $ujian->id)
+                        ->where('peserta_id', $peserta->id)
+                        ->value('nilai');
+                }
                 $state = 'selesai';
             } elseif (!$ujian->isOpen() && !$sesi) {
                 $state = 'tertutup';
@@ -198,5 +203,33 @@ class UjianPesertaController extends Controller
         }
 
         return response()->json(['status' => 'ok']);
+    }
+
+    /**
+     * Reset ujian akibat pelanggaran fokus (meninggalkan layar ujian / beralih tab).
+     * Menghapus sesi aktif agar peserta dapat mengulang kembali dari nol secara mandiri.
+     */
+    public function resetPelanggaran(Request $request, $id)
+    {
+        $peserta = $this->peserta();
+        $ujian = Ujian::findOrFail($id);
+
+        $sesi = SesiUjian::where('ujian_id', $ujian->id)
+            ->where('peserta_id', $peserta->id)
+            ->first();
+
+        if ($sesi) {
+            $sesi->delete();
+        }
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'status' => 'reset',
+                'message' => 'Ujian telah di-reset karena terdeteksi meninggalkan layar ujian sebanyak 2 kali.',
+                'redirect' => route('ujian.index'),
+            ]);
+        }
+
+        return redirect()->route('ujian.index')->with('error', 'Ujian Anda telah di-reset dari nol karena terdeteksi meninggalkan layar ujian sebanyak 2 kali. Pastikan koneksi internet stabil dan tetap fokus pada layar ujian saat mengulang!');
     }
 }

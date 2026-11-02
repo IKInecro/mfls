@@ -8,9 +8,9 @@
             <h1 class="text-2xl font-black text-slate-800">Manajemen Berita</h1>
             <p class="text-sm text-slate-500 mt-1">Kelola publikasi berita dan artikel</p>
         </div>
-        <a href="{{ route('admin.berita.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-xl hover:bg-slate-900 transition-all font-bold text-sm shadow-sm ring-1 ring-slate-900/10">
-            <span class="iconify text-lg" data-icon="solar:add-circle-bold"></span>
-            Tambah Berita
+        <a href="{{ route('admin.berita.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0870B8] text-white rounded-xl hover:bg-[#065A96] transition-all font-bold text-xs shadow-xs">
+            <span class="iconify text-base" data-icon="solar:add-circle-bold"></span>
+            <span>Tambah Berita Baru</span>
         </a>
     </div>
 

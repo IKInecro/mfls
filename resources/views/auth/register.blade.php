@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="mb-10 text-center lg:text-left">
-    <h1 class="text-3xl font-black text-gray-900 mb-3">Pendaftaran MNCU Future Leader Scholarship 2026</h1>
-    <p class="text-gray-500 font-medium">Buat akun untuk memulai pendaftaran MNCU Future Leader Scholarship 2026.</p>
+    <h1 class="text-3xl font-black text-gray-900 mb-3">Pendaftaran MNCU Future Leader Scholarship Ajaran 2027</h1>
+    <p class="text-gray-500 font-medium">Buat akun untuk memulai pendaftaran MNCU Future Leader Scholarship Ajaran 2027.</p>
 </div>
 
 <form action="/register" method="POST" class="space-y-8">
@@ -87,15 +87,22 @@
             <div>
                 <label for="tahun_lulus" class="block text-xs font-bold text-gray-700 mb-2">Tahun Lulus</label>
                 <select id="tahun_lulus" name="tahun_lulus" required class="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary-gold/10 outline-none transition-all text-sm font-medium">
-                    <option value="">Pilih Tahun</option>
-                    <option value="2021">2021</option>
+                    <option value="">Pilih Tahun Kelulusan</option>
                     <option value="2022">2022</option>
                     <option value="2023">2023</option>
                     <option value="2024">2024</option>
                     <option value="2025">2025</option>
                     <option value="2026">2026</option>
+                    <option value="2027">2027 (Kelas 12 TA 2026/2027)</option>
                 </select>
             </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200/80 flex items-start gap-2.5 text-amber-900 text-xs">
+            <span class="iconify text-base text-amber-600 shrink-0 mt-0.5" data-icon="solar:info-circle-bold"></span>
+            <p class="leading-relaxed">
+                <strong>Informasi Kelayakan:</strong> Siswa/i kelas 12 SMA/SMK/MA sederajat tahun ajaran 2026/2027, atau lulusan tahun ajaran 2022/2023/2024/2025/2026/2027.
+            </p>
         </div>
     </div>
 

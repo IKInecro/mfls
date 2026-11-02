@@ -1,1387 +1,1568 @@
 @extends('layouts.user')
 
 @section('content')
-@php $buka = \App\Models\PengaturanPendaftaran::aktif(); @endphp
+@php
+    $buka = \App\Models\PengaturanPendaftaran::aktif();
+    $deadlineDate = $pengaturan->pendaftaran_selesai 
+        ? $pengaturan->pendaftaran_selesai->format('Y-m-d\TH:i:s') . '+07:00' 
+        : '2026-05-04T23:59:59+07:00';
+@endphp
+
 <style>
-/* Consistent section heading system for home.blade.php */
-.section-label {
-    font-size: clamp(1rem, 3.5vw, 1.5rem) !important;
+/* Smooth Floating & Parallax Keyframes */
+@keyframes floatSlow {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(1deg); }
 }
-.section-title {
-    font-size: clamp(1.75rem, 6vw, 3rem) !important;
-    line-height: 1.2 !important;
-    word-break: break-word;
+@keyframes floatDelayed {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(10px) rotate(-1deg); }
 }
-.hero-title {
-    font-size: clamp(3rem, 12vw, 5.5rem) !important;
-    line-height: 1.1 !important;
-    word-break: break-word;
+@keyframes pulseGlow {
+    0%, 100% { opacity: 0.35; transform: scale(1); }
+    50% { opacity: 0.65; transform: scale(1.08); }
 }
-.about-title {
-    font-size: clamp(2.5rem, 8vw, 4.5rem) !important;
-    line-height: 1.1 !important;
-    word-break: break-word;
+.animate-float-slow {
+    animation: floatSlow 6s ease-in-out infinite;
+}
+.animate-float-delayed {
+    animation: floatDelayed 7s ease-in-out infinite;
+}
+.animate-pulse-glow {
+    animation: pulseGlow 8s ease-in-out infinite;
+}
+
+/* Perspective 3D Tilt Card */
+.perspective-container {
+    perspective: 1200px;
+}
+.tilt-card {
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+/* Reveal on Scroll Elements */
+.reveal-init {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-init.revealed {
+    opacity: 1;
+    transform: translateY(0);
 }
 </style>
-<!-- Hero Section -->
-<div id="home" class="relative bg-white pt-6 sm:pt-12 pb-10 sm:pb-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full overflow-x-hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            <!-- Left Column: Text Content -->
-            <div class="text-center lg:text-left space-y-4 sm:space-y-6 md:space-y-8 scroll-fade-left px-2 sm:px-0">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-black uppercase tracking-widest {{ $buka ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                    <span class="w-2 h-2 rounded-full {{ $buka ? 'bg-green-500 animate-pulse' : 'bg-red-500' }}"></span>
+
+<!-- Hero Section with Mouse Parallax & 3D Artwork Showcase -->
+<section id="home" class="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50/60 pt-6 pb-16 lg:pt-14 lg:pb-28 border-b border-slate-100">
+    <!-- Ambient Parallax Glows -->
+    <div id="ambient-glow-1" class="absolute -top-32 -left-28 w-96 h-96 sm:w-[32rem] sm:h-[32rem] bg-blue-400/15 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
+    <div id="ambient-glow-2" class="absolute top-1/3 -right-28 w-80 h-80 sm:w-[28rem] sm:h-[28rem] bg-amber-400/15 rounded-full blur-3xl pointer-events-none animate-pulse-glow" style="animation-delay: 3s;"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            
+            <!-- Left Column: Primary Copy & Action (7 Cols) -->
+            <div class="lg:col-span-7 text-center lg:text-left space-y-6">
+                
+                <!-- Status Pill -->
+                <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide shadow-sm {{ $buka ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200' }}">
+                    <span class="w-2.5 h-2.5 rounded-full {{ $buka ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500' }}"></span>
                     @if($buka)
-                        Pendaftaran Dibuka @if($pengaturan->pendaftaran_selesai) s/d {{ $pengaturan->pendaftaran_selesai->format('d/m/Y H:i') }} @endif
+                        <span>Pendaftaran Dibuka (MFLS Ajaran 2027) @if($pengaturan->pendaftaran_selesai) s/d {{ $pengaturan->pendaftaran_selesai->format('d M Y, H:i') }} WIB @endif</span>
                     @else
-                        Pendaftaran Ditutup
+                        <span>Pendaftaran Periode Ini Telah Ditutup</span>
                     @endif
                 </div>
-                <h1 class="hero-title font-extrabold text-dark-navy leading-tight">
-                  MNCU 
-                    <span class="text-primary-yellow">Future</span> Leader
-                    Scholarship
+
+                <!-- Main Headline -->
+                <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.12]">
+                    MNCU <span class="text-primary-blue">Future Leader</span> <br class="hidden sm:inline">
+                    <span class="text-amber-500 relative inline-block">
+                        Scholarship Ajaran 2027
+                        <svg class="absolute -bottom-1.5 left-0 w-full h-2.5 text-amber-300/40" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="4" fill="none"/></svg>
+                    </span>
                 </h1>
-                
-                <p class="text-base sm:text-base md:text-lg lg:text-xl text-gray-700 font-semibold">
-                    Beasiswa Kuliah Up To 100% hingga lulus<br class="hidden sm:block">
-                     di Media Nusantara Citra University
+
+                <!-- Subheadline -->
+                <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
+                    Program beasiswa kuliah unggulan jenjang sarjana (S1) dengan dukungan biaya pendidikan <strong class="text-slate-900 font-semibold">hingga 100% sampai 8 semester</strong> di Media Nusantara Citra University. Dibina langsung praktisi industri dalam ekosistem <strong class="text-primary-blue font-semibold">MNC Group</strong> untuk mencetak calon pemimpin bangsa yang berdaya saing global.
                 </p>
-                
-                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+
+                <!-- Action CTAs -->
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-2">
                     @if($buka)
-                        <a href="{{ route('register') }}" class="bg-orange-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base font-bold shadow-lg hover:bg-orange-600 transition-all duration-300">
-                            <i class="fas fa-user-plus me-2"></i>
-                            Daftar Sekarang
+                        <a href="{{ route('register') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-base font-bold text-white bg-primary-blue hover:bg-primary-blue-hover shadow-lg shadow-blue-900/20 hover:shadow-xl hover:shadow-blue-900/30 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0">
+                            <span>Daftar Beasiswa Sekarang</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
                     @else
-                        <a href="#" class="bg-gray-400 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-base font-bold shadow-lg cursor-not-allowed transition-all duration-300"> 
-                            <i class="fas fa-lock me-2"></i>
-                            Pendaftaran Ditutup
+                        <a href="#timeline" onclick="showPendaftaranTutupModal(event)" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-base font-bold text-slate-600 bg-slate-200 hover:bg-slate-300 transition-colors cursor-pointer shadow-xs">
+                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            <span>Pendaftaran Ditutup</span>
                         </a>
                     @endif
-                    <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" target="_blank" class="flex items-center justify-center gap-2 text-dark-navy text-sm sm:text-base font-semibold hover:text-primary-yellow transition-colors">
-                        Gabung Saluran WhatsApp
-                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+
+                    <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-slate-700 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-sm transition-all duration-200">
+                        <span class="iconify text-emerald-600 text-lg" data-icon="solar:chat-round-dots-bold"></span>
+                        <span>Gabung Saluran WhatsApp</span>
+                    </a>
+                </div>
+
+                <!-- Fast Highlights -->
+                <div class="pt-4 border-t border-slate-200/80 grid grid-cols-3 gap-4 max-w-xl mx-auto lg:mx-0 text-left">
+                    <div>
+                        <div class="text-xl sm:text-2xl font-black text-slate-900">100%</div>
+                        <div class="text-xs text-slate-500 font-medium leading-snug">Beasiswa Hingga Lulus</div>
+                    </div>
+                    <div>
+                        <div class="text-xl sm:text-2xl font-black text-slate-900">8 Prodi</div>
+                        <div class="text-xs text-slate-500 font-medium leading-snug">Pilihan Jurusan S1</div>
+                    </div>
+                    <div>
+                        <div class="text-xl sm:text-2xl font-black text-slate-900">MNC Group</div>
+                        <div class="text-xs text-slate-500 font-medium leading-snug">Jaringan Industri & Karir</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Original Artwork (newlogo.webp) with 3D Parallax & Floating Glass Badges -->
+            <div class="lg:col-span-5 relative perspective-container" id="hero-artwork-area">
+                <div class="relative max-w-md mx-auto tilt-card" id="hero-tilt-card">
+                    
+                    <!-- Decorative Radial Halo -->
+                    <div class="absolute -inset-4 bg-gradient-to-tr from-primary-blue/20 via-amber-400/20 to-blue-500/10 rounded-[2.5rem] blur-2xl opacity-75"></div>
+
+                    <!-- Main Artwork Container using the exact newlogo.webp requested by user -->
+                    <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/90 bg-white group">
+                        <img id="hero-main-img" src="{{ asset('icon/newlogo.webp') }}" alt="MNCU Future Leader Scholarship Poster" class="w-full h-auto object-cover transform group-hover:scale-[1.03] transition-transform duration-700 ease-out">
+                    </div>
+
+                    <!-- Floating Parallax Badge 1 (Top Left) -->
+                    <div class="absolute -top-5 -left-4 sm:-left-8 bg-white/95 backdrop-blur-md rounded-2xl p-3 sm:p-3.5 shadow-xl border border-slate-100 flex items-center gap-3 animate-float-slow z-20">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                            <span class="iconify text-2xl" data-icon="solar:medal-ribbons-star-bold"></span>
+                        </div>
+                        <div>
+                            <div class="text-[11px] text-slate-500 font-medium">Kategori Beasiswa</div>
+                            <div class="text-xs sm:text-sm font-bold text-slate-900">Penuh Up To 100%</div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Parallax Badge 2 (Bottom Right) -->
+                    <div class="absolute -bottom-5 -right-4 sm:-right-8 bg-white/95 backdrop-blur-md rounded-2xl p-3 sm:p-3.5 shadow-xl border border-slate-100 flex items-center gap-3 animate-float-delayed z-20">
+                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-primary-blue flex items-center justify-center shrink-0">
+                            <span class="iconify text-2xl" data-icon="solar:users-group-rounded-bold"></span>
+                        </div>
+                        <div>
+                            <div class="text-[11px] text-slate-500 font-medium">Praktisi & Eksekutif</div>
+                            <div class="text-xs sm:text-sm font-bold text-slate-900">Mentorship BoD MNC</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Countdown & Urgency Telemetry Panel -->
+<section class="relative bg-gradient-to-r from-[#021b44] via-[#022868] to-[#011638] text-white py-8 border-y border-blue-950/50 shadow-inner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+            
+            <!-- Left Info -->
+            <div class="text-center lg:text-left space-y-1">
+                <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-400">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                    <span>Tenggat Waktu Pendaftaran TA 2027</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    Pendaftaran Ditutup Dalam Waktu:
+                </h2>
+                <p class="text-xs sm:text-sm text-blue-200">
+                    Lengkapi pengisian data dan berkas persyaratan sebelum sistem ditutup.
+                </p>
+            </div>
+
+            <!-- Tabular Digits Countdown -->
+            <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center">
+                <div class="bg-white/10 border border-white/15 rounded-xl px-3 sm:px-5 py-2.5 backdrop-blur-md min-w-[70px] sm:min-w-[85px] shadow-lg">
+                    <div id="days" class="text-2xl sm:text-4xl font-black font-mono text-amber-400 tabular-nums">00</div>
+                    <div class="text-[10px] sm:text-xs font-semibold text-blue-200 uppercase tracking-wider mt-0.5">Hari</div>
+                </div>
+                <div class="bg-white/10 border border-white/15 rounded-xl px-3 sm:px-5 py-2.5 backdrop-blur-md min-w-[70px] sm:min-w-[85px] shadow-lg">
+                    <div id="hours" class="text-2xl sm:text-4xl font-black font-mono text-amber-400 tabular-nums">00</div>
+                    <div class="text-[10px] sm:text-xs font-semibold text-blue-200 uppercase tracking-wider mt-0.5">Jam</div>
+                </div>
+                <div class="bg-white/10 border border-white/15 rounded-xl px-3 sm:px-5 py-2.5 backdrop-blur-md min-w-[70px] sm:min-w-[85px] shadow-lg">
+                    <div id="minutes" class="text-2xl sm:text-4xl font-black font-mono text-amber-400 tabular-nums">00</div>
+                    <div class="text-[10px] sm:text-xs font-semibold text-blue-200 uppercase tracking-wider mt-0.5">Menit</div>
+                </div>
+                <div class="bg-white/10 border border-white/15 rounded-xl px-3 sm:px-5 py-2.5 backdrop-blur-md min-w-[70px] sm:min-w-[85px] shadow-lg">
+                    <div id="seconds" class="text-2xl sm:text-4xl font-black font-mono text-amber-400 tabular-nums">00</div>
+                    <div class="text-[10px] sm:text-xs font-semibold text-blue-200 uppercase tracking-wider mt-0.5">Detik</div>
+                </div>
+            </div>
+
+            <!-- Fast Action Button -->
+            <div>
+                @if($buka)
+                    <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-slate-900 bg-amber-400 hover:bg-amber-300 shadow-lg shadow-amber-400/20 transition-all hover:scale-105 active:scale-95">
+                        <span>Lengkapi Berkas Sekarang</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                @else
+                    <a href="#timeline" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-slate-300 bg-blue-950/60 border border-blue-400/20">
+                        <span>Lihat Jadwal Seleksi</span>
+                    </a>
+                @endif
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- About Section: Leadership Ecosystem & Campus Life -->
+<section id="about" class="py-20 lg:py-28 bg-white reveal-init">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            
+            <!-- Left: Text Content & Value Proposition (7 Cols) -->
+            <div class="lg:col-span-7 space-y-6">
+                <span class="inline-block text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 border border-blue-100 px-3.5 py-1.5 rounded-full">
+                    Tentang Program MFLS
+                </span>
+                
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                    Mencetak Generasi Emas Pemimpin Masa Depan di Bawah Naungan MNC Group
+                </h2>
+
+                <div class="space-y-4 text-slate-600 text-base sm:text-lg leading-relaxed">
+                    <p>
+                        <strong class="text-slate-900">MNCU Future Leader Scholarship (MFLS)</strong> adalah program beasiswa unggulan resmi yang diselenggarakan oleh MNC Group untuk calon mahasiswa berprestasi yang melanjutkan studi sarjana di Media Nusantara Citra University (MNC University).
+                    </p>
+                    <p>
+                        Melalui beasiswa ini, penerima beasiswa tidak hanya mendapatkan dukungan finansial kuliah hingga 100%, tetapi juga akses ke lingkungan pendidikan terintegrasi langsung dengan ekosistem industri, khususnya di bidang bisnis, keuangan, media, teknologi informasi, dan industri kreatif.
+                    </p>
+                </div>
+
+                <!-- 4 Institutional Pillars -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary-blue/30 transition-colors">
+                        <div class="text-3xl font-black text-primary-blue">2</div>
+                        <div class="text-xs font-semibold text-slate-700 uppercase tracking-wide mt-1">Kampus Strategis</div>
+                        <div class="text-[11px] text-slate-500 mt-0.5">Menteng & Kebon Jeruk</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary-blue/30 transition-colors">
+                        <div class="text-3xl font-black text-primary-blue">2</div>
+                        <div class="text-xs font-semibold text-slate-700 uppercase tracking-wide mt-1">Fakultas Unggulan</div>
+                        <div class="text-[11px] text-slate-500 mt-0.5">Bisnis & Industri Kreatif</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary-blue/30 transition-colors">
+                        <div class="text-3xl font-black text-primary-blue">8</div>
+                        <div class="text-xs font-semibold text-slate-700 uppercase tracking-wide mt-1">Program Studi</div>
+                        <div class="text-[11px] text-slate-500 mt-0.5">Jenjang Sarjana (S1)</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary-blue/30 transition-colors">
+                        <div class="text-3xl font-black text-primary-blue">90+</div>
+                        <div class="text-xs font-semibold text-slate-700 uppercase tracking-wide mt-1">Mitra Industri</div>
+                        <div class="text-[11px] text-slate-500 mt-0.5">Nasional & Global</div>
+                    </div>
+                </div>
+
+                <!-- Link to Program Studi -->
+                <div class="pt-2">
+                    <a href="#program" class="inline-flex items-center gap-2 font-bold text-primary-blue hover:text-blue-800 transition-colors">
+                        <span>Lihat 8 Program Studi Pilihan</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </a>
                 </div>
             </div>
-            
-            <!-- Right Column: Hero Image -->
-            <div class="relative w-full scroll-fade-right mt-6 lg:mt-0 max-w-md mx-auto lg:max-w-none overflow-hidden rounded-2xl sm:rounded-[2.5rem]">
-                <img loading="lazy" src="{{ asset('icon/newlogo.webp') }}" alt="MNCU Future Leader Scholarship" class="w-full h-auto rounded-2xl sm:rounded-[2.5rem] hover:scale-[1.05] transition-transform duration-500">
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Countdown Section -->
-<div class="bg-white py-0 scroll-fade">
-    <div class="w-full">
-        <!-- Yellow Top Border -->
-        <div class="h-2 bg-primary-yellow"></div>
-        
-        <!-- Blue Bar with Countdown -->
-        <div class="bg-primary-blue py-12">
-            <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-                <div class="text-center mb-8 px-2 sm:px-0">
-                    <h3 class="section-label text-primary-yellow font-caveat font-semibold mb-2">Daftar Sekarang!</h3>
-                    <h2 class="section-title font-bold text-white">Pendaftaran akan ditutup dalam</h2>
-                </div>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-5xl mx-auto">
-                    <div class="text-center p-4 rounded-2xl md:bg-transparent bg-white/5 md:shadow-none shadow-lg backdrop-blur-sm border border-white/10 md:border-none">
-                        <div id="days" class="text-4xl md:text-6xl lg:text-7xl font-black text-primary-yellow mb-1 md:mb-2">00</div>
-                        <div class="text-xs md:text-base lg:text-lg font-bold text-white md:text-primary-yellow uppercase tracking-widest">Hari</div>
+            <!-- Right: Campus Life & Seminar Photo Mosaic with Parallax Depth -->
+            <div class="lg:col-span-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <div class="rounded-2xl overflow-hidden shadow-md border border-slate-100 group">
+                            <img src="{{ asset('icon/Student1.webp') }}" alt="Aktivitas Mahasiswa MNC University" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="rounded-2xl overflow-hidden shadow-md border border-slate-100 group">
+                            <img src="{{ asset('icon/seminar2.webp') }}" alt="Seminar Kepemimpinan MNC Group" class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
                     </div>
-                    <div class="text-center p-4 rounded-2xl md:bg-transparent bg-white/5 md:shadow-none shadow-lg backdrop-blur-sm border border-white/10 md:border-none">
-                        <div id="hours" class="text-4xl md:text-6xl lg:text-7xl font-black text-primary-yellow mb-1 md:mb-2">00</div>
-                        <div class="text-xs md:text-base lg:text-lg font-bold text-white md:text-primary-yellow uppercase tracking-widest">Jam</div>
-                    </div>
-                    <div class="text-center p-4 rounded-2xl md:bg-transparent bg-white/5 md:shadow-none shadow-lg backdrop-blur-sm border border-white/10 md:border-none">
-                        <div id="minutes" class="text-4xl md:text-6xl lg:text-7xl font-black text-primary-yellow mb-1 md:mb-2">00</div>
-                        <div class="text-xs md:text-base lg:text-lg font-bold text-white md:text-primary-yellow uppercase tracking-widest">Menit</div>
-                    </div>
-                    <div class="text-center p-4 rounded-2xl md:bg-transparent bg-white/5 md:shadow-none shadow-lg backdrop-blur-sm border border-white/10 md:border-none">
-                        <div id="seconds" class="text-4xl md:text-6xl lg:text-7xl font-black text-primary-yellow mb-1 md:mb-2">00</div>
-                        <div class="text-xs md:text-base lg:text-lg font-bold text-white md:text-primary-yellow uppercase tracking-widest">Detik</div>
+                    <div class="space-y-4 pt-6">
+                        <div class="rounded-2xl overflow-hidden shadow-md border border-slate-100 group">
+                            <img src="{{ asset('icon/student4.webp') }}" alt="Fasilitas Kampus MNC University" class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="rounded-2xl overflow-hidden shadow-md border border-slate-100 group">
+                            <img src="{{ asset('icon/group3.webp') }}" alt="Awardee MNC University" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Yellow Bottom Border -->
-        <div class="h-2 bg-primary-yellow"></div>
-    </div>
-</div>
 
-<!-- About Section with Photos -->
-<div id="about" class="py-12 md:py-24 bg-gray-50">
+        </div>
+    </div>
+</section>
+
+<!-- Program Studi Section: Direct Interactive Filter (No Hidden Modals) -->
+<section id="program" class="py-20 lg:py-28 bg-slate-50 border-t border-slate-200/80 reveal-init">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 md:gap-12 lg:gap-20 items-start">
-            <!-- Left: Text + Stats (3 columns) -->
-            <div class="lg:col-span-3 scroll-fade-left">
-                <h3 class="section-label text-primary-yellow font-caveat font-semibold mb-4">Tentang Kami</h3>
-                <h2 class="about-title font-black text-dark-navy mb-8 leading-none">MNCU <span class="text-primary-yellow">Future</span> Leader Scholarship</h2>
-                
-                <div class="space-y-6 text-gray-700 leading-relaxed mb-12 text-base md:text-lg text-justify">
-                    <p>
-MNCU Future Leader Scholarship adalah program beasiswa yang diberikan oleh MNC Group kepada calon mahasiswa berprestasi untuk melanjutkan pendidikan di MNC University. Program ini bertujuan untuk mencetak generasi muda yang unggul, inovatif, dan berjiwa kepemimpinan, dengan memberikan kesempatan kuliah hingga 100%.                    </p>
-                    <p>
-Melalui beasiswa ini, penerima tidak hanya mendapatkan dukungan finansial, tetapi juga akses pada lingkungan pendidikan yang berkualitas dan terintegrasi dengan dunia industri, khususnya di bidang bisnis, keuangan, teknologi, dan industri kreatif.                    </p>
-                </div>
-                
-                <!-- Stats Grid 2x2 -->
-                <div class="grid grid-cols-2 gap-8 mb-8">
-                    <div class="stat-item text-center lg:text-left">
-                        <div class="text-5xl md:text-6xl font-black text-dark-navy mb-2">2</div>
-                        <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Kampus</div>
-                    </div>
-                    <div class="stat-item text-center lg:text-left">
-                        <div class="text-5xl md:text-6xl font-black text-dark-navy mb-2">2</div>
-                        <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Fakultas</div>
-                    </div>
-                    <div class="stat-item text-center lg:text-left">
-                        <div class="text-5xl md:text-6xl font-black text-dark-navy mb-2">8</div>
-                        <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Program Studi</div>
-                    </div>
-                    <div class="stat-item text-center lg:text-left">
-                        <div class="text-5xl md:text-6xl font-black text-dark-navy mb-2">90+</div>
-                        <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Kemitraan</div>
-                    </div>
-                </div>
-                
-                <!-- Link Selengkapnya -->
-                <a href="#" id="selengkapnya-btn" class="inline-flex items-center gap-2 text-primary-yellow font-bold hover:gap-4 transition-all">
-                    Selengkapnya
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        
+        <!-- Header -->
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="inline-block text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 border border-blue-100 px-3.5 py-1.5 rounded-full mb-3">
+                Pilihan Program Studi S1
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Pilih Program Studi Impian Anda
+            </h2>
+            <p class="text-base sm:text-lg text-slate-600 mt-3">
+                Seluruh 8 program studi jenjang S1 terbuka untuk beasiswa penuh hingga 100%. Kurikulum relevan industri dan berbasis teknologi masa depan.
+            </p>
+
+            <!-- Quiz Recommendation Banner -->
+            <div class="mt-6 inline-flex flex-wrap items-center justify-center gap-3 p-2 pl-4 bg-white rounded-full border border-slate-200 shadow-sm text-sm">
+                <span class="text-slate-600 font-medium">Masih ragu menentukan pilihan jurusan?</span>
+                <a href="{{ route('quiz.show') }}" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-primary-blue hover:bg-primary-blue-hover transition-colors shadow-sm">
+                    <span class="iconify" data-icon="solar:magic-stick-3-bold"></span>
+                    <span>Ikuti Quiz Rekomendasi Prodi</span>
                 </a>
             </div>
-            
-            <!-- Right: Staggered Photo Collage (2 columns) -->
-            <div class="lg:col-span-2 scroll-fade-right">
-                <div class="grid grid-cols-2 gap-4">
-                    <!-- Top Right -->
-                    <div class="col-start-2">
-                        <img loading="lazy" src="{{ asset('icon/Student1.webp') }}" alt="Students Photo 1" class="rounded-2xl shadow-lg w-full h-64 object-cover">
-                    </div>
-                    
-                    <!-- Middle Left -->
-                    <div class="col-start-1 row-start-2">
-                        <img loading="lazy" src="{{ asset('icon/seminar2.webp') }}" alt="Seminar Photo 2" class="rounded-2xl shadow-lg w-full h-48 object-cover">
-                    </div>
-                    
-                    <!-- Middle Right -->
-                    <div class="col-start-2 row-start-2">
-                        <img loading="lazy" src="{{ asset('icon/group3.webp') }}" alt="Group Photo 3" class="rounded-2xl shadow-lg w-full h-48 object-cover">
-                    </div>
-                    
-                    <!-- Bottom Left -->
-                    <div class="col-start-1 row-start-3">
-                        <img loading="lazy" src="{{ asset('icon/student4.webp') }}" alt="Students Photo 4" class="rounded-2xl shadow-lg w-full h-64 object-cover">
-                    </div>
-                </div>
+        </div>
+
+        <!-- Faculty Tabs -->
+        <div class="flex justify-center mb-8">
+            <div class="inline-flex p-1.5 bg-slate-200/80 rounded-2xl gap-1 text-sm font-semibold" id="prodi-filter-tabs">
+                <button type="button" onclick="filterProdi('all', event)" class="prodi-tab-btn active px-5 py-2.5 rounded-xl transition-all duration-200 bg-white text-slate-900 shadow-sm">
+                    Semua Program Studi (8)
+                </button>
+                <button type="button" onclick="filterProdi('fbk', event)" class="prodi-tab-btn px-5 py-2.5 rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-900">
+                    Bisnis & Keuangan (3)
+                </button>
+                <button type="button" onclick="filterProdi('fik', event)" class="prodi-tab-btn px-5 py-2.5 rounded-xl transition-all duration-200 text-slate-600 hover:text-slate-900">
+                    Industri & Kreatif (5)
+                </button>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Modal Program Studi -->
-<div id="program-studi-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden opacity-0 transition-all duration-300">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-3xl max-w-6xl w-full max-h-[90vh] overflow-y-auto transform scale-95 transition-all duration-300" id="modal-content">
-            <!-- Modal Header -->
-            <div class="sticky top-0 bg-white border-b border-gray-100 p-8 rounded-t-3xl">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-3xl font-black text-dark-navy">Program Studi MNCU</h2>
-                        <p class="text-gray-600 mt-2">Pilih program studi sesuai minat dan bakatmu</p>
-                    </div>
-                    <button id="close-modal" class="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors">
-                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
-            </div>
+        <!-- Program Studi Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="prodi-grid">
             
-            <!-- Modal Body -->
-            <div class="p-8">
-                <!-- Fakultas Bisnis dan Keuangan -->
-                <div class="mb-12">
-                    <div class="flex items-center gap-4 mb-8">
-                        <div class="w-16 h-16 bg-primary-yellow/10 rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-primary-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-dark-navy">Fakultas Bisnis dan Keuangan</h3>
-                            <p class="text-gray-600">Mempersiapkan lulusan yang kompeten di bidang bisnis dan keuangan</p>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        @foreach([
-                            ['name' => 'Manajemen', 'desc' => 'Mempelajari strategi bisnis, kepemimpinan, dan pengelolaan organisasi modern', 'icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'],
-                            ['name' => 'Akuntansi', 'desc' => 'Fokus pada pencatatan, analisis, dan pelaporan keuangan perusahaan', 'icon' => 'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z'],
-                            ['name' => 'Pendidikan Matematika', 'desc' => 'Mempersiapkan pendidik matematika yang profesional dan inovatif', 'icon' => 'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z']
-                        ] as $prodi)
-                        <div class="bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl border border-gray-100 hover:border-primary-yellow hover:shadow-lg transition-all duration-300 group">
-                            <div class="w-12 h-12 bg-primary-yellow/10 group-hover:bg-primary-yellow/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
-                                <svg class="w-6 h-6 text-primary-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $prodi['icon'] }}"/></svg>
-                            </div>
-                            <h4 class="font-bold text-dark-navy text-lg mb-2">{{ $prodi['name'] }}</h4>
-                            <p class="text-gray-600 text-sm leading-relaxed">{{ $prodi['desc'] }}</p>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-                
-                <!-- Fakultas Industri dan Kreatif -->
+            <!-- 1. Manajemen -->
+            <div class="prodi-card fbk bg-white rounded-2xl p-6 border border-slate-200/90 hover:border-primary-blue hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
                 <div>
-                    <div class="flex items-center gap-4 mb-8">
-                        <div class="w-16 h-16 bg-primary-yellow/10 rounded-2xl flex items-center justify-center">
-                            <svg class="w-8 h-8 text-primary-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-primary-blue flex items-center justify-center group-hover:bg-primary-blue group-hover:text-white transition-colors">
+                            <span class="iconify text-2xl" data-icon="solar:chart-square-bold"></span>
                         </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-dark-navy">Fakultas Industri dan Kreatif</h3>
-                            <p class="text-gray-600">Mengembangkan talenta kreatif dan teknologi untuk masa depan</p>
-                        </div>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FBK</span>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach([
-                            ['name' => 'Pendidikan Bahasa Inggris', 'desc' => 'Mempersiapkan pendidik bahasa Inggris yang kompeten dan berdaya saing global', 'icon' => 'M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129'],
-                            ['name' => 'Sains Komunikasi', 'desc' => 'Mempelajari teori dan praktik komunikasi di era digital dan media massa', 'icon' => 'M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z'],
-                            ['name' => 'Desain Komunikasi Visual', 'desc' => 'Mengembangkan kreativitas dalam desain grafis, branding, dan komunikasi visual', 'icon' => 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 3H5a2 2 0 00-2 2v12a4 4 0 004 4h2a2 2 0 002-2V5a2 2 0 00-2-2z'],
-                            ['name' => 'Ilmu Komputer', 'desc' => 'Fokus pada pengembangan software, algoritma, dan teknologi komputer terdepan', 'icon' => 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'],
-                            ['name' => 'Sistem Informasi', 'desc' => 'Menggabungkan teknologi informasi dengan manajemen bisnis untuk solusi digital', 'icon' => 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4']
-                        ] as $prodi)
-                        <div class="bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl border border-gray-100 hover:border-primary-yellow hover:shadow-lg transition-all duration-300 group">
-                            <div class="w-12 h-12 bg-primary-yellow/10 group-hover:bg-primary-yellow/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
-                                <svg class="w-6 h-6 text-primary-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $prodi['icon'] }}"/></svg>
-                            </div>
-                            <h4 class="font-bold text-dark-navy text-lg mb-2">{{ $prodi['name'] }}</h4>
-                            <p class="text-gray-600 text-sm leading-relaxed">{{ $prodi['desc'] }}</p>
-                        </div>
-                        @endforeach
-                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Manajemen</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                        Mempelajari strategi kepemimpinan korporasi, manajemen finansial, serta kewirausahaan modern yang adaptif di era digital.
+                    </p>
                 </div>
-                
-                <!-- CTA Section -->
-                <div class="mt-12 text-center p-8 bg-gradient-to-r from-primary-yellow/10 to-primary-yellow/5 rounded-2xl border border-primary-yellow/20">
-                    <h4 class="text-xl font-bold text-dark-navy mb-4">Tertarik dengan Program Studi di Atas?</h4>
-                    <p class="text-gray-600 mb-6">Daftar sekarang dan raih kesempatan mendapatkan beasiswa penuh!</p>
-                    @if($buka)
-                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 bg-orange-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-orange-600 transition-all">
-                            <i class="fas fa-user-plus me-2"></i>
-                            Daftar Sekarang
-                        </a>
-                    @else
-                        <a href="#" class="inline-flex items-center gap-2 bg-gray-400 text-white px-8 py-3 rounded-full font-bold shadow-lg cursor-not-allowed transition-all">
-                            <i class="fas fa-lock me-2"></i>
-                            Pendaftaran Ditutup
-                        </a>
-                    @endif
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span>Fakultas Bisnis & Keuangan</span>
+                    <span class="font-bold text-primary-blue">Beasiswa s/d 100%</span>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Timeline Section -->
-<div id="timeline" class="py-24 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="section-title font-black text-dark-navy text-center mb-16 fade-in">Jadwal dan Tahapan Seleksi</h2>
-        
-        <!-- Vertical Timeline -->
-        <div class="relative fade-in max-w-4xl mx-auto">
-            @php
-                $timeline = [
-                    ['title' => 'Pembukaan Pendaftaran', 'date' => '16 Maret 2026', 'active' => false],
-                    ['title' => 'Penutupan Pendaftaran', 'date' => '04 Mei 2026', 'active' => false],
-                    ['title' => 'Mini Project', 'date' => '08 Mei 2026', 'active' => false],
-                    ['title' => 'Tes TPA, TBI & Pemetaan Diri', 'date' => '16 Mei 2026', 'active' => false],
-                    ['title' => 'Interview', 'date' => '20 Mei 2026', 'active' => false],
-                    ['title' => 'Sit in Class/Company Visit', 'date' => '21 & 22 Mei 2026', 'active' => false],
-                    ['title' => 'Pengumuman Awardee', 'date' => '03 Juni 2026', 'active' => true],
-                ];
-            @endphp
-            
-            <!-- Vertical Line -->
-            <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-primary-yellow"></div>
-            
-            @foreach($timeline as $index => $item)
-            <div class="relative flex items-start mb-12 last:mb-0">
-                <!-- Dot -->
-                <div class="relative z-10 mr-8">
-                    @if($item['active'])
-                        <div class="relative w-6 h-6">
-                            <div class="absolute inset-0 bg-primary-yellow rounded-full animate-ping"></div>
-                            <div class="relative w-6 h-6 bg-primary-yellow rounded-full border-4 border-white shadow-lg"></div>
+            <!-- 2. Akuntansi -->
+            <div class="prodi-card fbk bg-white rounded-2xl p-6 border border-slate-200/90 hover:border-primary-blue hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-primary-blue flex items-center justify-center group-hover:bg-primary-blue group-hover:text-white transition-colors">
+                            <span class="iconify text-2xl" data-icon="solar:wallet-money-bold"></span>
                         </div>
-                    @else
-                        <div class="w-6 h-6 bg-primary-yellow rounded-full border-4 border-white shadow-lg"></div>
-                    @endif
-                </div>
-                
-                <!-- Content -->
-                <div class="flex-1 bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 {{ $item['active'] ? 'border-primary-yellow bg-primary-yellow/5' : '' }}">
-                    <h4 class="font-bold text-lg {{ $item['active'] ? 'text-primary-yellow' : 'text-dark-navy' }} mb-2">
-                        {{ $item['title'] }}
-                    </h4>
-                    <p class="text-sm {{ $item['active'] ? 'text-primary-yellow font-semibold' : 'text-gray-600' }}">
-                        <i class="fas fa-calendar-alt mr-2"></i>{{ $item['date'] }}
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FBK</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Akuntansi</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                        Fokus pada analisis laporan keuangan, perpajakan, audit korporat, dan sistem informasi akuntansi berbasis automasi data.
                     </p>
-                    @if($item['active'])
-                        <div class="mt-3 inline-flex items-center px-3 py-1 rounded-full bg-primary-yellow text-white text-xs font-semibold">
-                            <i class="fas fa-clock mr-1"></i>Sedang Berlangsung
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span>Fakultas Bisnis & Keuangan</span>
+                    <span class="font-bold text-primary-blue">Beasiswa s/d 100%</span>
+                </div>
+            </div>
+
+            <!-- 3. Pendidikan Matematika -->
+            <div class="prodi-card fbk bg-white rounded-2xl p-6 border border-slate-200/90 hover:border-primary-blue hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-primary-blue flex items-center justify-center group-hover:bg-primary-blue group-hover:text-white transition-colors">
+                            <span class="iconify text-2xl" data-icon="solar:calculator-bold"></span>
                         </div>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FBK</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Pendidikan Matematika</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                        Mencetak pendidik matematika inovatif, analis kuantitatif, dan problem solver berdaya saing internasional.
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span>Fakultas Bisnis & Keuangan</span>
+                    <span class="font-bold text-primary-blue">Beasiswa s/d 100%</span>
+                </div>
+            </div>
+
+            <!-- 4. Sains Komunikasi -->
+            <div class="prodi-card fik bg-white rounded-2xl p-6 border border-slate-200/90 hover:border-primary-blue hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-slate-900 transition-colors">
+                            <span class="iconify text-2xl" data-icon="solar:videocamera-record-bold"></span>
+                        </div>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FIK</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Sains Komunikasi</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                        Kurikulum komprehensif penyiaran media (broadcasting), jurnalisme digital, dan public relations terhubung langsung ke MNC Media.
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span>Fakultas Industri & Kreatif</span>
+                    <span class="font-bold text-primary-blue">Beasiswa s/d 100%</span>
+                </div>
+            </div>
+
+            <!-- 5. Desain Komunikasi Visual -->
+            <div class="prodi-card fik bg-white rounded-2xl p-6 border border-slate-200/90 hover:border-primary-blue hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-slate-900 transition-colors">
+                            <span class="iconify text-2xl" data-icon="solar:palette-round-bold"></span>
+                        </div>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FIK</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Desain Komunikasi Visual</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                        Pengembangan talenta branding, animasi, visual storytelling, UI/UX, dan creative directing dalam ekosistem media nasional.
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span>Fakultas Industri & Kreatif</span>
+                    <span class="font-bold text-primary-blue">Beasiswa s/d 100%</span>
+                </div>
+            </div>
+
+            <!-- 6. Ilmu Komputer -->
+            <div class="prodi-card fik bg-white rounded-2xl p-6 border border-slate-200/90 hover:border-primary-blue hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-slate-900 transition-colors">
+                            <span class="iconify text-2xl" data-icon="solar:code-square-bold"></span>
+                        </div>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FIK</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Ilmu Komputer</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                        Fokus pada rekayasa perangkat lunak (software engineering), kecerdasan buatan (AI), data science, dan komputasi awan.
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span>Fakultas Industri & Kreatif</span>
+                    <span class="font-bold text-primary-blue">Beasiswa s/d 100%</span>
+                </div>
+            </div>
+
+            <!-- 7. Sistem Informasi -->
+            <div class="prodi-card fik bg-white rounded-2xl p-6 border border-slate-200/90 hover:border-primary-blue hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-slate-900 transition-colors">
+                            <span class="iconify text-2xl" data-icon="solar:server-square-bold"></span>
+                        </div>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FIK</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Sistem Informasi</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                        Mengintegrasikan teknologi informasi dengan arsitektur bisnis korporat, analitik data, dan transformasi digital.
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span>Fakultas Industri & Kreatif</span>
+                    <span class="font-bold text-primary-blue">Beasiswa s/d 100%</span>
+                </div>
+            </div>
+
+            <!-- 8. Pendidikan Bahasa Inggris -->
+            <div class="prodi-card fik bg-white rounded-2xl p-6 border border-slate-200/90 hover:border-primary-blue hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-slate-900 transition-colors">
+                            <span class="iconify text-2xl" data-icon="solar:global-bold"></span>
+                        </div>
+                        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FIK</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Pendidikan Bahasa Inggris</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                        Mempersiapkan komunikator dan pendidik bahasa Inggris profesional yang kompeten di tingkat global dan industri komunikasi.
+                    </p>
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span>Fakultas Industri & Kreatif</span>
+                    <span class="font-bold text-primary-blue">Beasiswa s/d 100%</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Exclusive Benefits Section (With Original 'keuntungan.webp' Asset) -->
+<section id="benefit" class="py-20 lg:py-28 bg-white border-t border-slate-100 reveal-init">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="inline-block text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 border border-blue-100 px-3.5 py-1.5 rounded-full mb-3">
+                Benefit Eksklusif
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                Melangkah Lebih Jauh Bersama MNC University
+            </h2>
+            <p class="text-base sm:text-lg text-slate-600 mt-3">
+                Keuntungan eksklusif bagi penerima beasiswa MFLS dalam mengembangkan potensi akademik dan kepemimpinan.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Left: 5 Concrete Benefits (7 Cols) -->
+            <div class="lg:col-span-7 space-y-4">
+                
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary-blue/30 hover:shadow-md transition-all flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-400 text-slate-900 flex items-center justify-center shrink-0 shadow-sm">
+                        <span class="iconify text-2xl" data-icon="solar:wallet-money-bold"></span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-base">Dukungan Biaya Kuliah Hingga 100%</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-1">Mendapat keringanan biaya kuliah hingga potongan penuh (100%) sesuai kategori beasiswa selama masa studi sarjana.</p>
+                    </div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary-blue/30 hover:shadow-md transition-all flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary-blue text-white flex items-center justify-center shrink-0 shadow-sm">
+                        <span class="iconify text-2xl" data-icon="solar:users-group-rounded-bold"></span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-base">Program Kepemimpinan & Mentorship BoD MNC</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-1">Pelatihan leadership, personal branding, serta pembinaan langsung dari para eksekutif dan pimpinan praktisi MNC Group.</p>
+                    </div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary-blue/30 hover:shadow-md transition-all flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-400 text-slate-900 flex items-center justify-center shrink-0 shadow-sm">
+                        <span class="iconify text-2xl" data-icon="solar:buildings-bold"></span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-base">Sit In Class & Company Visit MNC Group</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-1">Belajar langsung di studio penyiaran, kantor redaksi, dan unit bisnis MNC Group untuk mendapatkan wawasan industri nyata.</p>
+                    </div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary-blue/30 hover:shadow-md transition-all flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary-blue text-white flex items-center justify-center shrink-0 shadow-sm">
+                        <span class="iconify text-2xl" data-icon="solar:case-round-minimalistic-bold"></span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-base">Peluang Magang & Fast-Track Rekrutmen</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-1">Mendapatkan pengalaman kerja profesional di divisi MNC Group sesuai prodi dan prioritas seleksi karir lulusan terbaik.</p>
+                    </div>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-primary-blue/30 hover:shadow-md transition-all flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-400 text-slate-900 flex items-center justify-center shrink-0 shadow-sm">
+                        <span class="iconify text-2xl" data-icon="solar:diploma-verified-bold"></span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-base">Networking Nasional & Sertifikat Resmi</h4>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-1">Membangun jejaring kolaborasi bersama siswa-siswi berprestasi se-Indonesia serta sertifikat penghargaan kehormatan resmi.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right: Original 'keuntungan.webp' Graphic Asset (5 Cols) -->
+            <div class="lg:col-span-5">
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-slate-100 bg-white group">
+                    <img src="{{ asset('icon/keuntungan.webp') }}" alt="Keuntungan Beasiswa MNCU" class="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-500">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Scholarship Coverage Section (With Original 'scholarr.webp' Asset) -->
+<section class="py-20 lg:py-28 bg-gradient-to-br from-[#021b44] via-[#022868] to-[#011638] text-white relative overflow-hidden reveal-init">
+    <div class="absolute inset-0 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:24px_24px] opacity-15"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="inline-block text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/20 px-3.5 py-1.5 rounded-full mb-3">
+                Kategori Pembiayaan
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                Cakupan Beasiswa Masa Studi
+            </h2>
+            <p class="text-base sm:text-lg text-slate-300 mt-3">
+                Transparansi skema pembiayaan pendidikan yang disiapkan untuk mendukung kelancaran studi Anda hingga wisuda.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Left: 2 Tiers (7 Cols) -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- Tier 1 -->
+                <div class="p-6 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-md border-2 border-amber-400/60 shadow-2xl relative">
+                    <div class="absolute -top-3.5 right-6 bg-amber-400 text-slate-950 text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md">
+                        Pilihan Utama
+                    </div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-400/20 text-amber-400 flex items-center justify-center shrink-0">
+                            <span class="iconify text-3xl" data-icon="solar:crown-star-bold"></span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-black text-white">Beasiswa Penuh (100%)</h3>
+                            <p class="text-xs sm:text-sm text-slate-300">Bebas Biaya Pendidikan Hingga 8 Semester</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-200 leading-relaxed">
+                        Pembebasan biaya kuliah secara 100% penuh sampai selesai masa studi (8 semester), prioritas pembinaan karir, sit-in class unit bisnis, serta mentorship intensif BoD MNC Group.
+                    </p>
+                </div>
+
+                <!-- Tier 2 -->
+                <div class="p-6 sm:p-8 rounded-3xl bg-white/5 backdrop-blur-md border border-white/15 shadow-xl">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+                            <span class="iconify text-3xl" data-icon="solar:diploma-verified-bold"></span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-black text-white">Beasiswa Parsial (75%)</h3>
+                            <p class="text-xs sm:text-sm text-slate-300">Keringanan Biaya Pendidikan Signifikan</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-200 leading-relaxed">
+                        Pemotongan biaya pendidikan sebesar 75% sampai 8 semester dengan akses fasilitas akademik dan kesempatan mengikuti seluruh program kepemimpinan yang sama.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Right: Original 'scholarr.webp' Graphic (5 Cols) -->
+            <div class="lg:col-span-5 text-center">
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 bg-white/5 p-4 group">
+                    <img src="{{ asset('icon/scholarr.webp') }}" alt="Scholar Portrait MNC University" class="w-full h-auto object-contain max-h-96 mx-auto group-hover:scale-105 transition-transform duration-500">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Timeline Section: Selection Journey Pipeline -->
+<section id="timeline" class="py-20 lg:py-28 bg-white border-t border-slate-100 reveal-init">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="inline-block text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 border border-blue-100 px-3.5 py-1.5 rounded-full mb-3">
+                Jadwal & Tahapan Seleksi
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Tahapan Seleksi MFLS Ajaran 2027
+            </h2>
+            <p class="text-base sm:text-lg text-slate-600 mt-3">
+                Ikuti seluruh rangkaian tahapan seleksi secara bertahap dan transparan hingga penetapan awardee resmi.
+            </p>
+        </div>
+
+        @php
+            $timelineSteps = $pengaturan->getTimelineOrDefault();
+        @endphp
+
+        <!-- Steps Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @foreach($timelineSteps as $item)
+            <div class="relative rounded-2xl p-6 border transition-all duration-300 {{ !empty($item['active']) ? 'bg-blue-50/60 border-primary-blue shadow-lg ring-1 ring-primary-blue' : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-md' }}">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs font-black px-2.5 py-1 rounded-md {{ !empty($item['active']) ? 'bg-primary-blue text-white' : 'bg-slate-100 text-slate-700' }}">
+                        TAHAP {{ $item['step'] }}
+                    </span>
+                    @if(!empty($item['active']))
+                        <span class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                            Aktif
+                        </span>
+                    @else
+                        <span class="text-xs text-slate-600 font-medium">{{ $item['status'] }}</span>
                     @endif
                 </div>
+
+                <h3 class="text-lg font-bold text-slate-900 mb-2 leading-snug">
+                    {{ $item['title'] }}
+                </h3>
+
+                <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-blue mb-3">
+                    <span class="iconify" data-icon="solar:calendar-bold"></span>
+                    <span>{{ $item['date'] }}</span>
+                </div>
+
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    {{ $item['desc'] }}
+                </p>
             </div>
             @endforeach
         </div>
-    </div>
-</div>
 
-<!-- Exclusive MNC Group Benefits -->
-<div class="py-24 bg-white overflow-hidden">
+    </div>
+</section>
+
+<!-- Requirements & Document Download Section -->
+<section id="requirements" class="py-20 lg:py-28 bg-slate-50 border-t border-slate-200/80 reveal-init">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16 scroll-fade">
-            <h3 class="section-label text-primary-yellow font-caveat font-semibold mb-4">Benefit Eksklusif</h3>
-            <h2 class="section-title font-black text-dark-navy mb-6 leading-tight">Melangkah Lebih Jauh Bersama MNC University</h2>
-        </div>
         
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <!-- Left: 5 Benefits -->
-            <div class="space-y-6 order-2 lg:order-1">
-                <!-- Benefit 1 -->
-                <div class="bg-gray-50 p-6 rounded-2xl hover:shadow-lg transition-shadow">
-                    <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 bg-primary-yellow rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold text-dark-navy mb-2">Dukungan Biaya Kuliah Hingga 100%</h4>
-                            <p class="text-gray-600 text-sm">Mendapat keringanan biaya kuliah hingga potongan penuh sesuai kategori beasiswa.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Benefit 2 -->
-                <div class="bg-gray-50 p-6 rounded-2xl hover:shadow-lg transition-shadow">
-                    <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 bg-dark-navy rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-7 h-7 text-primary-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold text-dark-navy mb-2">Program Pengembangan Kepemimpinan & Mentorship</h4>
-                            <p class="text-gray-600 text-sm">Pelatihan leadership, personal branding, dan bimbingan langsung dari praktisi MNC Group.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Benefit 3 -->
-                <div class="bg-gray-50 p-6 rounded-2xl hover:shadow-lg transition-shadow">
-                    <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 bg-primary-yellow rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold text-dark-navy mb-2">Site In Class & Company Visit MNC Group</h4>
-                            <p class="text-gray-600 text-sm">Belajar langsung di lingkungan industri serta unit bisnis MNC Group untuk mendapatkan pengalaman nyata.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Benefit 4 -->
-                <div class="bg-gray-50 p-6 rounded-2xl hover:shadow-lg transition-shadow">
-                    <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 bg-dark-navy rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-7 h-7 text-primary-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold text-dark-navy mb-2">Kesempatan Magang di MNC Group</h4>
-                            <p class="text-gray-600 text-sm">Dapat pengalaman kerja profesional di berbagai divisi sesuai bidang studi dan minat karier.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Benefit 5 -->
-                <div class="bg-gray-50 p-6 rounded-2xl hover:shadow-lg transition-shadow">
-                    <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 bg-primary-yellow rounded-xl flex items-center justify-center shrink-0">
-                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold text-dark-navy mb-2">Networking & Sertifikat Participation</h4>
-                            <p class="text-gray-600 text-sm">Bertemu dengan siswa/siswi berprestasi, saling belajar dan tumbuh bersama calon pemimpin serta mendapatkan sertifikat resmi dari MNC University.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="inline-block text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 border border-blue-100 px-3.5 py-1.5 rounded-full mb-3">
+                Syarat & Ketentuan
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Persyaratan Calon Pendaftar & Berkas
+            </h2>
+            <p class="text-base sm:text-lg text-slate-600 mt-3">
+                Pastikan Anda memenuhi kriteria umum serta mengunduh format template berkas resmi di bawah ini.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             
-            <!-- Right: Image -->
-            <div class="relative order-1 lg:order-2">
-                <img loading="lazy" src="{{ asset('icon/keuntungan.webp') }}" alt="Benefit Keuntungan" class="  ">
-            </div>
-        </div>
-    </div>
-</div>
+            <!-- Left: Eligibility Criteria (5 Cols) -->
+            <div class="lg:col-span-5 space-y-4">
+                <h3 class="text-xl font-bold text-slate-900 border-b pb-3">
+                    Kriteria Kelayakan Umum
+                </h3>
 
-<!-- Syarat dan Ketentuan Section -->
-<div id="requirements" class="py-24 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16 fade-in">
-            <h3 class="section-label text-primary-yellow font-caveat font-semibold mb-2">Persyaratan</h3>
-            <h2 class="section-title font-black text-dark-navy">Syarat dan Ketentuan</h2>
-            <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Pastikan Anda memenuhi semua persyaratan berikut sebelum mendaftar</p>
-        </div>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-            <!-- Left: Requirements List -->
-            <div class="scroll-fade-left">
-                <h3 class="text-2xl font-bold text-dark-navy mb-8">Persyaratan Umum</h3>
-                
-                <div class="space-y-6">
-                    @foreach([
-                        ['icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', 'title' => 'Siswa Kelas 12 & Gap Year', 'desc' => 'Siswa/i kelas 12 SMA/SMK/MA sederajat tahun ajaran 2025/2026, atau lulusan tahun ajaran 2021/2022/2023/2024/2025'],
-                        ['icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', 'title' => 'Memiliki Semangat Dan Kemauan Belajar', 'desc' => 'Menunjukkan Semangat Belajar Tinggi Serta Motivasi Untuk Terus Berkembang dan Berkontribusi'],
-                        ['icon' => 'M13 10V3L4 14h7v7l9-11h-7z', 'title' => 'Komitmen', 'desc' => 'Bersedia mengikuti seluruh rangkaian seleksi dan program pembinaan'],
-                        ['icon' => 'M13 10V3L4 14h7v7l9-11h-7z', 'title' => 'Memiliki Jiwa Kepemimpinan Dan Motivasi Tinggi', 'desc' => 'Aktif Di Kegiatan Sekolah, Komunitas, Atau Organisasi Yang Mencerminkan Semangat Kepemimpinan'],
-                        ['icon' => 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', 'title' => 'Karakter', 'desc' => 'Memiliki jiwa kepemimpinan, aktif berorganisasi, dan berkarakter baik']
-                    ] as $requirement)
-                    <div class="flex gap-4 items-start p-6 bg-gray-50 rounded-2xl hover:bg-primary-yellow/5 hover:border-primary-yellow border border-transparent transition-all duration-300">
-                        <div class="w-12 h-12 bg-primary-yellow rounded-full flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $requirement['icon'] }}"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-dark-navy text-lg mb-2">{{ $requirement['title'] }}</h4>
-                            <p class="text-gray-600 text-sm leading-relaxed">{{ $requirement['desc'] }}</p>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            
-            <!-- Right: Documents Required -->
-            <div class="scroll-fade-right">
-                <h3 class="text-2xl font-bold text-dark-navy mb-8">Dokumen yang Diperlukan</h3>
-                
-                <div class="bg-gradient-to-br from-primary-yellow/10 to-primary-yellow/5 rounded-3xl p-8 border border-primary-yellow/20">
-                    <div class="space-y-6">
-                        @foreach([
-                            ['icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'title' => 'Rapor Semester 1-5', 'format' => 'PDF (Max 5MB)'],
-                            ['icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', 'title' => 'Pas Foto Terbaru', 'format' => 'JPG/PNG (3x4 cm)'],
-                            ['icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4', 'title' => 'Sertifikat Prestasi', 'format' => 'PDF (Jika ada)'],
-                            ['icon' => 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z', 'title' => 'Personal Statement', 'format' => 'PDF (Max 500 kata)'],
-                            ['icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4', 'title' => 'Surat Rekomendasi Sekolah', 'format' => 'PDF (Khusus Siswa Aktif)', 'note' => 'Tidak diperlukan untuk alumni'],
-                            ['icon' => 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', 'title' => 'Study Plan', 'format' => 'PDF (Rencana Studi)']
-                        ] as $document)
-                        <div class="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-all duration-300 {{ isset($document['note']) ? 'border-l-4 border-l-orange-400' : '' }}">
-                            <div class="w-10 h-10 bg-primary-yellow/20 rounded-lg flex items-center justify-center shrink-0">
-                                <svg class="w-5 h-5 text-primary-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $document['icon'] }}"/></svg>
-                            </div>
-                            <div class="flex-1">
-                                <h5 class="font-semibold text-dark-navy">{{ $document['title'] }}</h5>
-                                <p class="text-xs text-gray-500">{{ $document['format'] }}</p>
-                                @if(isset($document['note']))
-                                    <p class="text-xs text-orange-600 font-medium mt-1">{{ $document['note'] }}</p>
-                                @endif
-                            </div>
-                            <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                    
-                    <!-- Important Note -->
-                    <div class="mt-8 p-6 bg-white rounded-2xl border-l-4 border-primary-yellow">
-                        <div class="flex gap-3">
-                            <svg class="w-6 h-6 text-primary-yellow shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
-                            <div>
-                                <h5 class="font-bold text-dark-navy mb-2">Penting!</h5>
-                                <p class="text-sm text-gray-600 leading-relaxed">
-                                    Pastikan semua dokumen dalam format yang benar dan dapat dibaca dengan jelas. 
-                                    Dokumen yang tidak sesuai ketentuan akan menyebabkan pendaftaran ditolak.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- CTA Button -->
-        <div class="text-center mt-16 fade-in">
-            @if($buka)
-                <a href="{{ route('register') }}" class="inline-flex items-center gap-3 bg-orange-500 text-white px-10 py-4 rounded-full text-lg font-bold shadow-lg hover:bg-orange-600 transition-all duration-300">
-                    <i class="fas fa-user-plus me-2"></i>
-                    Daftar Sekarang
-                </a>
-            @else
-                <a href="#" class="inline-flex items-center gap-3 bg-gray-400 text-white px-10 py-4 rounded-full text-lg font-bold shadow-lg cursor-not-allowed transition-all duration-300">
-                    <i class="fas fa-lock me-2"></i>
-                    Pendaftaran Ditutup
-                </a>
-            @endif
-            <p class="text-sm text-gray-500 mt-4">Gratis dan tanpa biaya apapun</p>
-        </div>
-    </div>
-</div>
-
-<!-- Benefits Section (Dark Box) -->
-<div id="program" class="py-24 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-dark-navy rounded-[3rem] p-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center scroll-fade">
-            <!-- Left: Benefits List -->
-            <div class="space-y-8">
-                <h2 class="section-title font-black text-white mb-8">Cakupan Beasiswa</h2>
-                
-                @foreach([
-                    ['icon' => 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', 'title' => 'Beasiswa Penuh', 'desc' => 'Pemotongan biaya pendidikan 100% sampai 8 Semester'],
-                    ['icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4', 'title' => 'Beasiswa Parsial', 'desc' => 'Pemotongan Biaya Pendidikan Mulai Dari 50% Hingga 75% sampai 8 semester'],
-                    ['icon' => 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', 'title' => 'Peluang Karir', 'desc' => 'Prioritas rekrutmen bagi lulusan terbaik di lingkungan MNC Group'],
-                    ['icon' => 'M13 10V3L4 14h7v7l9-11h-7z', 'title' => 'Pengembangan Diri', 'desc' => 'Program pembinaan karakter dan skill kepemimpinan'],
-                    ['icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', 'title' => 'Networking Luas', 'desc' => 'Terhubung dengan profesional dan pemimpin industri'],
-                ] as $benefit)
-                <div class="flex gap-4 items-start">
-                    <div class="w-12 h-12 bg-primary-yellow rounded-full flex items-center justify-center shrink-0">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $benefit['icon'] }}"/></svg>
+                <div class="p-4 rounded-xl bg-white border border-slate-200 flex items-start gap-3.5 shadow-sm">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 text-primary-blue flex items-center justify-center shrink-0 mt-0.5">
+                        <span class="iconify text-base" data-icon="solar:user-bold"></span>
                     </div>
                     <div>
-                        <h4 class="font-bold text-white text-lg mb-1">{{ $benefit['title'] }}</h4>
-                        <p class="text-gray-300 text-sm">{{ $benefit['desc'] }}</p>
+                        <h4 class="font-bold text-slate-900 text-sm">Siswa Kelas 12 & Gap Year</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Siswa/i kelas 12 SMA/SMK/MA sederajat tahun ajaran 2026/2027, atau lulusan tahun ajaran 2022/2023/2024/2025/2026/2027.</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-white border border-slate-200 flex items-start gap-3.5 shadow-sm">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 text-primary-blue flex items-center justify-center shrink-0 mt-0.5">
+                        <span class="iconify text-base" data-icon="solar:chart-2-bold"></span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm">Prestasi Akademik / Non-Akademik</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Memiliki nilai rapor yang konsisten baik atau memiliki sertifikat penghargaan perlombaan / kegiatan organisasi.</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-white border border-slate-200 flex items-start gap-3.5 shadow-sm">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 text-primary-blue flex items-center justify-center shrink-0 mt-0.5">
+                        <span class="iconify text-base" data-icon="solar:cup-first-bold"></span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm">Jiwa Kepemimpinan & Karakter</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Aktif dalam organisasi sekolah / komunitas pemuda, bersemangat belajar tinggi, dan berkarakter baik.</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-white border border-slate-200 flex items-start gap-3.5 shadow-sm">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 text-primary-blue flex items-center justify-center shrink-0 mt-0.5">
+                        <span class="iconify text-base" data-icon="solar:check-read-bold"></span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm">Komitmen Mengikuti Seleksi</h4>
+                        <p class="text-xs text-slate-600 mt-0.5">Bersedia mengikuti seluruh tahapan seleksi (mini project, tes CBT, dan wawancara) secara sungguh-sungguh.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Document Checklist + Direct Download Templates (7 Cols) -->
+            <div class="lg:col-span-7 space-y-6">
+                <h3 class="text-xl font-bold text-slate-900 border-b pb-3 flex items-center justify-between">
+                    <span>Dokumen yang Wajib Disiapkan</span>
+                    <span class="text-xs font-normal text-slate-500">Format PDF / Gambar</span>
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    
+                    <!-- Doc 1: Rapor -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                            <span class="iconify text-lg" data-icon="solar:document-text-bold"></span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-sm">Rapor Semester 1 - 5</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Format PDF (Maks. 5 MB)</p>
+                        </div>
+                    </div>
+
+                    <!-- Doc 2: Pas Foto -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                            <span class="iconify text-lg" data-icon="solar:camera-bold"></span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-sm">Pas Foto Terbaru</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Format JPG / PNG (Ukuran 3x4 cm)</p>
+                        </div>
+                    </div>
+
+                    <!-- Doc 3: Sertifikat Prestasi -->
+                    <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm flex items-start gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+                            <span class="iconify text-lg" data-icon="solar:medal-ribbon-bold"></span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-sm">Sertifikat Prestasi</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Opsional / Pendukung (Format PDF)</p>
+                        </div>
+                    </div>
+
+                    <!-- Doc 4: Personal Statement with Download -->
+                    <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/50 shadow-sm flex flex-col justify-between">
+                        <div class="flex items-start gap-3 mb-2">
+                            <div class="w-9 h-9 rounded-lg bg-blue-100 text-primary-blue flex items-center justify-center shrink-0">
+                                <span class="iconify text-lg" data-icon="solar:pen-new-square-bold"></span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">Personal Statement</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Esai motivasi (Maks. 500 kata)</p>
+                            </div>
+                        </div>
+                        <a href="{{ asset('icon/Personal Statement MFLS 2026.pdf') }}" download class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:underline mt-1">
+                            <span class="iconify" data-icon="solar:download-square-bold"></span>
+                            <span>Unduh Template Esai PDF</span>
+                        </a>
+                    </div>
+
+                    <!-- Doc 5: Study Plan with Download -->
+                    <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/50 shadow-sm flex flex-col justify-between">
+                        <div class="flex items-start gap-3 mb-2">
+                            <div class="w-9 h-9 rounded-lg bg-blue-100 text-primary-blue flex items-center justify-center shrink-0">
+                                <span class="iconify text-lg" data-icon="solar:book-2-bold"></span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">Study Plan</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Rencana studi dan aspirasi karir</p>
+                            </div>
+                        </div>
+                        <a href="{{ asset('icon/Study Plan MFLS 2026_2.pdf') }}" download class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:underline mt-1">
+                            <span class="iconify" data-icon="solar:download-square-bold"></span>
+                            <span>Unduh Template Study Plan PDF</span>
+                        </a>
+                    </div>
+
+                    <!-- Doc 6: Surat Rekomendasi with Download -->
+                    <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/50 shadow-sm flex flex-col justify-between">
+                        <div class="flex items-start gap-3 mb-2">
+                            <div class="w-9 h-9 rounded-lg bg-blue-100 text-primary-blue flex items-center justify-center shrink-0">
+                                <span class="iconify text-lg" data-icon="solar:diploma-bold"></span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">Surat Rekomendasi Sekolah</h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Khusus siswa aktif (Alumni tidak wajib)</p>
+                            </div>
+                        </div>
+                        <a href="{{ asset('icon/Surat Rekomendasi MFLS_2.pdf') }}" download class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:underline mt-1">
+                            <span class="iconify" data-icon="solar:download-square-bold"></span>
+                            <span>Unduh Template Rekomendasi PDF</span>
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Registration Fast CTA -->
+                <div class="p-5 rounded-2xl bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+                    <div>
+                        <div class="font-bold text-base">Sudah Menyiapkan Berkas Anda?</div>
+                        <div class="text-xs text-slate-300">Pendaftaran akun gratis tanpa dipungut biaya apapun.</div>
+                    </div>
+                    @if($buka)
+                        <a href="{{ route('register') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-slate-900 bg-amber-400 hover:bg-amber-300 transition-colors shrink-0">
+                            <span>Daftar Sekarang</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                    @else
+                        <span class="text-xs text-slate-400 font-medium">Pendaftaran sedang ditutup</span>
+                    @endif
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Testimonials Section: "Apa Kata Mereka?" 18-Awardee Interactive Slider -->
+<section class="py-20 lg:py-28 bg-white border-t border-slate-100 reveal-init overflow-hidden">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-14">
+            <span class="inline-block text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 border border-blue-100 px-3.5 py-1.5 rounded-full mb-3">
+                Kisah & Kesan Awardee
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Apa Kata Penerima Beasiswa MFLS?
+            </h2>
+            <p class="text-base sm:text-lg text-slate-600 mt-3">
+                Kisah nyata 18 mahasiswa berprestasi yang berhasil meraih beasiswa 100% dan bertumbuh bersama MNC University.
+            </p>
+        </div>
+
+        @php
+            $testimonials = [
+                ['name' => 'Irfan Syahfutra', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Sistem Informasi', 'photo' => 'Irfan.webp', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman yang luar biasa. Selama kegiatan ini, kami belajar banyak hal baru yang melatih mental, tanggung jawab, dan kepemimpinan. Momen ini menjadi pijakan berharga untuk terus berkembang.'],
+                ['name' => 'Satria Pambudi Attur Rohman', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Desain Komunikasi Visual', 'photo' => 'Satria.webp', 'quote' => 'Terimakasih banyak untuk MNCU Future Leader Scholarship buat kesempatan, ilmu, dan pengalaman baru yang bener bener luar biasa. Di sini, aku nggak cuma sekedar belajar teori, tapi juga dilatih buat jadi pribadi yang punya jiwa leadership atau kepemimpinan yang kuat.'],
+                ['name' => 'Cellindia Vanesa Heriyandu', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Pendidikan Bahasa Inggris', 'photo' => 'cellin.webp', 'quote' => 'Melalui rangkaian kegiatan MFLS, saya belajar nilai kepemimpinan, kerja sama, dan keberanian untuk terus berkembang. Dipertemukan dengan teman, kakak pembimbing, serta dosen-dosen inspiratif menjadi pengalaman berharga yang membentuk cara berpikir saya.'],
+                ['name' => 'Sandy Arif Saputra', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Ilmu Komputer', 'photo' => 'Sandy.webp', 'quote' => 'Mengikuti MNCU Future Leader Scholarship jadi salah satu pengalaman paling berkesan buat aku. Bertemu teman-teman hebat, para mentor yang inspiring, serta dosen-dosen dengan kualitas yang really next level adalah hal yang nggak akan aku lupain. Failure is part of the journey, and trying is always the first win.'],
+                ['name' => 'Silvi Melani Putri', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Pendidikan Matematika', 'photo' => 'Silvi.webp', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas ilmu, pengalaman, dan kesempatan yang sangat berharga. Program ini memberikan berbagai wawasan dan pengalaman baru yang sangat menginspirasi serta menjadi bekal berharga bagi kami untuk pengembangan diri di masa depan.'],
+                ['name' => 'Kirania Rizma Az-Zahra', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Akuntansi', 'photo' => 'Kirania.webp', 'quote' => 'Long story short I survived! Terima kasih MNCU Future Leader Scholarship atas beasiswa 100%. Dalam program ini, bukan hanya memberi aku beasiswa, namun juga memberi ruang untuk tumbuh, belajar, dan bermimpi lebih jauh.'],
+                ['name' => 'Innez Putria Abidin', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Manajemen', 'photo' => 'Innez.webp', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman dan pembelajaran yang luar biasa. Selama mengikuti program ini, saya banyak belajar hal baru dan menginspirasi terutama tentang leadership, kerja sama, dan pengembangan diri yang akan berguna di masa depan.'],
+                ['name' => 'Rizki', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Sistem Informasi', 'photo' => 'Rizki.webp', 'quote' => 'Terima kasih kepada MNC University yang telah memberikan harapan bagi generasi muda Indonesia melalui Beasiswa 100% MNCU Future Leader Scholarship. Kesempatan ini menjadi jembatan untuk anak desa bisa menggapai masa depan yang lebih baik.'],
+                ['name' => 'Andini Raissa', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Manajemen', 'photo' => 'Andini.webp', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas kesempatan luar biasa yang membuka ruang tumbuh, membentuk karakter, dan menguatkan jiwa kepemimpinan kami, setiap prosesnya menjadi pijakan untuk melangkah lebih berani, berpikir lebih visioner, dan berdampak lebih nyata.'],
+                ['name' => 'Alfiah Wirda Lukmansyah', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Akuntansi', 'photo' => 'Alfiah.webp', 'quote' => 'MFLS bukan hanya memberikan beasiswa, tapi juga keluarga baru dan pengalaman yang luar biasa. Terima kasih atas kesempatan ini!'],
+                ['name' => 'Dzakiyah Febriyanti', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Ilmu Komputer', 'photo' => 'Dzakiyah.webp', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman luar biasa ini. Sit in class yang saya ikuti menjadi ruang belajar yang sangat berharga, di sana saya dilatih untuk mengasah leadership, memperluas wawasan, dan mendapatkan banyak inspirasi baru.'],
+                ['name' => 'Gavino Pasha Putra', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Ilmu Komputer', 'photo' => 'Gavino.webp', 'quote' => 'Terima kasih atas MNCU Future Leader Scholarship atas program beasiswa yang sudah diselenggarakan. Bagi saya ini bukanlah akhir, tetapi ini adalah awal untuk kita mencapai level yang lebih tinggi lagi kedepannya.'],
+                ['name' => 'Rahmalia Putri', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Desain Komunikasi Visual', 'photo' => 'raput.webp', 'quote' => 'Saya sangat berterimakasih sebesar-besarnya kepada MNC University karena telah memberikan kesempatan dan tanggung jawab sebagai penerima beasiswa 100%. Dengan beasiswa ini merupakan langkah awal bagi kami yang mau berjuang dan berusaha.'],
+                ['name' => 'Muhamad Rifatur Seva Kuswara', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Sistem Informasi', 'photo' => 'Rifatur.webp', 'quote' => 'Saya sangat berterimakasih banyak kepada MNCU Future Leader Scholarship. Dari sini saya belajar banyak sekali, bertemu teman-teman yang hebat, kaka yang keren, dosen-dosen yang sangat luar biasa dan sebuah pengalaman yang sangat berharga.'],
+                ['name' => 'Rini Manda', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Sains Komunikasi', 'photo' => 'rini.webp', 'quote' => 'Mengikuti program MNCU Future Leader Scholarship merupakan pengalaman yang sangat berharga bagi saya. Program ini tidak hanya memberikan bantuan pendidikan, tetapi juga membentuk karakter, rasa percaya diri, serta semangat untuk terus berkembang dan berprestasi.'],
+                ['name' => 'Risky Zuliansyah', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Sains Komunikasi', 'photo' => 'Risky.webp', 'quote' => 'Saya menghaturkan apresiasi dan terima kasih yang setulus-tulusnya kepada MNC University. Program ini menjadikan impian saya melangkah ke jenjang pendidikan tinggi di bawah naungan ekosistem media terbesar di Asia menjadi kenyataan.'],
+                ['name' => 'Ibrahimovic', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Sains Komunikasi', 'photo' => 'Baim.webp', 'quote' => 'Terimakasih atas kesempatan yang telah diberikan kepada saya. Pada program ini saya mendapatkan banyak pelajaran dan kegiatan yang menarik seperti mentoring bimbingan kepemimpinan dan praktek langsung yang membuka wawasan baru.'],
+                ['name' => 'Gracia Lamtiar Yosefine Sagala', 'batch' => 'Awardee MFLS 2025', 'major' => 'S1 Akuntansi', 'photo' => 'grace.webp', 'quote' => 'Terima kasih yang sebesar-besarnya kepada MNC University atas kesempatan dan kepercayaan yang diberikan. Beasiswa ini menjadi sumber motivasi untuk terus belajar, berkembang, dan mempersiapkan diri sebagai calon pemimpin masa depan.']
+            ];
+        @endphp
+
+        <!-- Slider Wrapper with Hover Pause -->
+        <div id="testimonial-slider-container" class="relative group/slider">
+            
+            <!-- Cards Slides Track -->
+            <div class="relative min-h-[380px] sm:min-h-[330px] md:min-h-[290px] flex items-center justify-center">
+                @foreach($testimonials as $index => $t)
+                <div class="testimonial-slide w-full {{ $index === 0 ? 'active opacity-100 relative' : 'opacity-0 absolute inset-0 pointer-events-none' }} transition-all duration-500 ease-out" data-index="{{ $index }}">
+                    <div class="bg-gradient-to-br from-slate-50 via-white to-blue-50/40 rounded-3xl p-8 sm:p-12 border border-slate-200/90 shadow-xl shadow-slate-900/5 relative">
+                        
+                        <!-- Top Header: Quote Icon & Counter Badge -->
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="text-amber-500">
+                                <span class="iconify text-4xl sm:text-5xl" data-icon="solar:quote-up-square-bold"></span>
+                            </div>
+                            <span class="text-xs font-mono font-bold text-slate-500 bg-white px-3.5 py-1 rounded-full border border-slate-200 shadow-sm">
+                                {{ $index + 1 }} / {{ count($testimonials) }}
+                            </span>
+                        </div>
+
+                        <!-- Quote Text -->
+                        <blockquote class="text-slate-800 text-base sm:text-lg md:text-xl font-normal leading-relaxed italic mb-8">
+                            "{{ $t['quote'] }}"
+                        </blockquote>
+
+                        <!-- Author Profile -->
+                        <div class="flex items-center gap-4 pt-6 border-t border-slate-200/80">
+                            <img src="{{ asset('icon/' . $t['photo']) }}" alt="{{ $t['name'] }}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-primary-blue/30 shadow-md">
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-base sm:text-lg">{{ $t['name'] }}</h4>
+                                <div class="text-xs sm:text-sm text-slate-600 font-medium">{{ $t['major'] }}</div>
+                                <div class="text-xs font-semibold text-primary-blue mt-0.5">{{ $t['batch'] }}</div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 @endforeach
             </div>
-            
-            <!-- Right: Portrait Photo -->
-            <div>
-<img loading="lazy" src="{{ asset('icon/scholarr.webp') }}" alt="Scholar Portrait" class="w-full">            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Berita & Pengumuman Section -->
-@if($beritas->count() > 0)
-<div id="berita" class="py-24 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16 fade-in">
-            <h3 class="section-label text-primary-yellow font-caveat font-semibold mb-2">Berita &amp; Informasi</h3>
-            <h2 class="section-title font-black text-dark-navy">Kabar Terbaru MNCU Future Leader Scholarship</h2>
+            <!-- Navigation Controls: Prev & Next Buttons -->
+            <button type="button" onclick="prevSlide()" class="absolute -left-3 sm:-left-6 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white border border-slate-200 shadow-lg text-slate-700 hover:text-primary-blue hover:scale-110 active:scale-95 transition-all flex items-center justify-center z-20" aria-label="Slide sebelumnya">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button type="button" onclick="nextSlide()" class="absolute -right-3 sm:-right-6 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white border border-slate-200 shadow-lg text-slate-700 hover:text-primary-blue hover:scale-110 active:scale-95 transition-all flex items-center justify-center z-20" aria-label="Slide berikutnya">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </button>
+
+            <!-- Pagination Dots (Interactive) -->
+            <div class="flex items-center justify-center flex-wrap gap-2 mt-8" id="testimonial-dots-container">
+                @foreach($testimonials as $index => $t)
+                <button type="button" onclick="goToSlide({{ $index }})" class="testimonial-dot h-2.5 rounded-full transition-all duration-300 {{ $index === 0 ? 'w-8 bg-amber-400' : 'w-2.5 bg-slate-300 hover:bg-slate-400' }}" aria-label="Lihat testimoni {{ $t['name'] }}"></button>
+                @endforeach
+            </div>
+
+            <!-- Pause on Hover Indicator Notice -->
+            <div class="text-center text-[11px] text-slate-500 font-medium mt-3 flex items-center justify-center gap-1.5">
+                <span class="iconify" data-icon="solar:cursor-bold"></span>
+                <span>Arahkan kursor (hover) untuk menjeda otomatis slideshow</span>
+            </div>
+
         </div>
+
+    </div>
+</section>
+
+<!-- Berita & Informasi Terkini (jika ada berita terbit) -->
+@if($beritas->count() > 0)
+<section id="berita" class="py-20 lg:py-28 bg-slate-50 border-t border-slate-200/80 reveal-init">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+            <div>
+                <span class="inline-block text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 border border-blue-100 px-3.5 py-1.5 rounded-full mb-3">
+                    Berita & Informasi
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    Kabar Terbaru Seputar MFLS
+                </h2>
+            </div>
+            <a href="{{ route('pengumuman') }}" class="inline-flex items-center gap-1.5 text-sm font-bold text-primary-blue hover:text-blue-800 transition-colors">
+                <span>Lihat Semua Informasi</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($beritas as $berita)
-            <div class="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 scroll-fade">
-                @if($berita->thumbnail)
-                <img loading="lazy" src="{{ asset('storage/' . $berita->thumbnail) }}" alt="{{ $berita->judul }}" class="w-full h-48 object-cover">
-                @else
-                <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-                    <span class="iconify text-4xl text-gray-400" data-icon="solar:gallery-bold-duotone"></span>
+            <article class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                    @if($berita->thumbnail)
+                        <div class="h-48 overflow-hidden bg-slate-100">
+                            <img src="{{ asset('storage/' . $berita->thumbnail) }}" alt="{{ $berita->judul }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                    @else
+                        <div class="w-full h-48 bg-slate-100 flex items-center justify-center text-slate-400">
+                            <span class="iconify text-4xl" data-icon="solar:gallery-bold-duotone"></span>
+                        </div>
+                    @endif
+
+                    <div class="p-6">
+                        <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-500 mb-2">
+                            <span class="iconify text-primary-blue" data-icon="solar:calendar-bold"></span>
+                            <span>{{ $berita->created_at->format('d M Y') }}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 group-hover:text-primary-blue transition-colors line-clamp-2 mb-2">
+                            <a href="{{ route('berita.show', $berita->slug) }}">{{ $berita->judul }}</a>
+                        </h3>
+                        <p class="text-sm text-slate-600 line-clamp-3">
+                            {{ strip_tags($berita->konten) }}
+                        </p>
+                    </div>
                 </div>
-                @endif
-                <div class="p-6">
-                    <div class="flex items-center gap-2 text-sm text-primary-yellow font-semibold mb-3">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <span>{{ $berita->created_at->format('d M Y') }}</span>
-                    </div>
-                    <h4 class="text-xl font-bold text-dark-navy mb-3 line-clamp-2">{{ $berita->judul }}</h4>
-                    <div class="text-gray-600 text-sm line-clamp-3 mb-4">
-                        {!! strip_tags($berita->konten) !!}
-                    </div>
-                    <a href="{{ route('berita.show', $berita->slug) }}" class="inline-flex items-center gap-2 text-primary-yellow font-bold hover:gap-3 transition-all">
-                        Baca Selengkapnya
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+
+                <div class="px-6 pb-6 pt-0">
+                    <a href="{{ route('berita.show', $berita->slug) }}" class="inline-flex items-center gap-1.5 text-sm font-bold text-primary-blue group-hover:text-blue-800">
+                        <span>Baca Selengkapnya</span>
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
                 </div>
-            </div>
+            </article>
             @endforeach
         </div>
+
     </div>
-</div>
+</section>
 @endif
 
-<!-- Testimonials Section - "Apa Kata Mereka" -->
-<div class="py-24 bg-gradient-to-br from-primary-yellow/5 to-white relative overflow-hidden">
-    <div class="absolute top-0 right-0 w-96 h-96 bg-primary-yellow/10 rounded-full blur-3xl"></div>
-    
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="text-center mb-16 fade-in">
-            <h3 class="section-label text-primary-yellow font-caveat font-semibold mb-2">Testimonial</h3>
-            <h2 class="section-title font-black text-dark-navy">Apa Kata Mereka?</h2>
-        </div>
+<!-- Strategic Partners & Youth Alliances -->
+<section class="py-16 bg-white border-t border-slate-100 reveal-init">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         
-        <!-- Testimonials Slideshow -->
-        <div class="relative max-w-5xl mx-auto">
+        <span class="inline-block text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-50 border border-slate-200 px-3.5 py-1.5 rounded-full mb-3">
+            Jaringan Kolaborasi Nasional
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+            Mitra Organisasi & Komunitas Kepemudaan
+        </h2>
+        <p class="text-sm text-slate-600 max-w-xl mx-auto mb-10">
+            Bersama mendukung sosialisasi beasiswa dan pengembangan kepemimpinan pelajar di seluruh Indonesia.
+        </p>
+
+        <!-- Partner Logos Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6 items-center">
             @php
-                $testimonials = [
-                    ['name' => 'Irfan Syahfutra', 'batch' => 'MFLS 2025', 'major' => 'Sistem informasi', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman yang luar biasa.Selama kegiatan ini, kami belajar banyak hal baru yang melatih mental, tanggung jawab, dan kepemimpinan. Pengalaman ini menjadi momen berharga dan sangat menginspirasi kami untuk terus berkembang.', 'photo' => 'Irfan.webp'],
-                    ['name' => 'Satria Pambudi Attur Rohman', 'batch' => 'MFLS 2025', 'major' => 'Desain Komunikasi Visual', 'quote' => 'Terimakasih banyak untuk MNCU Future Leader Scholarship buat kesempatan, ilmu, dan pengalaman baru yang bener bener luar biasa. Di sini, aku nggak cuma sekedar belajar teori, tapi juga dilatih buat jadi pribadi yang punya jiwa leadership atau kepemimpinan yang kuat. Banyak hal baru yang aku dapet dan pastinya sangat menginspirasi untuk lebih semangat ke depannya.', 'photo' => 'Satria.webp'],
-                    ['name' => 'Cellindia Vanesa Heriyandu', 'batch' => 'MFLS 2025', 'major' => 'Pendidikan Bahasa Inggris', 'quote' => 'Terima kasih kepada MNCU Future Leader Scholarship atas program yang luar biasa ini. Melalui rangkaian kegiatan, saya belajar nilai kepemimpinan, kerja sama, dan keberanian untuk terus berkembang. Dipertemukan dengan teman, kakak pembimbing, serta dosen-dosen inspiratif menjadi pengalaman berharga yang membentuk cara berpikir saya sampai dengan detik ini.', 'photo' => 'cellin.webp'],
-                    ['name' => 'Sandy Arif Saputra', 'batch' => 'MFLS 2025', 'major' => 'Ilmu Komputer', 'quote' => 'Mengikuti MNCU Future Leader Scholarship jadi salah satu pengalaman paling berkesan buat aku. Bertemu teman-teman hebat, para mentor yang inspiring, serta dosen-dosen dengan kualitas yang really next level adalah hal yang nggak akan aku lupain. Failure is part of the journey, and trying is always the first win.', 'photo' => 'Sandy.webp'],
-                    ['name' => 'Silvi Melani Putri', 'batch' => 'MFLS 2025', 'major' => 'Pendidikan Matematika', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas ilmu, pengalaman, dan kesempatan yang sangat berharga. Program ini memberikan berbagai wawasan dan pengalaman baru yang sangat menginspirasi serta menjadi bekal berharga bagi kami untuk pengembangan diri di masa depan.', 'photo' => 'Silvi.webp'],
-                    ['name' => 'Kirania Rizma Az-Zahra', 'batch' => 'MFLS 2025', 'major' => 'Akuntansi', 'quote' => 'Long story short I survived! Terima kasih MNCU Future Leader Scholarship atas beasiswa 100%. Dalam program ini, bukan hanya memberi aku beasiswa, namun juga memberi ruang untuk tumbuh, belajar, dan bermimpi lebih jauh.', 'photo' => 'Kirania.webp'],
-                    ['name' => 'Innez Putria Abidin', 'batch' => 'MFLS 2025', 'major' => ' Manajemen', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman dan pembelajaran yang luar biasa. Selama mengikuti program ini, saya banyak belajar hal baru dan menginspirasi terutama tentang leadership, kerja sama, dan pengembangan diri yang akan berguna di masa depan. Terima kasih juga untuk para mentor yang telah memberikan banyak ilmu dan support kepada teman-teman semua.', 'photo' => 'Innez.webp'],
-                    ['name' => 'Rizki', 'batch' => 'MFLS 2025', 'major' => 'Sistem Informasi', 'quote' => 'Terima kasih kepada MNC University yang telah memberikan harapan bagi generasi muda Indonesia melalui Beasiswa 100% MNCU Future Leader Scholarship. Kesempatan ini menjadi jembatan untuk anak desa bisa menggapai masa depan yang lebih baik.', 'photo' => 'Rizki.webp'],
-                    ['name' => 'Andini Raissa', 'batch' => 'MFLS 2025', 'major' => 'Manajemen', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas kesempatan luar biasa yang membuka ruang tumbuh, membentuk karakter, dan menguatkan jiwa kepemimpinan kami, setiap prosesnya menjadi pijakan untuk melangkah lebih berani, berpikir lebih visioner, dan berdampak lebih nyata,semoga MNC University terus melahirkan pemimpin masa depan yang berintegritas dan berpengaruh. May MNC University continue to inspire future leaders💫.', 'photo' => 'Andini.webp'],
-                    ['name' => 'Alfiah Wirda Lukmansyah', 'batch' => 'MFLS 2025', 'major' => 'Akuntansi', 'quote' => 'MFLS bukan hanya memberikan beasiswa, tapi juga keluarga baru dan pengalaman yang luar biasa. Terima kasih atas kesempatan ini!', 'photo' => 'Alfiah.webp'],
-                    ['name' => 'Dzakiyah Febriyanti', 'batch' => 'MFLS 2025', 'major' => 'Ilmu Komputer', 'quote' => 'Terima kasih MNCU Future Leader Scholarship atas pengalaman luar biasa ini. Sit in class yang saya ikuti menjadi ruang belajar yang sangat berharga, di sana saya dilatih untuk mengasah leadership, memperluas wawasan, dan mendapatkan banyak inspirasi baru. Program ini tidak hanya menambah wawasan, tetapi juga membentuk mindset saya untuk terus berkembang dan berani mengambil peran di masa depan.', 'photo' => 'Dzakiyah.webp'],
-                    ['name' => 'Gavino Pasha Putra', 'batch' => 'MFLS 2025', 'major' => 'Ilmu Komputer', 'quote' => 'Terima kasih atas MNCU Future Leader Scholarship Atas program beasiswa yang sudah diselenggarakan, bagi saya ini bukanlah akhir, tetapi ini adalah awal untuk kita mencapai level yang lebih tinggi lagi kedepannya.', 'photo' => 'Gavino.webp'],
-                    ['name' => 'Rahmalia Putri', 'batch' => 'MFLS 2025', 'major' => 'Desain Komunikasi Visual', 'quote' => 'saya sangat mengucapkan terimakasih sebesar-besar nya kepada MNC University karena telah memberikan kesempatan dan tanggung jawab sebagai penerima beasiswa 100%, dan saya sangat berterimakasih kepada orang tua serta kerabat-kerabat saya yang sudah mendukung saya. Dengan BEASISWA 100% yang di berikan MNC University ini merupakan langkah awal atau permulaan bagi saya untuk menggapai apa yang saya impikan, apa yang saya rencanakan dan memberikan kesempatan serta wadah bagi kami yang MAU BERJUANG DAN BERUSAHA. Terimakasih banyak kepada MNC University dan sukses selalu kedepannya🌟', 'photo' => 'raput.webp'],
-                    ['name' => 'Muhamad  Rifatur Seva Kuswara', 'batch' => 'MFLS 2025', 'major' => 'Sistem Informasi', 'quote' => 'Saya sangat berterimakasih banyak kepada MNCU Future Leader Scholarship telah mengadakan program ini, karena dari sini saya belajar banyak sekali, saya bertemu teman-teman yang hebat, kaka yang keren, dosen-dosen yang sangat LUAR BIASA dan sebuah pengalaman yang sangat berharga, yang tidak pernah saya bayangkan sukses selalu untuk MNC Group dan MNC University, dimana para mimpi anak bangsa tersalurkan dengan program-program yang sangat luar biasa dan di dukung dengan banyaknya kemajuan teknologi, "tiada kesuksesan tanpa kegagalan, dan kegagalan adalah awal batu loncatan menuju kesuksesan", you never know, if you never try.', 'photo' => 'Rifatur.webp'],
-                    ['name' => 'Rini Manda', 'batch' => 'MFLS 2025', 'major' => 'Sains Komunikasi', 'quote' => 'Kesan: Mengikuti program MNCU Future Leader Scholarship merupakan pengalaman yang sangat berharga bagi saya. Program ini tidak hanya memberikan bantuan pendidikan, tetapi juga membentuk karakter, rasa percaya diri, serta semangat untuk terus berkembang dan berprestasi. Saya merasa bangga dan bersyukur bisa menjadi bagian dari program ini. Pesan: Terima kasih kepada seluruh pihak MNC University dan penyelenggara MNCU Future Leader Scholarship atas kesempatan luar biasa yang telah diberikan. Semoga program ini terus berlanjut dan dapat menjangkau lebih banyak generasi muda agar semakin banyak calon pemimpin masa depan yang lahir, berintegritas, dan membawa dampak positif bagi masyarakat.', 'photo' => 'rini.webp'],
-                    ['name' => 'Risky Zuliansyah', 'batch' => 'MFLS 2025', 'major' => 'Sains Komunikasi', 'quote' => 'Saya menghaturkan apresiasi dan rasa terima kasih yang setulus-tulusnya kepada MNC University atas hadirnya program MNCU Future Leader Scholarship, sebuah ikhtiar nyata yang tidak sekadar membuka peluang, tetapi juga menyalakan asa bagi saya untuk melangkah ke jenjang pendidikan tinggi. Program ini menjadikan impian saya bukan lagi sekadar wacana, melainkan tujuan yang kini memiliki arah dan kemungkinan. Ketertarikan saya memilih MNC University berangkat dari keyakinan bahwa kampus ini berdiri sebagai institusi pendidikan dengan ekosistem media yang sangat luas di tingkat Asia, serta berada di bawah naungan MNC Group yang bereputasi global. Di sinilah saya melihat pendidikan tidak hanya dimaknai sebagai proses akademik semata, melainkan juga sebagai ruang pembentukan jejaring, penguatan kapasitas diri, dan penempaan kepemimpinan untuk menghadapi tantangan masa depan.', 'photo' => 'Risky.webp'],
-                    ['name' => 'Ibrahimovic', 'batch' => 'MFLS 2025', 'major' => 'Sains Komunikasi', 'quote' => 'Terimakasih atas kesempatan yang telah diberikan kepada saya, pada program ini saya mendapatkan banyak pelajaran dan kegiatan yang menarik selama program berlangsung. Seperti mentoring/bimbingan, leadership dan membuka lembaran baru lagi dalam hidup ku, yang bukan hanya sekedar teori tetapi praktek langsung. Semoga ini bisa membawa kebaikan kedepannya dan tempat untuk bertumbuh lebih baik.', 'photo' => 'Baim.webp'],
-                    ['name' => 'Gracia Lamtiar Yosefine Sagala', 'batch' => 'MFLS 2025', 'major' => 'Akuntansi', 'quote' => 'Terima kasih yang sebesar-besarnya kepada MNC University melalui program MNCU Future Leader Scholarship atas kesempatan dan kepercayaan yang diberikan. Beasiswa ini bukan hanya menjadi dukungan dalam perjalanan pendidikan saya, tetapi juga menjadi sumber motivasi untuk terus belajar, berkembang, dan mempersiapkan diri sebagai calon pemimpin masa depan. Saya sangat bersyukur atas kesempatan berharga ini dan berharap dapat memanfaatkannya dengan sebaik-baiknya serta memberikan dampak positif bagi lingkungan kampus dan masyarakat.', 'photo' => 'grace.webp']
+                $partners = [
+                    ['name' => 'Forum OSIS Nasional', 'logo' => 'Logo FON .webp'],
+                    ['name' => 'Muda Berdaya', 'logo' => 'Logo_MudaBerdaya - Square Primary.webp'],
+                    ['name' => 'Maju Bersama OSIS', 'logo' => 'MNCU Future Leader Scholarship_20260316_040958_0000.webp'],
+                    ['name' => 'Gensmart Indonesia', 'logo' => 'gensmart.webp'],
+                    ['name' => 'Zeekend', 'logo' => 'zeekend.webp'],
+                    ['name' => 'Forum OSIS Bogor', 'logo' => 'forum osis bogor.webp'],
+                    ['name' => 'Forum Pemuda Beraksi Jabar', 'logo' => 'forum pemuda beraksi jawa barat.webp'],
+                    ['name' => 'Forum Pemuda Beraksi Banten', 'logo' => 'forum osis banten.webp'],
+                    ['name' => 'Tunas Satria Sriwijaya', 'logo' => 'tunas satria sriwijaya.webp'],
+                    ['name' => 'Forum OSIS SIT', 'logo' => 'forum osis sekolah islam terpadu.webp'],
+                    ['name' => 'Forum OSIS Jakarta Pusat', 'logo' => 'forum osis jakarta pusat.webp'],
+                    ['name' => 'Forum OSIS SMK DKJ', 'logo' => 'FORUM OSIS SMK DAERAH KHUSUS JAKARTA.webp'],
                 ];
             @endphp
-            
-            <!-- Slideshow Container -->
-            <div class="testimonial-slideshow relative">
-                @foreach($testimonials as $index => $testimonial)
-                <div class="testimonial-slide {{ $index === 0 ? 'active' : '' }} absolute inset-0 opacity-0 transition-opacity duration-500" data-slide="{{ $index }}">
-                    <div class="bg-white p-8 md:p-12 rounded-3xl shadow-2xl border border-gray-100">
-                        <!-- Quote Icon -->
-                        <svg class="w-16 h-16 text-primary-yellow/20 mb-6 mx-auto" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
-                        
-                        <p class="text-gray-700 text-lg md:text-xl leading-relaxed mb-8 italic text-center">"{{ $testimonial['quote'] }}"</p>
-                        
-                        <div class="flex items-center justify-center gap-4 border-t border-gray-100 pt-6">
-                            <img loading="lazy" src="{{ asset('icon/' . $testimonial['photo']) }}" alt="{{ $testimonial['name'] }}" class="w-16 h-16 rounded-full object-cover border-2 border-primary-yellow/20">
-                            <div>
-                                <h4 class="font-bold text-dark-navy text-lg">{{ $testimonial['name'] }}</h4>
-                                <p class="text-sm text-gray-500">{{ $testimonial['major'] }}</p>
-                                <p class="text-xs text-primary-yellow font-semibold">{{ $testimonial['batch'] }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
+
+            @foreach($partners as $partner)
+            <div class="bg-slate-50/80 rounded-xl p-3.5 border border-slate-200 shadow-sm flex flex-col items-center justify-center h-28 hover:shadow-md hover:bg-white hover:border-slate-300 transition-all duration-200 group">
+                <img src="{{ asset('icon/' . $partner['logo']) }}" alt="{{ $partner['name'] }}" class="max-h-14 max-w-full object-contain grayscale group-hover:grayscale-0 transition-all duration-300">
+                <span class="text-[10px] font-semibold text-slate-500 group-hover:text-slate-900 transition-colors mt-2 text-center line-clamp-1">{{ $partner['name'] }}</span>
             </div>
-            
-            <!-- Navigation Arrows -->
-            <button onclick="changeSlide(-1)" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 w-12 h-12 bg-white rounded-full shadow-lg hover:bg-primary-yellow hover:text-white transition-all flex items-center justify-center z-10">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            </button>
-            <button onclick="changeSlide(1)" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 w-12 h-12 bg-white rounded-full shadow-lg hover:bg-primary-yellow hover:text-white transition-all flex items-center justify-center z-10">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            </button>
-        </div>
-        
-        <!-- Pagination Dots -->
-        <div class="flex justify-center gap-3 mt-12" id="testimonial-dots">
-            @foreach($testimonials as $index => $testimonial)
-            <button onclick="goToSlide({{ $index }})" class="testimonial-dot w-3 h-3 rounded-full transition-all {{ $index === 0 ? 'bg-primary-yellow w-8' : 'bg-gray-300' }}" data-dot="{{ $index }}"></button>
             @endforeach
         </div>
+
     </div>
-</div>
+</section>
 
-<script>
-let currentSlide = 0;
-const totalSlides = {{ count($testimonials) }};
-let autoSlideInterval;
-
-function showSlide(n) {
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const dots = document.querySelectorAll('.testimonial-dot');
-    
-    if (n >= totalSlides) currentSlide = 0;
-    if (n < 0) currentSlide = totalSlides - 1;
-    
-    slides.forEach((slide, index) => {
-        if (index === currentSlide) {
-            slide.classList.add('active', 'opacity-100', 'relative');
-            slide.classList.remove('opacity-0', 'absolute');
-        } else {
-            slide.classList.remove('active', 'opacity-100', 'relative');
-            slide.classList.add('opacity-0', 'absolute');
-        }
-    });
-    
-    dots.forEach((dot, index) => {
-        if (index === currentSlide) {
-            dot.classList.add('bg-primary-yellow', 'w-8');
-            dot.classList.remove('bg-gray-300');
-        } else {
-            dot.classList.remove('bg-primary-yellow', 'w-8');
-            dot.classList.add('bg-gray-300');
-        }
-    });
-}
-
-function changeSlide(direction) {
-    currentSlide += direction;
-    if (currentSlide >= totalSlides) currentSlide = 0;
-    if (currentSlide < 0) currentSlide = totalSlides - 1;
-    showSlide(currentSlide);
-    resetAutoSlide();
-}
-
-function goToSlide(n) {
-    currentSlide = n;
-    showSlide(currentSlide);
-    resetAutoSlide();
-}
-
-function autoSlide() {
-    currentSlide++;
-    if (currentSlide >= totalSlides) currentSlide = 0;
-    showSlide(currentSlide);
-}
-
-function resetAutoSlide() {
-    clearInterval(autoSlideInterval);
-    autoSlideInterval = setInterval(autoSlide, 5000);
-}
-
-// Initialize slideshow
-showSlide(currentSlide);
-autoSlideInterval = setInterval(autoSlide, 5000);
-</script>
-
-<!-- Collaboration Section -->
-<div class="py-24 bg-gradient-to-b from-white to-gray-50">
+<!-- Contact & Information Desk -->
+<section id="contact" class="py-20 lg:py-28 bg-slate-50 border-t border-slate-200/80 reveal-init">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16 fade-in">
-            <h3 class="section-label text-primary-yellow font-caveat font-semibold mb-2">Kolaborasi</h3>
-            <h2 class="section-title font-black text-dark-navy">Mitra dan Pendukung</h2>
-            <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Bersama membangun generasi pemimpin masa depan</p>
-        </div>
         
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 scroll-fade">
-            <!-- MAJU BERSAMA OSIS (MBO) -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/MNCU Future Leader Scholarship_20260316_040958_0000.webp') }}?v={{ time() }}" alt="MAJU BERSAMA OSIS" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">Maju Bersama Osis</h4>
-                </div>
-            </div>
-
-            <!-- FORUM OSIS NASIONAL (FON) -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/Logo FON .webp') }}?v={{ time() }}" alt="FORUM OSIS NASIONAL" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">Forum OSIS Nasional</h4>
-                </div>
-            </div>
-
-            <!-- MUDA BERDAYA -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/Logo_MudaBerdaya - Square Primary.webp') }}?v={{ time() }}" alt="MUDA BERDAYA" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">Muda Berdaya</h4>
-                </div>
-            </div>
-
-            <!-- ZEEKEND -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/zeekend.webp') }}?v={{ time() }}" alt="ZEEKEND" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">ZEEKEND</h4>
-                </div>
-            </div>
-
-            <!-- GENSMART INDONESIA -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/gensmart.webp') }}?v={{ time() }}" alt="GENSMART INDONESIA" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">GENSMART INDONESIA</h4>
-                </div>
-            </div>
-
-            <!-- FORUM OSIS KABUPATEN BOGOR -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum osis bogor.webp') }}?v={{ time() }}" alt="FORUM OSIS KABUPATEN BOGOR" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM OSIS KABUPATEN BOGOR</h4>
-                </div>
-            </div>
-
-            <!-- FORUM PEMUDA BERAKSI JABAR -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum pemuda beraksi jawa barat.webp') }}?v={{ time() }}" alt="FORUM PEMUDA BERAKSI JABAR" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM PEMUDA BERAKSI JABAR</h4>
-                </div>
-            </div>
-
-            <!-- FORUM PEMUDA BERAKSI BANTEN -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum osis banten.webp') }}?v={{ time() }}" alt="FORUM PEMUDA BERAKSI BANTEN" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM PEMUDA BERAKSI BANTEN</h4>
-                </div>
-            </div>
-
-            <!-- TUNAS SATRIA WIJAYA -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/tunas satria sriwijaya.webp') }}?v={{ time() }}" alt="TUNAS SATRIA WIJAYA" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">TUNAS SATRIA WIJAYA</h4>
-                </div>
-            </div>
-
-            <!-- FORUM SEKOLAH ISLAM TERPADU -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum osis sekolah islam terpadu.webp') }}?v={{ time() }}" alt="FORUM SEKOLAH ISLAM TERPADU" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM SEKOLAH ISLAM TERPADU</h4>
-                </div>
-            </div>
-
-            <!-- FORUM OSIS DAERAH JAKARTA PUSAT -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum osis jakarta pusat.webp') }}?v={{ time() }}" alt="FORUM OSIS DAERAH JAKARTA PUSAT" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM OSIS DAERAH JAKARTA PUSAT</h4>
-                </div>
-            </div>
-
-            <!-- FORUM OSIS KOTA SUKABUMI -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3">
-                        <img loading="lazy" src="{{ asset('icon/forum osis kota sukabumi.webp') }}?v={{ time() }}" alt="FORUM OSIS KOTA SUKABUMI" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM OSIS KOTA SUKABUMI</h4>
-                </div>
-            </div>
-
-            <!-- FORUM OSIS SMK DAERAH KHUSUS JAKARTA -->
-            <div class="group transform hover:-translate-y-1 transition-all duration-300">
-                <div class="flex flex-col items-center justify-center p-4">
-                    <div class="w-full h-28 flex items-center justify-center mb-3 bg-white rounded-xl">
-                        <img loading="lazy" src="{{ asset('icon/FORUM OSIS SMK DAERAH KHUSUS JAKARTA.webp') }}?v={{ time() }}" alt="FORUM OSIS SMK DAERAH KHUSUS JAKARTA" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-dark-navy text-center group-hover:text-primary-blue transition-colors uppercase tracking-wider">FORUM OSIS SMK DAERAH KHUSUS JAKARTA</h4>
-                </div>
-            </div>
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="inline-block text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 border border-blue-100 px-3.5 py-1.5 rounded-full mb-3">
+                Layanan Informasi & Bantuan
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Hubungi Panitia Seleksi Beasiswa MFLS
+            </h2>
+            <p class="text-base sm:text-lg text-slate-600 mt-3">
+                Memiliki kendala saat proses pendaftaran atau membutuhkan klarifikasi persyaratan? Tim helpdesk kami siap mendampingi Anda.
+            </p>
         </div>
-    </div>
-</div>
 
-<!-- Contact Section - "Hubungi Kami" -->
-<div id="contact" class="py-24 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16 fade-in">
-            <h2 class="section-title font-black text-dark-navy mb-4">Hubungi Kami</h2>
-            <p class="text-gray-600 font-semibold max-w-2xl mx-auto">Punya pertanyaan? Tim kami siap membantu Anda</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
             <!-- WhatsApp -->
-            <div class="contact-card bg-gradient-to-br from-gray-50 to-white p-10 rounded-3xl border-2 border-gray-100 text-center hover:border-primary-yellow hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
-                <div class="w-20 h-20 bg-primary-yellow/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-10 h-10 text-primary-yellow" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            <div class="p-8 rounded-2xl bg-white border border-slate-200 text-center hover:border-primary-blue hover:shadow-xl transition-all duration-300">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+                    <span class="iconify text-3xl" data-icon="solar:chat-round-dots-bold"></span>
                 </div>
-                <h4 class="font-black text-dark-navy text-xl mb-3">WhatsApp</h4>
-                <a href="https://wa.me/6285880059189" target="_blank" class="text-primary-yellow font-bold text-lg hover:underline">+62 858-8005-9189</a>
-                <p class="text-gray-500 text-sm mt-3">Senin - Jumat: 09.00 - 17.00 WIB</p>
+                <h3 class="font-bold text-slate-900 text-lg mb-1">WhatsApp Center</h3>
+                <p class="text-xs text-slate-500 mb-4">Senin - Jumat: 09.00 - 17.00 WIB</p>
+                <a href="https://wa.me/6285880059189" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-bold text-sm text-emerald-600 hover:text-emerald-700">
+                    <span>+62 858-8005-9189</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
             </div>
-            
+
             <!-- Email -->
-            <div class="contact-card bg-gradient-to-br from-gray-50 to-white p-10 rounded-3xl border-2 border-gray-100 text-center hover:border-primary-yellow hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2" style="animation-delay: 200ms;">
-                <div class="w-20 h-20 bg-primary-yellow/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-10 h-10 text-primary-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <div class="p-8 rounded-2xl bg-white border border-slate-200 text-center hover:border-primary-blue hover:shadow-xl transition-all duration-300">
+                <div class="w-14 h-14 rounded-2xl bg-blue-100 text-primary-blue flex items-center justify-center mx-auto mb-4">
+                    <span class="iconify text-3xl" data-icon="solar:letter-bold"></span>
                 </div>
-                <h4 class="font-black text-dark-navy text-xl mb-3">Email</h4>
-                <a href="mailto:info@beasiswamncu.com" class="text-primary-yellow font-bold text-lg hover:underline">info@beasiswamncu.com</a>
-                <p class="text-gray-500 text-sm mt-3">Respon dalam 1x24 jam</p>
+                <h3 class="font-bold text-slate-900 text-lg mb-1">Email Resmi</h3>
+                <p class="text-xs text-slate-500 mb-4">Respon resmi dalam 1 x 24 jam kerja</p>
+                <a href="mailto:info@beasiswamncu.com" class="inline-flex items-center gap-1.5 font-bold text-sm text-primary-blue hover:text-blue-800">
+                    <span>info@beasiswamncu.com</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
             </div>
-            
+
             <!-- Instagram -->
-            <div class="contact-card bg-gradient-to-br from-gray-50 to-white p-10 rounded-3xl border-2 border-gray-100 text-center hover:border-primary-yellow hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2" style="animation-delay: 400ms;">
-                <a href="https://www.instagram.com/beasiswamncu/" target="_blank">
-                <div class="w-20 h-20 bg-primary-yellow/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-10 h-10 text-primary-yellow" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            <div class="p-8 rounded-2xl bg-white border border-slate-200 text-center hover:border-primary-blue hover:shadow-xl transition-all duration-300">
+                <div class="w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-4">
+                    <span class="iconify text-3xl" data-icon="solar:camera-bold"></span>
                 </div>
-                <h4 class="font-black text-dark-navy text-xl mb-3">Instagram</h4>
-                <a href="https://www.instagram.com/beasiswamncu/" target="_blank" class="text-primary-yellow font-bold text-lg hover:underline">@beasiswamncu</a>
-                <p class="text-gray-500 text-sm mt-3">Follow untuk info terbaru</p>
+                <h3 class="font-bold text-slate-900 text-lg mb-1">Instagram Resmi</h3>
+                <p class="text-xs text-slate-500 mb-4">Update live & pengumuman awardee</p>
+                <a href="https://www.instagram.com/beasiswamncu/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-bold text-sm text-rose-600 hover:text-rose-700">
+                    <span>@beasiswamncu</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
             </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Bottom CTA Banner -->
+<section class="py-16 bg-gradient-to-r from-primary-blue to-blue-900 text-white text-center">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+            Siap Menjadi Pemimpin Masa Depan Bersama MNC University?
+        </h2>
+        <p class="text-blue-100 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+            Daftarkan diri Anda hari ini dan raih kesempatan beasiswa kuliah penuh hingga 100% sampai lulus.
+        </p>
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+            @if($buka)
+                <a href="{{ route('register') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-base font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 shadow-xl transition-all duration-200 hover:-translate-y-0.5">
+                    <span>Daftar Sekarang (Gratis)</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+            @else
+                <a href="#timeline" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-base font-bold text-slate-300 bg-blue-950/60 border border-blue-400/20">
+                    <span>Lihat Jadwal Seleksi Gelombang Berikutnya</span>
+                </a>
+            @endif
+            <a href="https://wa.me/6285880059189" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all duration-200">
+                <span>Tanya Panitia via WhatsApp</span>
+            </a>
         </div>
     </div>
-</div>
+</section>
 
-<style>
-/* Fade-in Animation */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes fadeInRight {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.fade-in {
-    opacity: 0;
-    animation: fadeInUp 0.8s ease forwards;
-}
-
-/* Scroll-triggered animations */
-.scroll-fade {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.scroll-fade.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.scroll-fade-left {
-    opacity: 0;
-    transform: translateX(-50px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.scroll-fade-left.visible {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.scroll-fade-right {
-    opacity: 0;
-    transform: translateX(50px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.scroll-fade-right.visible {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.testimonial-card,
-.contact-card {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s ease;
-}
-
-.testimonial-card.visible,
-.contact-card.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Stagger effect for stats */
-.stat-item {
-    opacity: 0;
-    transform: scale(0.8);
-    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.stat-item.visible {
-    opacity: 1;
-    transform: scale(1);
-}
-@keyframes bounce-slow {
-    0%, 100% {
-        transform: translateY(-10%);
-        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-    }
-    50% {
-        transform: translateY(0);
-        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-    }
-}
-
-.animate-bounce-slow {
-    animation: bounce-slow 3s infinite;
-}
-
-/* Mobile Responsive Fixes */
-@media (max-width: 768px) {
-    /* Prevent horizontal scroll */
-    body {
-        overflow-x: hidden;
-    }
-    
-    /* Ensure all containers fit screen */
-    .max-w-7xl,
-    .max-w-6xl,
-    .max-w-5xl,
-    .max-w-4xl {
-        max-width: 100%;
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-    
-    /* Hero section adjustments */
-    #home {
-        padding-top: 1.5rem !important;
-        padding-bottom: 2rem !important;
-    }
-    
-    /* Hero section text sizing */
-    h1 {
-        font-size: 1.5rem !important;
-        line-height: 1.3 !important;
-    }
-    
-    h2 {
-        font-size: 1.5rem !important;
-    }
-    
-    h3 {
-        font-size: 1.25rem !important;
-    }
-    
-    /* Adjust padding for mobile */
-    .py-24 {
-        padding-top: 2.5rem;
-        padding-bottom: 2.5rem;
-    }
-    
-    .py-20 {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-    }
-    
-    .py-12 {
-        padding-top: 1.5rem;
-        padding-bottom: 1.5rem;
-    }
-    
-    /* Fix image overflow */
-    img {
-        max-width: 100%;
-        height: auto;
-    }
-    
-    /* Testimonial slideshow */
-    .testimonial-slideshow {
-        min-height: 400px;
-    }
-    
-    /* Modal responsive */
-    #program-studi-modal .bg-white {
-        margin: 1rem;
-        max-height: calc(100vh - 2rem);
-    }
-    
-    /* Contact cards stack properly */
-    .contact-card {
-        margin-bottom: 1rem;
-    }
-    
-    /* Ensure buttons don't overflow */
-    button, a {
-        word-wrap: break-word;
-    }
-    
-    /* Fix grid gaps on mobile */
-    .gap-16 {
-        gap: 2rem;
-    }
-    
-    .gap-20 {
-        gap: 2rem;
-    }
-    
-    /* Reduce space-y on mobile */
-    .space-y-8 > * + * {
-        margin-top: 1rem;
-    }
-}
-
-/* Extra small devices */
-@media (max-width: 480px) {
-    h1 {
-        font-size: 1.25rem !important;
-    }
-    
-    .text-5xl,
-    .text-6xl,
-    .text-7xl {
-        font-size: 1.5rem !important;
-    }
-    
-    .text-4xl {
-        font-size: 1.25rem !important;
-    }
-    
-    .text-3xl {
-        font-size: 1.125rem !important;
-    }
-    
-    .text-2xl {
-        font-size: 1rem !important;
-    }
-    
-    .text-xl {
-        font-size: 0.95rem !important;
-    }
-    
-    /* Reduce padding on very small screens */
-    .px-8 {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-    
-    .py-12 {
-        padding-top: 1.5rem;
-        padding-bottom: 1.5rem;
-    }
-    
-    /* Hero image size */
-    #home img {
-        max-width: 90%;
-        margin: 0 auto;
-    }
-}
-</style>
-
+<!-- Scripts: Parallax, Tabs, Countdown, Scroll Reveals -->
 <script>
-// Comprehensive Scroll Animation Observer
-document.addEventListener('DOMContentLoaded', function() {
-    const observerOptions = {
-        threshold: 0.15,
-        rootMargin: '0px 0px -100px 0px'
-    };
-    
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                // Optional: unobserve after animation to improve performance
-                // observer.unobserve(entry.target);
+// 1. Interactive 3D Mouse Parallax on Hero Artwork Card
+(function() {
+    const heroArea = document.getElementById('hero-artwork-area');
+    const tiltCard = document.getElementById('hero-tilt-card');
+    const glow1 = document.getElementById('ambient-glow-1');
+    const glow2 = document.getElementById('ambient-glow-2');
+
+    if (heroArea && tiltCard && window.matchMedia('(pointer: fine)').matches) {
+        let isHovered = false;
+
+        heroArea.addEventListener('mouseenter', () => { isHovered = true; });
+        heroArea.addEventListener('mouseleave', () => {
+            isHovered = false;
+            tiltCard.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        });
+
+        heroArea.addEventListener('mousemove', (e) => {
+            if (!isHovered) return;
+            const rect = heroArea.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            // Subtle rotation between -8 and +8 degrees
+            const rotateX = ((y - centerY) / centerY) * -7;
+            const rotateY = ((x - centerX) / centerX) * 7;
+
+            tiltCard.style.transform = `perspective(1200px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateZ(12px)`;
+
+            // Subtle parallax movement on ambient glows
+            if (glow1) {
+                glow1.style.transform = `translate(${((x - centerX) * 0.04).toFixed(1)}px, ${((y - centerY) * 0.04).toFixed(1)}px)`;
+            }
+            if (glow2) {
+                glow2.style.transform = `translate(${((x - centerX) * -0.04).toFixed(1)}px, ${((y - centerY) * -0.04).toFixed(1)}px)`;
             }
         });
-    }, observerOptions);
-    
-    // Observe all scroll-animated elements
-    const animatedElements = [
-        '.scroll-fade',
-        '.scroll-fade-left',
-        '.scroll-fade-right',
-        '.testimonial-card',
-        '.contact-card',
-        '.stat-item'
-    ];
-    
-    animatedElements.forEach(selector => {
-        document.querySelectorAll(selector).forEach((element, index) => {
-            // Add stagger delay
-            element.style.transitionDelay = `${index * 0.1}s`;
-            observer.observe(element);
-        });
-    });
-});
+    }
+})();
 
-// Real-time Countdown Timer
+// 2. Tab Filter for Program Studi
+function filterProdi(category, e) {
+    const cards = document.querySelectorAll('.prodi-card');
+    const tabButtons = document.querySelectorAll('.prodi-tab-btn');
+
+    tabButtons.forEach(btn => {
+        btn.classList.remove('active', 'bg-white', 'text-slate-900', 'shadow-sm');
+        btn.classList.add('text-slate-600');
+    });
+
+    if (e && e.currentTarget) {
+        e.currentTarget.classList.add('active', 'bg-white', 'text-slate-900', 'shadow-sm');
+        e.currentTarget.classList.remove('text-slate-600');
+    }
+
+    cards.forEach(card => {
+        if (category === 'all') {
+            card.style.display = 'flex';
+        } else if (card.classList.contains(category)) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+// 3. Real-time Countdown Timer
 (function() {
-    const targetDate = new Date("{{ $pengaturan->pendaftaran_selesai ? $pengaturan->pendaftaran_selesai->format('Y-m-d\TH:i:s') . '+07:00' : '2000-01-01T00:00:00+07:00' }}").getTime();
-    
+    const deadlineStr = "{{ $deadlineDate }}";
+    const targetDate = new Date(deadlineStr).getTime();
+
     function updateCountdown() {
         const now = new Date().getTime();
         const distance = targetDate - now;
-        
-        if (distance < 0) {
+
+        if (distance <= 0) {
             ['days', 'hours', 'minutes', 'seconds'].forEach(id => {
-                document.getElementById(id).textContent = "00";
+                const el = document.getElementById(id);
+                if (el) el.textContent = "00";
             });
             return;
         }
-        
+
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-        document.getElementById("days").textContent = String(days).padStart(2, '0');
-        document.getElementById("hours").textContent = String(hours).padStart(2, '0');
-        document.getElementById("minutes").textContent = String(minutes).padStart(2, '0');
-        document.getElementById("seconds").textContent = String(seconds).padStart(2, '0');
+
+        const daysEl = document.getElementById("days");
+        const hoursEl = document.getElementById("hours");
+        const minutesEl = document.getElementById("minutes");
+        const secondsEl = document.getElementById("seconds");
+
+        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+        if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+        if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
     }
-    
-    updateCountdown();  
+
+    updateCountdown();
     setInterval(updateCountdown, 1000);
 })();
 
-// Modal Program Studi
+// 4. Scroll Reveal with IntersectionObserver
 document.addEventListener('DOMContentLoaded', function() {
-    const selengkapnyaBtn = document.getElementById('selengkapnya-btn');
-    const modal = document.getElementById('program-studi-modal');
-    const modalContent = document.getElementById('modal-content');
-    const closeBtn = document.getElementById('close-modal');
-    
-    // Open modal
-    if (selengkapnyaBtn) {
-        selengkapnyaBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modalContent.classList.remove('scale-95');
-                modalContent.classList.add('scale-100');
-            }, 10);
-            document.body.style.overflow = 'hidden';
+    const reveals = document.querySelectorAll('.reveal-init');
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                obs.unobserve(entry.target);
+            }
         });
-    }
-    
-    // Close modal function
-    function closeModal() {
-        modal.classList.add('opacity-0');
-        modalContent.classList.remove('scale-100');
-        modalContent.classList.add('scale-95');
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }, 300);
-    }
-    
-    // Close modal events
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeModal);
-    }
-    
-    // Close modal when clicking outside
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            closeModal();
-        }
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
     });
-    
-// Close modal with Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-            closeModal();
-        }
-    });
-});
-</script>
 
-<!-- Live Notification Popup -->
-<!-- <div id="live-toast" class="fixed top-24 right-4 sm:top-28 sm:right-6 z-50 bg-white/95 backdrop-blur-md shadow-2xl rounded-2xl p-4 sm:p-5 border border-primary-yellow/20 flex items-center gap-4 transform translate-x-[200%] transition-transform duration-700 max-w-xs sm:max-w-sm">
-    <div class="relative w-12 h-12 rounded-full bg-gradient-to-br from-primary-yellow to-orange-400 flex items-center justify-center shrink-0 shadow-lg shadow-primary-yellow/30">
-        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-        <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></div>
-    </div>
-    <div class="flex-1 pr-6">
-        <p id="toast-text" class="text-sm text-dark-navy font-bold leading-tight"></p>
-        <p id="toast-time" class="text-xs text-gray-500 font-semibold mt-1 flex items-center gap-1">
-            <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <span id="toast-time-text">Baru saja</span>
-        </p>
-    </div>
-    <button onclick="document.getElementById('live-toast').style.display='none'" class="absolute pl-2 top-3 right-3 text-gray-400 hover:text-red-500 transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-    </button>
-</div> -->
-<!-- 
-<script>
+    reveals.forEach(el => observer.observe(el));
+});
+
+// 5. Testimonial 18-Awardee Slideshow with Pause-on-Hover
+let currentTestimonial = 0;
+const totalTestimonials = {{ count($testimonials) }};
+let testimonialTimer = null;
+const slideDelay = 5000;
+
+function showTestimonial(index) {
+    const slides = document.querySelectorAll('.testimonial-slide');
+    const dots = document.querySelectorAll('.testimonial-dot');
+
+    if (index >= totalTestimonials) currentTestimonial = 0;
+    else if (index < 0) currentTestimonial = totalTestimonials - 1;
+    else currentTestimonial = index;
+
+    slides.forEach((slide, i) => {
+        if (i === currentTestimonial) {
+            slide.classList.remove('opacity-0', 'absolute', 'pointer-events-none');
+            slide.classList.add('opacity-100', 'relative');
+        } else {
+            slide.classList.remove('opacity-100', 'relative');
+            slide.classList.add('opacity-0', 'absolute', 'pointer-events-none');
+        }
+    });
+
+    dots.forEach((dot, i) => {
+        if (i === currentTestimonial) {
+            dot.classList.remove('w-2.5', 'bg-slate-300');
+            dot.classList.add('w-8', 'bg-amber-400');
+        } else {
+            dot.classList.remove('w-8', 'bg-amber-400');
+            dot.classList.add('w-2.5', 'bg-slate-300');
+        }
+    });
+}
+
+function nextSlide() {
+    showTestimonial(currentTestimonial + 1);
+}
+
+function prevSlide() {
+    showTestimonial(currentTestimonial - 1);
+}
+
+function goToSlide(index) {
+    showTestimonial(index);
+    startAutoSlide();
+}
+
+function startAutoSlide() {
+    stopAutoSlide();
+    testimonialTimer = setInterval(nextSlide, slideDelay);
+}
+
+function stopAutoSlide() {
+    if (testimonialTimer) {
+        clearInterval(testimonialTimer);
+        testimonialTimer = null;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    const totalPendaftar = {{ $totalPendaftar ?? 0 }};
+    const sliderContainer = document.getElementById('testimonial-slider-container');
+    if (sliderContainer) {
+        // Pause on Hover
+        sliderContainer.addEventListener('mouseenter', stopAutoSlide);
+        sliderContainer.addEventListener('mouseleave', startAutoSlide);
 
-    const toastMessages = [
-        { text: `🚀 Wow! Saat ini sudah <span class="text-primary-yellow text-lg">${totalPendaftar}</span> orang bergabung di jalur Future Leader.`, time: 'Daftar sekarang!' }
-    ];
+        // Touch Swipe Support for Mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
 
- 
+        sliderContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            stopAutoSlide();
+        }, { passive: true });
 
-    let currentToast = 0;
-    const toastEl = document.getElementById('live-toast');
-    const toastText = document.getElementById('toast-text');
-    const toastTime = document.getElementById('toast-time-text');
+        sliderContainer.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) {
+                nextSlide();
+            } else if (touchEndX - touchStartX > 50) {
+                prevSlide();
+            }
+            startAutoSlide();
+        }, { passive: true });
 
-    function showNextToast() {
-        if (toastMessages.length === 0) return;
-        
-        // Reset animation logic
-        toastEl.classList.add('translate-x-[200%]');
-        toastEl.classList.remove('opacity-100');
-        
-        setTimeout(() => {
-            toastText.innerHTML = toastMessages[currentToast].text;
-            toastTime.innerHTML = toastMessages[currentToast].time;
-            
-            // Slide in
-            toastEl.classList.remove('translate-x-[200%]');
-            toastEl.classList.add('opacity-100');
-            
-            // Wait 5 seconds to slide out
-            setTimeout(() => {
-                toastEl.classList.add('translate-x-[200%]');
-                toastEl.classList.remove('opacity-100');
-                currentToast = (currentToast + 1) % toastMessages.length;
-            }, 10000);
-        }, 500); // short delay to ensure clean re-render
+        startAutoSlide();
     }
-
-    // Start cycle immediately after page load, but only show once per session
-    setTimeout(() => {
-        if (!sessionStorage.getItem('mfls_live_toast_shown')) {
-            showNextToast();
-            sessionStorage.setItem('mfls_live_toast_shown', 'true');
-        }
-    }, 500);
 });
-</script> -->
-
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/69caa3cfcfacab1c39445878/1jkvovpai';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
 </script>
-<!--End of Tawk.to Script-->
 
+<!-- Native Helpdesk & WhatsApp Floating Widget -->
+<div id="mfls-help-widget" class="fixed bottom-6 right-6 z-50 flex flex-col items-end select-none">
+    <!-- Popover Card -->
+    <div id="mfls-help-popup" class="hidden opacity-0 translate-y-4 scale-95 transition-all duration-300 ease-out mb-3 w-[90vw] max-w-sm rounded-2xl bg-white shadow-2xl border border-slate-200/90 overflow-hidden ring-1 ring-slate-900/5">
+        <!-- Header -->
+        <div class="p-4 bg-gradient-to-r from-[#0B1120] via-[#0D1B36] to-[#0870B8] text-white flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0 shadow-xs">
+                    <span class="iconify text-xl" data-icon="solar:chat-round-line-bold"></span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <h4 class="text-xs font-black tracking-wide text-white">Helpdesk MFLS Batch 3 (Ajaran 2027)</h4>
+                        <span class="px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider bg-amber-400 text-slate-900">2027</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-[11px] font-medium text-emerald-300">Panitia Aktif & Online</span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" onclick="toggleMflsHelp()" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors" title="Tutup">
+                <span class="iconify text-lg" data-icon="solar:close-circle-bold"></span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-4 space-y-3 bg-slate-50/70">
+            <div class="bg-white p-3 rounded-xl border border-slate-200/80 shadow-xs text-xs text-slate-600 leading-relaxed">
+                <p class="font-bold text-slate-800 mb-1">Halo Calon Pemimpin Masa Depan!</p>
+                <p>Butuh panduan pendaftaran, informasi seleksi, atau kendala berkas Beasiswa MFLS Batch 3? Kami siap mendampingi Anda.</p>
+            </div>
+
+            <div class="space-y-2">
+                <!-- WhatsApp Live Chat -->
+                <a href="https://wa.me/6285880059189?text=Halo%20Panitia%20MFLS%20Batch%203,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20dan%20seleksi%20beasiswa" 
+                   target="_blank" rel="noopener noreferrer"
+                   class="group flex items-center justify-between p-3 rounded-xl bg-white hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-300 transition-all duration-200 shadow-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <span class="iconify text-lg" data-icon="solar:chat-round-dots-bold"></span>
+                        </div>
+                        <div class="text-left">
+                            <span class="block text-xs font-bold text-slate-800 group-hover:text-emerald-700">Chat WhatsApp Panitia</span>
+                            <span class="block text-[10px] text-slate-500 font-medium">+62 858-8005-9189</span>
+                        </div>
+                    </div>
+                    <span class="iconify text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all text-sm" data-icon="solar:arrow-right-bold"></span>
+                </a>
+
+                <!-- Saluran WhatsApp Resmi -->
+                <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" 
+                   target="_blank" rel="noopener noreferrer"
+                   class="group flex items-center justify-between p-3 rounded-xl bg-white hover:bg-blue-50 border border-slate-200/80 hover:border-blue-300 transition-all duration-200 shadow-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-primary-blue flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <span class="iconify text-lg" data-icon="solar:bell-bing-bold"></span>
+                        </div>
+                        <div class="text-left">
+                            <span class="block text-xs font-bold text-slate-800 group-hover:text-primary-blue">Saluran Info & Update MFLS</span>
+                            <span class="block text-[10px] text-slate-500 font-medium">Broadcast Pengumuman Resmi</span>
+                        </div>
+                    </div>
+                    <span class="iconify text-slate-400 group-hover:text-primary-blue group-hover:translate-x-0.5 transition-all text-sm" data-icon="solar:arrow-right-bold"></span>
+                </a>
+
+                <!-- Quick Nav to Timeline -->
+                <a href="#timeline" onclick="toggleMflsHelp()"
+                   class="group flex items-center justify-between p-3 rounded-xl bg-white hover:bg-amber-50 border border-slate-200/80 hover:border-amber-300 transition-all duration-200 shadow-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <span class="iconify text-lg" data-icon="solar:calendar-date-bold"></span>
+                        </div>
+                        <div class="text-left">
+                            <span class="block text-xs font-bold text-slate-800 group-hover:text-amber-700">Lihat Timeline Seleksi</span>
+                            <span class="block text-[10px] text-slate-500 font-medium">Jadwal tahapan seleksi Batch 3</span>
+                        </div>
+                    </div>
+                    <span class="iconify text-slate-400 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all text-sm" data-icon="solar:arrow-right-bold"></span>
+                </a>
+            </div>
+
+            <!-- Footer note -->
+            <div class="pt-2 border-t border-slate-200 text-[10px] text-slate-400 text-center font-medium">
+                Jam Operasional: Senin - Jumat (08.30 - 17.00 WIB)
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Toggle Button -->
+    <button type="button" id="mfls-help-btn" onclick="toggleMflsHelp()"
+            class="group flex items-center gap-2.5 px-4 py-3 sm:px-5 sm:py-3.5 bg-gradient-to-r from-[#0870B8] to-[#0A85D9] hover:from-[#075f9c] hover:to-[#0870B8] text-white rounded-full shadow-xl shadow-blue-900/30 hover:shadow-2xl hover:shadow-blue-900/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 border border-blue-400/40 focus:outline-none focus:ring-4 focus:ring-blue-500/25">
+        <div class="relative flex items-center justify-center">
+            <span id="mfls-help-icon-chat" class="iconify text-xl sm:text-2xl transition-transform group-hover:scale-110" data-icon="solar:chat-round-dots-bold"></span>
+            <span id="mfls-help-icon-close" class="iconify text-xl sm:text-2xl hidden transition-transform group-hover:scale-110" data-icon="solar:close-circle-bold"></span>
+            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 ring-2 ring-white rounded-full animate-pulse"></span>
+        </div>
+        <span class="text-xs sm:text-sm font-bold tracking-tight">Butuh Bantuan?</span>
+    </button>
+</div>
+
+<script>
+function toggleMflsHelp() {
+    const popup = document.getElementById('mfls-help-popup');
+    const iconChat = document.getElementById('mfls-help-icon-chat');
+    const iconClose = document.getElementById('mfls-help-icon-close');
+    
+    if (popup.classList.contains('hidden')) {
+        popup.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            popup.classList.remove('opacity-0', 'translate-y-4', 'scale-95');
+            popup.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+        });
+        iconChat.classList.add('hidden');
+        iconClose.classList.remove('hidden');
+    } else {
+        popup.classList.add('opacity-0', 'translate-y-4', 'scale-95');
+        popup.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
+        setTimeout(() => {
+            popup.classList.add('hidden');
+        }, 300);
+        iconChat.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+    }
+}
+
+document.addEventListener('click', function(e) {
+    const widget = document.getElementById('mfls-help-widget');
+    const popup = document.getElementById('mfls-help-popup');
+    if (widget && popup && !popup.classList.contains('hidden')) {
+        if (!widget.contains(e.target)) {
+            toggleMflsHelp();
+        }
+    }
+});
+</script>
 @endsection

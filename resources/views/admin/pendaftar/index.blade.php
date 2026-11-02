@@ -3,13 +3,13 @@
 @section('content')
 <!-- Header Stats -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-[2rem] p-6 text-white shadow-xl shadow-orange-500/20 relative overflow-hidden">
-        <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
-        <h3 class="text-xs font-bold opacity-80 uppercase tracking-widest flex items-center gap-2">
-            <span class="iconify" data-icon="solar:users-group-rounded-bold"></span> Total Pendaftar
+    <div class="bg-[#0B1120] rounded-[2rem] p-6 text-white shadow-xl shadow-slate-950/20 border border-slate-800 relative overflow-hidden">
+        <div class="absolute right-0 top-0 w-32 h-32 bg-blue-600/15 rounded-full blur-3xl -mr-10 -mt-10"></div>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+            <span class="iconify text-[#0870B8]" data-icon="solar:users-group-rounded-bold"></span> Total Pendaftar
         </h3>
-        <p class="text-4xl font-black mt-2">{{ $pendaftars->count() }}</p>
-        <div class="mt-4 text-xs font-bold bg-white/20 inline-block px-3 py-1 rounded-full">Mahasiswa Baru</div>
+        <p class="text-4xl font-black mt-2 text-white">{{ $pendaftars->count() }}</p>
+        <div class="mt-4 text-[11px] font-bold bg-white/10 text-blue-400 border border-white/10 inline-block px-3 py-1 rounded-full">Kandidat Mahasiswa</div>
     </div>
     
     <div class="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-colors">
@@ -64,10 +64,10 @@
                 <div class="relative">
                     <span class="iconify absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" data-icon="solar:magnifer-linear"></span>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Nama / Sekolah..." 
-                        class="pl-12 pr-6 py-3 w-full md:w-64 bg-slate-50 border-transparent focus:bg-white focus:border-orange-200 focus:ring-4 focus:ring-orange-500/10 rounded-xl text-sm font-bold transition-all outline-none text-slate-600">
+                        class="pl-12 pr-6 py-3 w-full md:w-64 bg-slate-50 border-transparent focus:bg-white focus:border-[#0870B8] focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm font-bold transition-all outline-none text-slate-600">
                 </div>
 
-                <button type="submit" class="p-3 bg-slate-800 text-white rounded-xl hover:bg-slate-900 transition-all">
+                <button type="submit" class="p-3 bg-[#0870B8] text-white rounded-xl hover:bg-[#065A96] transition-all">
                     <span class="iconify text-xl" data-icon="solar:filter-bold"></span>
                 </button>
 
@@ -80,12 +80,12 @@
 
             <div class="flex items-center gap-2">
                 @if(auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || in_array(auth()->user()->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
-                <button type="button" onclick="bulkSendCertificates()" class="px-6 py-3 bg-orange-600 text-white rounded-xl text-xs font-black shadow-lg shadow-orange-200 hover:bg-orange-700 transition-all uppercase tracking-widest flex items-center gap-2">
+                <button type="button" onclick="bulkSendCertificates()" class="px-6 py-3 bg-[#0870B8] text-white rounded-xl text-xs font-black shadow-md hover:bg-[#065A96] transition-all uppercase tracking-widest flex items-center gap-2">
                     <span class="iconify text-lg" data-icon="solar:letter-send-bold"></span>
                     Kirim Sertifikat Massal
                 </button>
                 @endif
-                <a href="{{ route('admin.export') }}" class="px-6 py-3 bg-emerald-600 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition-all uppercase tracking-widest flex items-center gap-2">
+                <a href="{{ route('admin.export') }}" class="px-6 py-3 bg-emerald-600 text-white rounded-xl text-xs font-black shadow-md hover:bg-emerald-700 transition-all uppercase tracking-widest flex items-center gap-2">
                     <span class="iconify text-lg" data-icon="solar:file-download-bold"></span>
                     Export
                 </a>
@@ -99,7 +99,7 @@
                 <tr class="bg-slate-50/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-50">
                     @if(auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || in_array(auth()->user()->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
                     <th class="px-6 py-6 text-center">
-                        <input type="checkbox" id="selectAll" class="w-4 h-4 rounded text-orange-600 focus:ring-orange-500 border-slate-300">
+                        <input type="checkbox" id="selectAll" class="w-4 h-4 rounded text-[#0870B8] focus:ring-[#0870B8] border-slate-300">
                     </th>
                     @endif
                     <th class="px-8 py-6">Kandidat</th>
@@ -133,7 +133,7 @@
                 <tr class="group hover:bg-slate-50/50 transition-colors">
                     @if(auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || in_array(auth()->user()->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
                     <td class="px-6 py-5 text-center">
-                        <input type="checkbox" name="selected_ids[]" value="{{ $akun->id }}" class="row-checkbox w-4 h-4 rounded text-orange-600 focus:ring-orange-500 border-slate-300">
+                        <input type="checkbox" name="selected_ids[]" value="{{ $akun->id }}" class="row-checkbox w-4 h-4 rounded text-[#0870B8] focus:ring-[#0870B8] border-slate-300">
                     </td>
                     @endif
                     <td class="px-4 md:px-8 py-5">
@@ -312,11 +312,11 @@
                             </a>
                             <form action="{{ route('admin.pendaftar.send_certificate', $akun->id) }}" method="POST" class="inline">
                                 @csrf
-                                <button type="submit" onclick="return confirm('Kirim sertifikat ke email {{ $akun->email }}?')" class="w-9 h-9 flex items-center justify-center bg-orange-50 text-orange-600 rounded-xl hover:bg-orange-500 hover:text-white transition-all shadow-sm border border-orange-100" title="Kirim Sertifikat via Email">
-                                    <span class="iconify text-lg" data-icon="solar:letter-send-bold"></span>
+                                <button type="submit" onclick="return confirm('Kirim sertifikat ke email {{ $akun->email }}?')" class="w-9 h-9 flex items-center justify-center bg-blue-50 text-[#0870B8] rounded-xl hover:bg-[#0870B8] hover:text-white transition-all shadow-sm border border-blue-100" title="Kirim Sertifikat via Email">
+                                    <span class="iconify text-base" data-icon="solar:letter-send-bold"></span>
                                 </button>
                             </form>
-                            <a href="{{ route('admin.pendaftar.show', $akun->id) }}" class="h-9 px-4 bg-blue-600 text-white rounded-xl text-[10px] font-black hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-500/20 flex items-center gap-2 border border-blue-500">
+                            <a href="{{ route('admin.pendaftar.show', $akun->id) }}" class="h-9 px-4 bg-[#0870B8] text-white rounded-xl text-[10px] font-black hover:bg-[#065A96] transition-all shadow-md hover:shadow-blue-500/20 flex items-center gap-2 border border-blue-600">
                                 <span>VERIFIKASI</span>
                                 <span class="iconify" data-icon="solar:pen-new-square-bold"></span>
                             </a>
@@ -336,30 +336,30 @@
 </div>
 @if(auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || in_array(auth()->user()->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
 <!-- Modal Progress -->
-<div id="progressModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md overflow-hidden border border-slate-100">
+<div id="progressModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100">
         <div class="p-8 text-center">
-            <div class="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6 animate-bounce">
-                <span class="iconify text-3xl" data-icon="solar:letter-send-bold"></span>
+            <div class="w-16 h-16 bg-blue-50 text-[#0870B8] rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <span class="iconify text-3xl animate-spin" data-icon="solar:restart-bold"></span>
             </div>
             <h3 class="text-xl font-black text-slate-800 mb-2">Mengirim Sertifikat...</h3>
-            <p class="text-slate-500 text-sm font-medium mb-8">Mohon tunggu, sedang memproses antrean email.</p>
+            <p class="text-slate-500 text-xs font-semibold mb-8">Mohon tunggu, sedang memproses pengiriman sertifikat.</p>
             
             <div class="relative pt-1">
                 <div class="flex mb-2 items-center justify-between">
                     <div>
-                        <span class="text-xs font-black inline-block py-1 px-2 uppercase rounded-full text-orange-600 bg-orange-100" id="progressText">
+                        <span class="text-xs font-black inline-block py-1 px-2.5 uppercase rounded-full text-[#0870B8] bg-blue-50 border border-blue-200" id="progressText">
                             0%
                         </span>
                     </div>
                     <div class="text-right">
-                        <span class="text-xs font-black inline-block text-orange-600" id="progressCount">
+                        <span class="text-xs font-black inline-block text-[#0870B8]" id="progressCount">
                             0 / 0
                         </span>
                     </div>
                 </div>
-                <div class="overflow-hidden h-3 mb-4 text-xs flex rounded-full bg-slate-100">
-                    <div id="progressBar" style="width:0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-orange-500 transition-all duration-500"></div>
+                <div class="overflow-hidden h-2.5 mb-4 text-xs flex rounded-full bg-slate-100">
+                    <div id="progressBar" style="width:0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-[#0870B8] transition-all duration-500"></div>
                 </div>
             </div>
         </div>

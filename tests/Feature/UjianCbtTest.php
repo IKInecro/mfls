@@ -337,4 +337,205 @@ class UjianCbtTest extends TestCase
 
         Carbon::setTestNow();
     }
+
+    public function test_reset_pelanggaran_menghapus_sesi_dan_bisa_mengulang_dari_nol(): void
+    {
+        $peserta = $this->akun('pendaftar');
+        $ujian = $this->ujian();
+        $this->soal($ujian, 'a');
+        $this->mulaiSesi($ujian, $peserta->peserta);
+
+        $this->assertSame(1, SesiUjian::where('ujian_id', $ujian->id)->where('peserta_id', $peserta->peserta->id)->count());
+
+        // Panggil endpoint reset pelanggaran (JSON)
+        $res = $this->actingAs($peserta)
+            ->postJson("/pendaftar/ujian/{$ujian->id}/reset-pelanggaran")
+            ->assertOk()
+            ->assertJsonPath('status', 'reset');
+
+        // Sesi terhapus di database
+        $this->assertSame(0, SesiUjian::where('ujian_id', $ujian->id)->where('peserta_id', $peserta->peserta->id)->count());
+
+        // Peserta dapat masuk kembali ke ujian dan dibuatkan sesi baru dari awal
+        $this->actingAs($peserta)->get("/pendaftar/ujian/{$ujian->id}")->assertOk();
+        $this->assertSame(1, SesiUjian::where('ujian_id', $ujian->id)->where('peserta_id', $peserta->peserta->id)->count());
+    }
+
+    public function test_submit_kosong_menghasilkan_skor_nol_dan_menutup_sesi(): void
+    {
+        $peserta = $this->akun('pendaftar');
+        $pesertaId = $peserta->peserta->id;
+        $ujian = $this->ujian();
+        $this->soal($ujian, 'a');
+        $this->mulaiSesi($ujian, $peserta->peserta);
+
+        // Submit dengan array jawaban kosong (misal waktu habis tanpa menjawab)
+        $this->actingAs($peserta)
+            ->postJson("/pendaftar/ujian/{$ujian->id}/submit", ['answers' => []])
+            ->assertOk()
+            ->assertJsonPath('results.score', 0);
+
+        // Jawaban dan nilai tercatat 0, bukan tertinggal tanpa nilai
+        $this->assertSame(1, JawabanUjian::where('ujian_id', $ujian->id)->where('peserta_id', $pesertaId)->count());
+        $this->assertSame(0.0, (float) NilaiUjian::where('ujian_id', $ujian->id)->where('peserta_id', $pesertaId)->value('skor_rata'));
+        $this->assertSame(0, SesiUjian::where('ujian_id', $ujian->id)->where('peserta_id', $pesertaId)->count());
+    }
+
+    public function test_submit_pemetaan_diri_menghasilkan_skor_persentase_valid(): void
+    {
+        $peserta = $this->akun('pendaftar');
+        $pesertaId = $peserta->peserta->id;
+        $ujian = $this->ujian(['nama' => 'Instrumen Pemetaan Diri']);
+
+        $soal1 = Soal::create([
+            'ujian_id' => $ujian->id,
+            'pertanyaan' => 'Pertanyaan kesadaran diri?',
+            'opsi_a' => '1', 'opsi_b' => '2', 'opsi_c' => '3', 'opsi_d' => '4', 'opsi_e' => '5',
+            'kunci_jawaban' => null,
+            'bobot' => 1,
+            'kategori' => 'Self Awareness (SA)',
+        ]);
+
+        $this->mulaiSesi($ujian, $peserta->peserta);
+
+        // Menjawab E (skor 5 dari max 5 = 100%)
+        $this->actingAs($peserta)
+            ->postJson("/pendaftar/ujian/{$ujian->id}/submit", ['answers' => [$soal1->id => 'e']])
+            ->assertOk()
+            ->assertJsonPath('results.score', 100);
+
+        $nilaiUjian = NilaiUjian::where('ujian_id', $ujian->id)->where('peserta_id', $pesertaId)->first();
+        $this->assertNotNull($nilaiUjian);
+        $this->assertSame(100.0, (float) $nilaiUjian->skor_rata);
+
+        $jawaban = JawabanUjian::where('ujian_id', $ujian->id)->where('peserta_id', $pesertaId)->first();
+        $this->assertNotNull($jawaban);
+        $this->assertSame(100.0, (float) $jawaban->nilai);
+        $this->assertStringContainsString('HASIL ANALISIS INSTRUMEN PEMETAAN DIRI', $jawaban->kesimpulan_ai);
+    }
+
+    public function test_soal_dengan_spasi_atau_huruf_besar_tetap_terhitung_benar(): void
+    {
+        $peserta = $this->akun('pendaftar');
+        $ujian = $this->ujian();
+        $soal = $this->soal($ujian, 'B '); // Kunci jawaban ada spasi
+        $this->mulaiSesi($ujian, $peserta->peserta);
+
+        // User menjawab 'b' (lowercase, tanpa spasi)
+        $this->actingAs($peserta)
+            ->postJson("/pendaftar/ujian/{$ujian->id}/submit", ['answers' => [$soal->id => 'b']])
+            ->assertOk()
+            ->assertJsonPath('results.score', 100);
+    }
+
+    public function test_soal_tanpa_bobot_tetap_terhitung_proporsional(): void
+    {
+        $peserta = $this->akun('pendaftar');
+        $ujian = $this->ujian();
+        // Soal dengan bobot 0
+        $soal1 = Soal::create([
+            'ujian_id' => $ujian->id,
+            'pertanyaan' => 'Soal 1',
+            'opsi_a' => 'A', 'opsi_b' => 'B', 'opsi_c' => 'C', 'opsi_d' => 'D', 'opsi_e' => 'E',
+            'kunci_jawaban' => 'a',
+            'bobot' => 0,
+            'kategori' => 'tpa',
+        ]);
+        $soal2 = Soal::create([
+            'ujian_id' => $ujian->id,
+            'pertanyaan' => 'Soal 2',
+            'opsi_a' => 'A', 'opsi_b' => 'B', 'opsi_c' => 'C', 'opsi_d' => 'D', 'opsi_e' => 'E',
+            'kunci_jawaban' => 'c',
+            'bobot' => 0,
+            'kategori' => 'tpa',
+        ]);
+
+        $this->mulaiSesi($ujian, $peserta->peserta);
+
+        // Menjawab 1 benar dari 2 soal -> 50%
+        $this->actingAs($peserta)
+            ->postJson("/pendaftar/ujian/{$ujian->id}/submit", [
+                'answers' => [$soal1->id => 'a', $soal2->id => 'b']
+            ])
+            ->assertOk()
+            ->assertJsonPath('results.score', 50);
+    }
+
+    public function test_seleksi_ujian_mendeteksi_nilai_tpa_dan_tbi(): void
+    {
+        $admin = $this->akun('admin');
+        $peserta = $this->akun('pendaftar');
+        $pesertaId = $peserta->peserta->id;
+
+        // Beri status daftar lulus administrasi agar masuk seleksi ujian
+        \App\Models\Daftar::create([
+            'peserta_id' => $pesertaId,
+            'status' => 'lulus',
+            'no_wa' => '081234567890',
+            'jenis_kelamin' => 'Laki-laki',
+            'tahun_lulus' => 2026,
+            'ttl' => 'Jakarta, 01-01-2005',
+            'provinsi' => 'DKI Jakarta',
+            'kabupaten' => 'Jakarta Pusat',
+            'asal_sekolah' => 'SMAN 1 Jakarta',
+        ]);
+
+        $ujianTpa = $this->ujian(['nama' => 'Tes TPA Mandiri']);
+        $ujianTbi = $this->ujian(['nama' => 'Tes Bahasa Inggris (TBI)']);
+
+        NilaiUjian::create([
+            'ujian_id' => $ujianTpa->id,
+            'peserta_id' => $pesertaId,
+            'skor_asli' => 85,
+            'skor_rata' => 85.00,
+        ]);
+
+        NilaiUjian::create([
+            'ujian_id' => $ujianTbi->id,
+            'peserta_id' => $pesertaId,
+            'skor_asli' => 90,
+            'skor_rata' => 90.00,
+        ]);
+
+        $response = $this->actingAs($admin)->get('/admin/seleksi-ujian');
+        $response->assertOk()
+            ->assertSee('85.00')
+            ->assertSee('90.00');
+    }
+
+    public function test_export_seleksi_ujian_memuat_kolom_nilai_cbt(): void
+    {
+        $admin = $this->akun('admin');
+        $peserta = $this->akun('pendaftar');
+        $pesertaId = $peserta->peserta->id;
+
+        \App\Models\Daftar::create([
+            'peserta_id' => $pesertaId,
+            'status' => 'lulus',
+            'no_wa' => '081234567890',
+            'jenis_kelamin' => 'Laki-laki',
+            'tahun_lulus' => 2026,
+            'ttl' => 'Surabaya, 01-01-2005',
+            'provinsi' => 'Jawa Timur',
+            'kabupaten' => 'Surabaya',
+            'asal_sekolah' => 'SMAN 1 Surabaya',
+        ]);
+
+        $ujianTpa = $this->ujian(['nama' => 'Tes Potensi Akademik']);
+        NilaiUjian::create([
+            'ujian_id' => $ujianTpa->id,
+            'peserta_id' => $pesertaId,
+            'skor_asli' => 80,
+            'skor_rata' => 80.00,
+        ]);
+
+        $response = $this->actingAs($admin)->get('/admin/seleksi-ujian/export');
+        $response->assertOk();
+        $content = $response->streamedContent();
+
+        $this->assertStringContainsString('Nilai TPA', $content);
+        $this->assertStringContainsString('Nilai TBI', $content);
+        $this->assertStringContainsString('Rata-rata CBT', $content);
+        $this->assertStringContainsString('80.00', $content);
+    }
 }

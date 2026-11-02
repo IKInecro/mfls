@@ -151,8 +151,8 @@ class PendaftarController extends Controller
         $berkas = \App\Models\Berkas::where('peserta_id', $peserta->id)->first();
         $sertifikats = \App\Models\Sertifikat::where('peserta_id', $peserta->id)->get();
         
-        $tahunLulus = (int) ($peserta->tahun_lulus ?? 2026);
-        $maxSemester = ($tahunLulus < 2026) ? 6 : 5;
+        $tahunLulus = (int) ($peserta->tahun_lulus ?? 2027);
+        $maxSemester = ($tahunLulus < 2027) ? 6 : 5;
 
         return view('pendaftar.berkas', compact('peserta', 'berkas', 'sertifikats', 'maxSemester'));
     }
@@ -377,8 +377,8 @@ class PendaftarController extends Controller
             return redirect('/login')->with('error', 'Data profil pendaftar tidak ditemukan.');
         }
 
-        $tahunLulus = (int) ($peserta->tahun_lulus ?? 2026);
-        $maxSemester = ($tahunLulus < 2026) ? 6 : 5;
+        $tahunLulus = (int) ($peserta->tahun_lulus ?? 2027);
+        $maxSemester = ($tahunLulus < 2027) ? 6 : 5;
 
         // Ensure core subjects exist before querying them
         $coreSubjects = ['Bahasa Indonesia', 'Matematika Wajib', 'Bahasa Inggris'];
@@ -450,8 +450,8 @@ class PendaftarController extends Controller
             $this->compressImage($path);
         }
 
-        $tahunLulus = (int) ($peserta->tahun_lulus ?? 2026);
-        $maxSemester = ($tahunLulus < 2026) ? 6 : 5;
+        $tahunLulus = (int) ($peserta->tahun_lulus ?? 2027);
+        $maxSemester = ($tahunLulus < 2027) ? 6 : 5;
 
         // Handle Rapor Files Scans (Semester 1-6)
         for ($i = 1; $i <= $maxSemester; $i++) {
@@ -515,8 +515,8 @@ class PendaftarController extends Controller
             }
         }
 
-        $tahunLulus = (int) ($peserta->tahun_lulus ?? 2026);
-        $maxSemester = ($tahunLulus < 2026) ? 6 : 5;
+        $tahunLulus = (int) ($peserta->tahun_lulus ?? 2027);
+        $maxSemester = ($tahunLulus < 2027) ? 6 : 5;
         $uploadedRapor = [];
         for ($i = 1; $i <= $maxSemester; $i++)
             if ($request->hasFile('rapor' . $i))

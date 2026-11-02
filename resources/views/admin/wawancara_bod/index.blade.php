@@ -184,14 +184,10 @@
                                     <optgroup label="Layak - Kelas Reguler">
                                         <option value="Layak (100% Reguler)" {{ $statusWawancara === 'Layak (100% Reguler)' ? 'selected' : '' }}>✦ Layak 100% — Reguler</option>
                                         <option value="Layak (75% Reguler)"  {{ $statusWawancara === 'Layak (75% Reguler)'  ? 'selected' : '' }}>✦ Layak 75% — Reguler</option>
-                                        <option value="Layak (50% Reguler)"  {{ $statusWawancara === 'Layak (50% Reguler)'  ? 'selected' : '' }}>✦ Layak 50% — Reguler</option>
-                                        <option value="Layak (25% Reguler)"  {{ $statusWawancara === 'Layak (25% Reguler)'  ? 'selected' : '' }}>✦ Layak 25% — Reguler</option>
                                     </optgroup>
                                     <optgroup label="Layak - Kelas Eksekutif">
                                         <option value="Layak (100% Eksekutif)" {{ $statusWawancara === 'Layak (100% Eksekutif)' ? 'selected' : '' }}>✦ Layak 100% — Eksekutif</option>
                                         <option value="Layak (75% Eksekutif)"  {{ $statusWawancara === 'Layak (75% Eksekutif)'  ? 'selected' : '' }}>✦ Layak 75% — Eksekutif</option>
-                                        <option value="Layak (50% Eksekutif)"  {{ $statusWawancara === 'Layak (50% Eksekutif)'  ? 'selected' : '' }}>✦ Layak 50% — Eksekutif</option>
-                                        <option value="Layak (25% Eksekutif)"  {{ $statusWawancara === 'Layak (25% Eksekutif)'  ? 'selected' : '' }}>✦ Layak 25% — Eksekutif</option>
                                     </optgroup>
                                     <optgroup label="Tidak Layak">
                                         <option value="Tidak Layak" {{ $statusWawancara === 'Tidak Layak' ? 'selected' : '' }}>✕ Tidak Layak</option>

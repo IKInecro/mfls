@@ -8,11 +8,11 @@
 
 <!-- Filter Tabs -->
 <div class="flex gap-2 mb-8 overflow-x-auto pb-2">
-    <a href="{{ route('admin.soal.index') }}" class="px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all {{ !request('ujian_id') ? 'bg-dark-navy text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50' }}">
+    <a href="{{ route('admin.soal.index') }}" class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ !request('ujian_id') ? 'bg-[#0870B8] text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">
         Semua Soal
     </a>
     @foreach($ujians as $ujian)
-        <a href="{{ route('admin.soal.index', ['ujian_id' => $ujian->id]) }}" class="px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all {{ request('ujian_id') == $ujian->id ? 'bg-dark-navy text-white shadow-lg' : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50' }}">
+        <a href="{{ route('admin.soal.index', ['ujian_id' => $ujian->id]) }}" class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ request('ujian_id') == $ujian->id ? 'bg-[#0870B8] text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50' }}">
             {{ $ujian->nama }}
         </a>
     @endforeach
@@ -24,9 +24,9 @@
         <div class="sticky top-4 space-y-6">
             
             @if($errors->any())
-            <div class="bg-red-50 border border-red-200 p-4 rounded-xl mb-4">
-                <h4 class="text-red-800 font-bold text-xs mb-2 uppercase">Terjadi Kesalahan:</h4>
-                <ul class="list-disc list-inside text-[10px] text-red-600 font-medium">
+            <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl mb-4">
+                <h4 class="text-rose-800 font-bold text-xs mb-2 uppercase">Terjadi Kesalahan:</h4>
+                <ul class="list-disc list-inside text-[11px] text-rose-700 font-medium">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -40,27 +40,27 @@
             @endphp
             @if($currentUjian)
             <!-- Pengaturan Ujian Card -->
-            <div class="bg-yellow-50 border border-yellow-200 p-6 rounded-2xl mb-6">
-                <h3 class="font-bold text-yellow-900 mb-2">Pengaturan: {{ $currentUjian->nama }}</h3>
+            <div class="bg-white border border-slate-200/80 p-6 rounded-3xl mb-6 shadow-xs">
+                <h3 class="font-black text-slate-900 mb-3 text-sm">Pengaturan: {{ $currentUjian->nama }}</h3>
                 <form action="{{ route('admin.ujian.update', $currentUjian->id) }}" method="POST">
                     @csrf
                     @method('PUT')
                     
                     <div class="mb-3">
-                        <label class="block text-[10px] font-bold text-yellow-800 mb-1">Durasi (Menit)</label>
-                        <input type="number" name="durasi" value="{{ $currentUjian->durasi ?? 60 }}" required min="1" class="w-full px-3 py-2 bg-white border border-yellow-300 rounded-lg text-sm">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Durasi (Menit)</label>
+                        <input type="number" name="durasi" value="{{ $currentUjian->durasi ?? 60 }}" required min="1" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:border-[#0870B8] outline-none">
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-[10px] font-bold text-yellow-800 mb-1">Status Ujian</label>
-                        <select name="is_active" class="w-full px-3 py-2 bg-white border border-yellow-300 rounded-lg text-sm font-bold">
-                            <option value="1" {{ ($currentUjian->is_active ?? true) ? 'selected' : '' }}>🟢 BUKA (Aktif)</option>
-                            <option value="0" {{ !($currentUjian->is_active ?? true) ? 'selected' : '' }}>🔴 TUTUP (Tidak Aktif)</option>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Status Sesi Ujian</label>
+                        <select name="is_active" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:border-[#0870B8] outline-none">
+                            <option value="1" {{ ($currentUjian->is_active ?? true) ? 'selected' : '' }}>Buka (Sesi Aktif)</option>
+                            <option value="0" {{ !($currentUjian->is_active ?? true) ? 'selected' : '' }}>Tutup (Sesi Nonaktif)</option>
                         </select>
                     </div>
                     
-                    <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 rounded-lg text-sm transition-all shadow-md">
-                        Simpan Pengaturan
+                    <button type="submit" class="w-full bg-[#0870B8] hover:bg-[#065A96] text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-xs cursor-pointer">
+                        Simpan Pengaturan Paket
                     </button>
                 </form>
             </div>
@@ -68,21 +68,23 @@
             @endif
 
             <!-- Import Card -->
-            <div class="bg-indigo-50 border border-indigo-100 p-6 rounded-2xl">
-                <h3 class="font-bold text-indigo-900 mb-2">Import Soal Massal</h3>
-                <p class="text-xs text-indigo-600 mb-4">Support file .docx (Word), .pdf, dan .csv. <br>Format Word/PDF: No. Soal, A-D, Kunci: X</p>
+            <div class="bg-blue-50/50 border border-blue-100 p-6 rounded-3xl">
+                <h3 class="font-black text-slate-900 mb-1 text-sm">Import Soal Massal</h3>
+                <p class="text-xs text-slate-500 mb-4">Mendukung file .docx (Word), .pdf, dan .csv.<br>Format: No. Soal, Opsi A-D/E, Kunci Jawaban.</p>
                 <form action="{{ route('admin.soal.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-3">
-                        <select name="ujian_id" required class="w-full px-3 py-2 bg-white border border-indigo-200 rounded-lg text-xs font-bold text-indigo-900 focus:outline-none">
-                            <option value="">-- Pilih Kategori Ujian --</option>
+                        <select name="ujian_id" required class="w-full px-3.5 py-2.5 bg-white border border-blue-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-[#0870B8]">
+                            <option value="">-- Pilih Paket Ujian --</option>
                             @foreach($ujians as $ujian)
                                 <option value="{{ $ujian->id }}" {{ request('ujian_id') == $ujian->id ? 'selected' : '' }}>{{ $ujian->nama }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <input type="file" name="file_soal" accept=".csv,.txt,.docx,.pdf" required class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 mb-3"/>
-                    <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg text-sm transition-all shadow-md shadow-indigo-600/20">Upload File</button>
+                    <input type="file" name="file_soal" accept=".csv,.txt,.docx,.pdf" required class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-[#0870B8] hover:file:bg-blue-200 mb-3"/>
+                    <button class="w-full bg-[#0870B8] hover:bg-[#065A96] text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-xs cursor-pointer">
+                        Unggah & Ekstrak Soal
+                    </button>
                 </form>
             </div>
 
@@ -94,7 +96,7 @@
                     @csrf
                     <div>
                         <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Kategori Ujian</label>
-                        <select name="ujian_id" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-dark-navy">
+                        <select name="ujian_id" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#0870B8] focus:ring-4 focus:ring-blue-500/10">
                             <option value="">-- Pilih --</option>
                             @foreach($ujians as $ujian)
                                 <option value="{{ $ujian->id }}" {{ request('ujian_id') == $ujian->id ? 'selected' : '' }}>{{ $ujian->nama }}</option>
@@ -104,7 +106,7 @@
 
                     <div>
                         <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Pertanyaan</label>
-                        <textarea name="pertanyaan" rows="3" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-dark-navy" placeholder="Tulis soal di sini..."></textarea>
+                        <textarea name="pertanyaan" rows="3" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-[#0870B8] focus:ring-4 focus:ring-blue-500/10" placeholder="Tulis soal di sini..."></textarea>
                     </div>
 
                     <div>
@@ -158,7 +160,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-dark-navy text-white font-bold py-3 rounded-xl hover:bg-black transition-all shadow-lg">
+                    <button type="submit" class="w-full bg-[#0870B8] hover:bg-[#065A96] text-white font-bold py-2.5 rounded-xl transition-all shadow-xs cursor-pointer">
                         Simpan Soal
                     </button>
                 </form>
@@ -272,7 +274,7 @@ function confirmDeleteSoal(button) {
 
             <!-- Question Body -->
             <div class="flex gap-4">
-                <div class="shrink-0 w-8 h-8 bg-dark-navy text-white text-sm font-bold rounded-lg flex items-center justify-center shadow-lg shadow-dark-navy/20">
+                <div class="shrink-0 w-8 h-8 bg-[#0870B8] text-white text-xs font-bold rounded-xl flex items-center justify-center shadow-xs">
                     {{ $loop->iteration }}
                 </div>
                 <div class="flex-grow">

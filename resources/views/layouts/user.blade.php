@@ -46,18 +46,31 @@
         @theme {
             --color-primary-blue: #023681;
             --color-primary-blue-hover: #012659;
-            --color-primary-yellow: #fcdb2f;
-            --color-primary-yellow-hover: #e3c51a;
+            --color-primary-yellow: #f59e0b;
+            --color-primary-yellow-hover: #d97706;
             --color-dark-navy: #023681;
-            --font-jakarta: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-            --font-caveat: "Caveat", cursive;
+            --font-jakarta: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
         }
         @layer base {
             html, body {
-                @apply overflow-x-hidden w-full;
+                @apply overflow-x-hidden w-full scroll-smooth;
             }
             body {
-                @apply font-jakarta text-gray-800 bg-white antialiased;
+                @apply font-jakarta text-slate-800 bg-white antialiased selection:bg-primary-blue selection:text-amber-400;
+            }
+            /* Custom sleek scrollbar */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background: #f1f5f9;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 4px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: #023681;
             }
         }
     </style>
@@ -68,45 +81,44 @@
 
 <body class="font-jakarta antialiased">
     <div class="min-h-screen flex flex-col bg-white w-full">
-        <!-- Navbar -->
-        <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <!-- Sticky Navbar with Enhanced Blur & Shadow Transition -->
+        <nav id="main-navbar" class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80 transition-all duration-300">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-20">
+                <div class="flex justify-between items-center h-20">
                     <!-- Logo -->
                     <div class="flex items-center">
-                        <a href="/" class="flex items-center gap-2">
+                        <a href="/" class="flex items-center py-2">
                             <img src="{{ asset('icon/logoo.png') }}" alt="MNCU Future Leader Scholarship Logo"
-                                style="height: 80px !important; width: auto !important;"
-                                class="object-contain shrink-0">
+                                class="h-12 sm:h-14 w-auto object-contain shrink-0 hover:opacity-90 transition-opacity">
                         </a>
                     </div>
 
-                    <div class="hidden md:flex items-center space-x-8">
+                    <div class="hidden md:flex items-center space-x-7">
                         <a href="{{ url('/') }}#home"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link">Home</a>
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">Home</a>
                         <a href="{{ url('/') }}#about"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link">Tentang
-                            Kami</a>
-                        <a href="{{ url('/') }}#timeline"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link">Timeline</a>
-                        <a href="{{ url('/') }}#requirements"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link">S&K</a>
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">Tentang Kami</a>
                         <a href="{{ url('/') }}#program"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link">Program</a>
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">Program Studi</a>
+                        <a href="{{ url('/') }}#timeline"
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">Timeline</a>
+                        <a href="{{ url('/') }}#benefit"
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">Benefit</a>
+                        <a href="{{ url('/') }}#requirements"
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">S&K</a>
                         <a href="{{ url('/') }}#berita"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link">Berita</a>
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">Berita</a>
                         <a href="{{ url('/') }}#contact"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link">Kontak</a>
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">Kontak</a>
                         <a href="{{ route('quiz.show') }}"
-                            class="text-sm font-semibold text-primary-blue bg-blue-50 px-3 py-1 rounded-full border border-blue-100 hover:bg-primary-yellow hover:text-dark-navy transition-all">Rekomendasi
-                            Prodi</a>
+                            class="text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 px-3.5 py-1.5 rounded-full border border-blue-200 hover:bg-primary-blue hover:text-white transition-all shadow-sm">Quiz Prodi</a>
                     </div>
 
                     <!-- CTA Buttons -->
                     <div class="flex items-center gap-4">
                         <!-- Mobile menu button -->
                         <button id="mobile-menu-button"
-                            class="md:hidden p-2 rounded-md text-gray-600 hover:text-primary-yellow">
+                            class="md:hidden p-2 rounded-lg text-slate-600 hover:text-primary-blue hover:bg-slate-100 transition-colors" aria-label="Toggle navigation menu">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 6h16M4 12h16M4 18h16"></path>
@@ -115,13 +127,13 @@
 
                         @auth
                         <a href="{{ route('pendaftar.dashboard') }}"
-                            class="bg-primary-yellow hover:bg-primary-yellow-hover text-dark-navy px-8 py-3 rounded-full text-sm font-bold shadow-md shadow-primary-yellow/10 transition-all hover:scale-105 active:scale-95">
-                            Kembali ke Dashboard
+                            class="bg-primary-blue hover:bg-primary-blue-hover text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-blue-900/15 transition-all hover:-translate-y-0.5 active:translate-y-0">
+                            Dashboard
                         </a>
                         @else
                         <a href="/login"
-                            class="bg-primary-yellow hover:bg-primary-yellow-hover text-dark-navy px-8 py-3 rounded-full text-sm font-bold shadow-md shadow-primary-yellow/10 transition-all hover:scale-105 active:scale-95">
-                            Login
+                            class="bg-primary-blue hover:bg-primary-blue-hover text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-blue-900/15 transition-all hover:-translate-y-0.5 active:translate-y-0">
+                            Masuk
                         </a>
                         @endauth
                     </div>
@@ -129,33 +141,33 @@
                 </div>
 
                 <!-- Mobile Navigation Menu -->
-                <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 py-4">
-                    <div class="flex flex-col space-y-4">
+                <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 py-4">
+                    <div class="flex flex-col space-y-3">
                         <a href="{{ url('/') }}#home"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link mobile-nav-link">Home</a>
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">Home</a>
                         <a href="{{ url('/') }}#about"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link mobile-nav-link">Tentang
-                            Kami</a>
-                        <a href="{{ url('/') }}#timeline"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link mobile-nav-link">Timeline</a>
-                        <a href="{{ url('/') }}#requirements"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link mobile-nav-link">S&K</a>
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">Tentang Kami</a>
                         <a href="{{ url('/') }}#program"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link mobile-nav-link">Program</a>
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">Program Studi</a>
+                        <a href="{{ url('/') }}#timeline"
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">Timeline</a>
+                        <a href="{{ url('/') }}#benefit"
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">Benefit</a>
+                        <a href="{{ url('/') }}#requirements"
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">S&K</a>
                         <a href="{{ url('/') }}#berita"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link mobile-nav-link">Berita</a>
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">Berita</a>
                         <a href="{{ url('/') }}#contact"
-                            class="text-sm font-semibold text-gray-600 hover:text-primary-yellow transition-colors nav-link mobile-nav-link">Kontak</a>
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">Kontak</a>
                         <a href="{{ route('quiz.show') }}"
-                            class="text-sm font-semibold text-primary-blue bg-blue-50 px-3 py-2 rounded-xl text-center border border-blue-100">Rekomendasi
-                            Prodi</a>
+                            class="text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 px-3.5 py-2 rounded-xl text-center border border-blue-200">Quiz Rekomendasi Prodi</a>
                     </div>
                 </div>
             </div>
         </nav>
 
         <!-- Page Content -->
-        <main class="flex-grow">
+        <main class="flex-grow pt-20">
             @yield('content')
         </main>
 
@@ -178,14 +190,14 @@
 
                     <!-- Links 1 -->
                     <div>
-                        <h4 class="text-white font-bold mb-6">Halaman</h4>
-                        <ul class="space-y-4 text-sm">
-                            <li><a href="{{ url('/') }}" class="hover:text-primary-yellow transition-colors">Beranda</a>
-                            </li>
-                            <li><a href="{{ url('/') }}#about"
-                                    class="hover:text-primary-yellow transition-colors">Tentang Kami</a></li>
-                            <li><a href="{{ url('/') }}#program"
-                                    class="hover:text-primary-yellow transition-colors">Program Beasiswa</a></li>
+                        <h4 class="text-white font-bold mb-6">Navigasi Program</h4>
+                        <ul class="space-y-3 text-sm">
+                            <li><a href="{{ url('/') }}#home" class="hover:text-primary-yellow transition-colors">Beranda</a></li>
+                            <li><a href="{{ url('/') }}#about" class="hover:text-primary-yellow transition-colors">Tentang MFLS</a></li>
+                            <li><a href="{{ url('/') }}#program" class="hover:text-primary-yellow transition-colors">Program Studi (S1)</a></li>
+                            <li><a href="{{ url('/') }}#timeline" class="hover:text-primary-yellow transition-colors">Timeline Seleksi</a></li>
+                            <li><a href="{{ url('/') }}#benefit" class="hover:text-primary-yellow transition-colors">Cakupan Beasiswa</a></li>
+                            <li><a href="{{ url('/') }}#requirements" class="hover:text-primary-yellow transition-colors">Syarat & Berkas</a></li>
                         </ul>
                     </div>
 
@@ -266,30 +278,9 @@
             });
         </script>
 
-        <!-- SweetAlert2 untuk Notifikasi Error -->
+        <!-- Modern Modal Alert & Global Notification System -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                @if(session('error'))
-                    Swal.fire({
-                        title: 'Oops!',
-                        text: "{{ session('error') }}",
-                        icon: 'error',
-                        confirmButtonColor: '#f97316',
-                        confirmButtonText: 'Mengerti'
-                    });
-                @endif
-                @if(session('success'))
-                    Swal.fire({
-                        title: 'Berhasil!',
-                        text: "{{ session('success') }}",
-                        icon: 'success',
-                        confirmButtonColor: '#f97316',
-                        confirmButtonText: 'Mengerti'
-                    });
-                @endif
-            });
-        </script>
+        @include('partials.modal-alert')
     </div>
 
     <!-- Smooth Scrolling Navigation Script -->
@@ -335,14 +326,28 @@
                 });
             });
 
+            // Sticky Navbar Elevation & Shadow on scroll
+            const mainNav = document.getElementById('main-navbar');
+            window.addEventListener('scroll', function () {
+                if (mainNav) {
+                    if (window.scrollY > 15) {
+                        mainNav.classList.add('shadow-md', 'bg-white/95');
+                        mainNav.classList.remove('bg-white/90');
+                    } else {
+                        mainNav.classList.remove('shadow-md', 'bg-white/95');
+                        mainNav.classList.add('bg-white/90');
+                    }
+                }
+            });
+
             // Active navigation state on scroll
             window.addEventListener('scroll', function () {
-                const sections = ['home', 'about', 'timeline', 'requirements', 'program', 'berita', 'contact'];
+                const sections = ['home', 'about', 'program', 'timeline', 'benefit', 'requirements', 'berita', 'contact'];
                 const scrollPos = window.scrollY + 100;
 
                 sections.forEach(sectionId => {
                     const section = document.getElementById(sectionId);
-                    const navLink = document.querySelector(`a[href="#${sectionId}"]`);
+                    const navLink = document.querySelector(`a[href$="#${sectionId}"]`);
 
                     if (section && navLink) {
                         const sectionTop = section.offsetTop;
@@ -351,13 +356,13 @@
                         if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
                             // Remove active class from all nav links
                             navLinks.forEach(link => {
-                                link.classList.remove('text-primary-yellow');
-                                link.classList.add('text-gray-600');
+                                link.classList.remove('text-primary-blue', 'font-bold');
+                                link.classList.add('text-slate-600');
                             });
 
                             // Add active class to current nav link
-                            navLink.classList.remove('text-gray-600');
-                            navLink.classList.add('text-primary-yellow');
+                            navLink.classList.remove('text-slate-600');
+                            navLink.classList.add('text-primary-blue', 'font-bold');
                         }
                     }
                 });

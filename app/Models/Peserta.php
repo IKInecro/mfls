@@ -105,9 +105,9 @@ class Peserta extends Model
             if (!empty($this->$field)) $earnedPoints++;
         }
 
-        // 2. Determine Max Semester (Alumni: 6, 2026: 5)
-        $tahunLulus = (int) ($this->tahun_lulus ?? 2026);
-        $maxSemester = ($tahunLulus < 2026) ? 6 : 5;
+        // 2. Determine Max Semester (Alumni: 6, 2027: 5)
+        $tahunLulus = (int) ($this->tahun_lulus ?? 2027);
+        $maxSemester = ($tahunLulus < 2027) ? 6 : 5;
 
         // 3. Berkas Points (Comprehensive & Dynamic)
         $berkas = $this->berkas;
@@ -125,8 +125,8 @@ class Peserta extends Model
         // Ijazah/SKL/Kartu Pelajar is Mandatory for everyone
         $berkasFields[] = 'ijazah';
 
-        // Conditional: New Graduates 2026 must upload School Recommendation
-        if ($tahunLulus >= 2026) {
+        // Conditional: New Graduates 2027 must upload School Recommendation
+        if ($tahunLulus >= 2027) {
             $berkasFields[] = 'surat_rekomendasi_sekolah';
         }
 

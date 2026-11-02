@@ -23,16 +23,16 @@
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Pencarian Cepat</label>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama / Kode Ref..." 
-                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-orange-500 outline-none text-sm font-bold text-slate-700">
+                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-[#0870B8] focus:ring-4 focus:ring-blue-500/10 outline-none text-sm font-bold text-slate-700">
             </div>
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Asal Sekolah</label>
                 <input type="text" name="sekolah" value="{{ request('sekolah') }}" placeholder="Semua Sekolah..." 
-                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-orange-500 outline-none text-sm font-bold text-slate-700">
+                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-[#0870B8] focus:ring-4 focus:ring-blue-500/10 outline-none text-sm font-bold text-slate-700">
             </div>
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Prodi</label>
-                <select name="prodi" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-orange-500 outline-none text-sm font-bold text-slate-700">
+                <select name="prodi" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-[#0870B8] focus:ring-4 focus:ring-blue-500/10 outline-none text-sm font-bold text-slate-700">
                     <option value="">Semua Prodi</option>
                     <option value="Sains Komunikasi" {{ request('prodi') == 'Sains Komunikasi' ? 'selected' : '' }}>Sains Komunikasi</option>
                     <option value="Desain Komunikasi Visual" {{ request('prodi') == 'Desain Komunikasi Visual' ? 'selected' : '' }}>Desain Komunikasi Visual</option>
@@ -46,7 +46,7 @@
             </div>
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Kelengkapan Berkas</label>
-                <select name="berkas_status" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-orange-500 outline-none text-sm font-bold text-slate-700">
+                <select name="berkas_status" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-[#0870B8] focus:ring-4 focus:ring-blue-500/10 outline-none text-sm font-bold text-slate-700">
                     <option value="">Semua Status</option>
                     <option value="lengkap" {{ request('berkas_status') == 'lengkap' ? 'selected' : '' }}>Berkas Lengkap</option>
                     <option value="belum" {{ request('berkas_status') == 'belum' ? 'selected' : '' }}>Belum Lengkap</option>
@@ -56,17 +56,15 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Beasiswa</label>
-                <select name="beasiswa" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-orange-500 outline-none text-sm font-bold text-slate-700">
+                <select name="beasiswa" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-[#0870B8] focus:ring-4 focus:ring-blue-500/10 outline-none text-sm font-bold text-slate-700">
                     <option value="">Semua Beasiswa</option>
                     <option value="100%" {{ request('beasiswa') == '100%' ? 'selected' : '' }}>100%</option>
                     <option value="75%" {{ request('beasiswa') == '75%' ? 'selected' : '' }}>75%</option>
-                    <option value="50%" {{ request('beasiswa') == '50%' ? 'selected' : '' }}>50%</option>
-                    <option value="25%" {{ request('beasiswa') == '25%' ? 'selected' : '' }}>25%</option>
                 </select>
             </div>
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Kelas</label>
-                <select name="kelas" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-orange-500 outline-none text-sm font-bold text-slate-700">
+                <select name="kelas" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-[#0870B8] focus:ring-4 focus:ring-blue-500/10 outline-none text-sm font-bold text-slate-700">
                     <option value="">Semua Kelas</option>
                     <option value="Reguler" {{ request('kelas') == 'Reguler' ? 'selected' : '' }}>Reguler</option>
                     <option value="Karyawan" {{ request('kelas') == 'Karyawan' ? 'selected' : '' }}>Karyawan</option>
@@ -75,7 +73,7 @@
             </div>
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Rank Nilai (Min)</label>
-                <select name="min_nilai" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-orange-500 outline-none text-sm font-bold text-slate-700">
+                <select name="min_nilai" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-[#0870B8] focus:ring-4 focus:ring-blue-500/10 outline-none text-sm font-bold text-slate-700">
                     <option value="">Semua Nilai</option>
                     <option value="90" {{ request('min_nilai') == '90' ? 'selected' : '' }}>Nilai > 90</option>
                     <option value="80" {{ request('min_nilai') == '80' ? 'selected' : '' }}>Nilai > 80</option>

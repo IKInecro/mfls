@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengumuman MFLS 2026 — Segera Hadir</title>
-    <meta name="description" content="Pengumuman hasil seleksi MNCU Future Leader Scholarship 2026 akan segera dibuka.">
+    <title>Pengumuman MFLS Ajaran 2027 — Segera Hadir</title>
+    <meta name="description" content="Pengumuman hasil seleksi MNCU Future Leader Scholarship Ajaran 2027 akan segera dibuka.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -250,14 +250,14 @@
 <div class="container">
     <div class="badge">
         <span class="badge-dot"></span>
-        MNCU Future Leader Scholarship 2026
+        MNCU Future Leader Scholarship Ajaran 2027
     </div>
 
     <img src="{{ asset('icon/loog.png') }}" class="logo" alt="Logo MFLS" onerror="this.style.display='none'">
 
     <h1>Pengumuman Seleksi<br>Segera Dibuka</h1>
     <p class="subtitle">
-        Hasil seleksi beasiswa MNCU Future Leader Scholarship 2026<br>
+        Hasil seleksi beasiswa MNCU Future Leader Scholarship Ajaran 2027<br>
         akan diumumkan pada hari ini pukul <strong style="color:var(--gold)">12.00 WIB</strong>.
     </p>
 

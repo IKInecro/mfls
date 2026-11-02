@@ -1,98 +1,123 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-white">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title') - {{ config('app.name', 'MFLS') }}</title>
+    <title>@yield('title') - MNCU Future Leader Scholarship</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="{{ asset('icon/loog.png') }}">
     <link rel="shortcut icon" type="image/jpeg" href="{{ asset('icon/loog.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('icon/loog.png') }}">
 
-    <!-- Open Graph / Facebook / WhatsApp / Instagram -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="@yield('title') - {{ config('app.name', 'MFLS') }}">
-    <meta property="og:description"
-        content="Membangun generasi emas bangsa melalui program beasiswa unggulan dan pembinaan karakter yang berkelanjutan.">
-    <meta property="og:image" content="{{ asset('icon/loog.png') }}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="{{ config('app.name', 'MFLS') }}">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="{{ url()->current() }}">
-    <meta name="twitter:title" content="@yield('title') - {{ config('app.name', 'MFLS') }}">
-    <meta name="twitter:description"
-        content="Membangun generasi emas bangsa melalui program beasiswa unggulan dan pembinaan karakter yang berkelanjutan.">
-    <meta name="twitter:image" content="{{ asset('icon/loog.png') }}">
-
-    <!-- Fonts -->
+    <!-- Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
 
-    <!-- Tailwind CDN -->
+    <!-- Tailwind Browser 4 & SweetAlert2 -->
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style type="text/tailwindcss">
         @theme {
-            --color-primary-gold: #F2B451;
-            --color-primary-gold-hover: #e0a340;
-            --color-dark-navy: #111827;
-            --font-jakarta: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            --color-gold: #D99B26;
+            --color-gold-hover: #C2891E;
+            --color-navy: #0B1120;
+            --font-jakarta: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         @layer base {
+            html {
+                font-family: var(--font-jakarta);
+            }
             body {
-                @apply font-jakarta text-gray-800 bg-white antialiased;
+                @apply bg-white text-slate-800 antialiased selection:bg-slate-900 selection:text-white;
             }
         }
     </style>
-
 </head>
 
-<body class="font-jakarta antialiased bg-white">
+<body class="min-h-screen bg-white">
     <div class="flex min-h-screen">
-        <!-- Left Side: Image & Quote -->
-        <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-dark-navy">
-            <img src="{{ asset('icon/login.webp') }}" class="absolute inset-0 w-full h-full object-cover opacity-60"
-                alt="Login Background">
-            <div class="absolute inset-0 bg-gradient-to-tr from-dark-navy/90 via-dark-navy/40 to-primary-gold/20"></div>
+        
+        <!-- Left Hero Visual (Desktop Only) - Simple, Atmospheric & Clean -->
+        <div class="hidden lg:flex lg:w-1/2 relative bg-[#090E1A] overflow-hidden flex-col justify-between p-16 text-white">
+            <!-- Background Image with Soft Vignette -->
+            <img src="{{ asset('icon/login.webp') }}" 
+                 alt="MNC University" 
+                 class="absolute inset-0 w-full h-full object-cover opacity-25 mix-blend-luminosity">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#090E1A] via-[#090E1A]/80 to-transparent"></div>
 
-            <div class="relative z-10 flex flex-col justify-between p-16 w-full">
-                <div>
-                    <a href="/" class="flex items-center gap-3">
-                        <img src="{{ asset('icon/logoo.png') }}" alt="Logo MFLS" class="h-12 w-auto">
-                    </a>
-                </div>
+            <!-- Top Brand -->
+            <div class="relative z-10">
+                <a href="/" class="inline-flex items-center gap-3">
+                    <img src="{{ asset('icon/logoo.png') }}" alt="Logo MFLS" class="h-10 w-auto">
+                    <div class="border-l border-white/20 pl-3">
+                        <span class="block text-xs font-semibold text-slate-400 tracking-wider uppercase">MNC UNIVERSITY</span>
+                        <span class="block text-sm font-bold text-white tracking-tight">Future Leader Scholarship</span>
+                    </div>
+                </a>
+            </div>
 
-                <div class="max-w-md">
-                    <h2 class="text-4xl font-extrabold text-white leading-tight mb-6">
-                        "Pendidikan adalah senjata paling mematikan di dunia, karena dengan itu Anda dapat mengubah
-                        dunia."
-                    </h2>
-                    <p class="text-primary-gold font-bold">— Nelson Mandela</p>
-                </div>
+            <!-- Central Statement -->
+            <div class="relative z-10 max-w-md my-auto">
+                <p class="text-3xl font-bold text-white leading-tight tracking-tight">
+                    &ldquo;Pendidikan adalah senjata paling ampuh untuk mengubah dunia.&rdquo;
+                </p>
+                <p class="mt-4 text-sm font-semibold text-amber-400/90 tracking-wide">
+                    Nelson Mandela
+                </p>
+            </div>
 
-                <div class="text-white/50 text-sm">
-                    &copy; 2026 MNCU Future Leader Scholarship
-                </div>
+            <!-- Bottom Note -->
+            <div class="relative z-10 text-xs text-slate-500">
+                &copy; {{ date('Y') }} MNC University. Hak Cipta Dilindungi.
             </div>
         </div>
 
-        <!-- Right Side: Form -->
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-20 bg-white">
-            <div class="w-full max-w-md">
+        <!-- Right Side Form Canvas - Minimal, Clean & Focus-driven -->
+        <div class="w-full lg:w-1/2 flex flex-col justify-between p-8 sm:p-12 lg:p-16">
+            
+            <!-- Top Utility Link -->
+            <div class="flex items-center justify-between w-full max-w-md mx-auto mb-8">
+                <a href="/" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-slate-700 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span>Kembali ke Beranda</span>
+                </a>
+
+                @if(request()->routeIs('internal.login'))
+                    <a href="{{ route('login') }}" class="text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors">
+                        Portal Peserta &rarr;
+                    </a>
+                @else
+                    <a href="{{ route('internal.login') }}" class="text-xs font-semibold text-slate-400 hover:text-slate-700 transition-colors">
+                        Akses Internal &rarr;
+                    </a>
+                @endif
+            </div>
+
+            <!-- Form Container -->
+            <div class="w-full max-w-md mx-auto my-auto">
                 @yield('content')
             </div>
-        </div>
-    </div>
-</body>
 
+            <!-- Simple Footer -->
+            <div class="w-full max-w-md mx-auto mt-8 pt-4 text-center">
+                <p class="text-[11px] text-slate-400">
+                    MNC University Future Leader Scholarship 2026
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    @include('partials.modal-alert')
+</body>
 </html>

@@ -75,10 +75,10 @@
                         </div>
                         <div>
                             <label class="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Tahun Lulus</label>
-                            @php $thnLulus = (int) ($user->peserta->daftar->tahun_lulus ?? $user->peserta->tahun_lulus ?? 2026); @endphp
-                            <div class="text-xs font-bold {{ $thnLulus < 2026 ? 'text-purple-600' : 'text-slate-700' }}">
+                            @php $thnLulus = (int) ($user->peserta->daftar->tahun_lulus ?? $user->peserta->tahun_lulus ?? 2027); @endphp
+                            <div class="text-xs font-bold {{ $thnLulus < 2027 ? 'text-purple-600' : 'text-slate-700' }}">
                                 {{ $thnLulus }}
-                                @if($thnLulus < 2026) <span class="bg-purple-100 text-purple-600 px-1 py-0.5 rounded text-[8px] ml-1">ALUMNI</span> @endif
+                                @if($thnLulus < 2027) <span class="bg-purple-100 text-purple-600 px-1 py-0.5 rounded text-[8px] ml-1">ALUMNI</span> @endif
                             </div>
                         </div>
                         <div>
@@ -153,7 +153,7 @@
                     <thead>
                         <tr class="text-slate-400 font-black uppercase tracking-widest border-b border-slate-50">
                             <th class="py-4 text-left">Mata Pelajaran</th>
-                            @php $maxSem = (int)($user->peserta->daftar->tahun_lulus ?? $user->peserta->tahun_lulus ?? 2026) < 2026 ? 6 : 5; @endphp
+                            @php $maxSem = (int)($user->peserta->daftar->tahun_lulus ?? $user->peserta->tahun_lulus ?? 2027) < 2027 ? 6 : 5; @endphp
                             @for($i=1;$i<=$maxSem;$i++) <th class="py-4 text-center">S{{$i}}</th> @endfor
                             <th class="py-4 text-center bg-slate-50">AVG</th>
                         </tr>
@@ -252,8 +252,8 @@
                         'rapor5' => 'Raport Smst 5',
                     ];
 
-                    $tahunLulus = (int) ($user->peserta->daftar->tahun_lulus ?? $user->peserta->tahun_lulus ?? 2026);
-                    if ($tahunLulus < 2026) {
+                    $tahunLulus = (int) ($user->peserta->daftar->tahun_lulus ?? $user->peserta->tahun_lulus ?? 2027);
+                    if ($tahunLulus < 2027) {
                         $berkasItems['rapor6'] = 'Raport Smst 6';
                     }
 
@@ -262,7 +262,7 @@
                     $berkasItems['personal_statement'] = 'Personal Statement';
                     $berkasItems['study_plan'] = 'Study Plan';
                     
-                    if ($tahunLulus >= 2026) {
+                    if ($tahunLulus >= 2027) {
                         $berkasItems['surat_rekomendasi_sekolah'] = 'Surat Rekomendasi';
                     }
 
@@ -699,7 +699,8 @@ function confirmUpdateTahunLulus(userId, name, currentYear) {
             '2023': '2023',
             '2024': '2024',
             '2025': '2025',
-            '2026': '2026'
+            '2026': '2026',
+            '2027': '2027'
         },
         inputValue: currentYear,
         showCancelButton: true,

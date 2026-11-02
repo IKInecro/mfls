@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>PENGUMUMAN HASIL SELEKSI - MNCU Future Leader Scholarship 2026</title>
+    <title>PENGUMUMAN HASIL SELEKSI - MNCU Future Leader Scholarship Ajaran 2027</title>
 
     <link rel="icon" type="image/png" href="{{ asset('icon/logoo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -164,7 +164,7 @@
                             SELAMAT! ANDA DINYATAKAN SEBAGAI<br>
                             <span class="text-yellow-300">PENERIMA BEASISWA</span>
                         </h3>
-                        <p class="text-white/70 text-[10px] mt-3 font-medium uppercase tracking-wider">MNCU FUTURE LEADER SCHOLARSHIP 2026</p>
+                        <p class="text-white/70 text-[10px] mt-3 font-medium uppercase tracking-wider">MNCU FUTURE LEADER SCHOLARSHIP AJARAN 2027</p>
                     </div>
                 </div>
 
@@ -309,7 +309,7 @@
                     </button>
                 </div>
             </div>
-            <p class="mt-8 text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">© 2026 MNCU FUTURE LEADER
+            <p class="mt-8 text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">© 2027 MNCU FUTURE LEADER
                 SCHOLARSHIP</p>
         @endif
     </main>
@@ -326,15 +326,15 @@
                 prodi: "{{ explode(' | ', $peserta->pilihan_prodi ?? '')[0] ?? '-' }}",
                 fakultas: "MNC UNIVERSITY",
                 tanggal: "{{ date('d F Y') }}",
-                noSurat: "MNCU/MFLS/2026/{{ str_pad($peserta->id, 4, '0', STR_PAD_LEFT) }}"
+                noSurat: "MNCU/MFLS/2027/{{ str_pad($peserta->id, 4, '0', STR_PAD_LEFT) }}"
             };
             console.log('Capture library loaded:', typeof domtoimage !== 'undefined' ? 'domtoimage' : 'none');
         @endif
 
             async function shareResult(name, status) {
                 const shareData = {
-                    title: 'Hasil Seleksi MFLS 2026',
-                    text: `Saya ${name} dinyatakan ${status} Seleksi Administrasi MNCU Future Leader Scholarship 2026!`,
+                    title: 'Hasil Seleksi MFLS Ajaran 2027',
+                    text: `Saya ${name} dinyatakan ${status} Seleksi Administrasi MNCU Future Leader Scholarship Ajaran 2027!`,
                     url: window.location.href
                 };
                 try {
@@ -380,15 +380,15 @@
 
                     const response = await fetch(dataUrl);
                     const imageBlob = await response.blob();
-                    const fileName = `Hasil_MFLS_2026_${window.PESERTA_DATA.nisn}.png`;
+                    const fileName = `Hasil_MFLS_2027_${window.PESERTA_DATA.nisn}.png`;
                     const file = new File([imageBlob], fileName, { type: 'image/png' });
 
                     // Try to share the file if supported
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
                         await navigator.share({
                             files: [file],
-                            title: 'Hasil Seleksi MFLS 2026',
-                            text: `Hasil Seleksi MNCU Future Leader Scholarship 2026 - ${window.PESERTA_DATA.nama}`
+                            title: 'Hasil Seleksi MFLS Ajaran 2027',
+                            text: `Hasil Seleksi MNCU Future Leader Scholarship Ajaran 2027 - ${window.PESERTA_DATA.nama}`
                         });
                     } else {
                         // Fallback to download
