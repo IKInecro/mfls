@@ -111,7 +111,7 @@ class AuthController extends Controller
             'provinsi' => 'required|string',
             'kabupaten' => 'required|string',
             'nama_sekolah' => 'required|string',
-            'no_guru_bk' => 'nullable|string|max:30',
+            'no_guru_bk' => 'required|string|max:30',
             'sumber_informasi' => 'required|string|max:100',
             'kode_referral' => 'nullable|string|max:50',
             'cf-turnstile-response' => 'required',
@@ -119,6 +119,7 @@ class AuthController extends Controller
             'email.unique' => 'Email ini sudah terdaftar. Gunakan email lain atau silakan login.',
             'nisn.unique' => 'NISN ini sudah terdaftar dalam sistem. Hubungi admin jika ini kesalahan.',
             'no_whatsapp.unique' => 'Nomor WhatsApp ini sudah digunakan oleh pendaftar lain.',
+            'no_guru_bk.required' => 'Nomor WhatsApp Guru BK atau Wali Kelas wajib diisi.',
             'sumber_informasi.required' => 'Wajib memilih sumber informasi.',
             'cf-turnstile-response.required' => 'Wajib menyelesaikan verifikasi keamanan.',
         ]);
