@@ -77,6 +77,7 @@ class EmailTemplateController extends Controller
 
         $data = EmailTemplate::viewData($key, EmailTemplate::SAMPLES[$key]);
         $draft = $request->input('body');
+        $draftSubject = $request->input('subject');
 
         $message = new class
         {
@@ -86,10 +87,32 @@ class EmailTemplateController extends Controller
             }
         };
 
-        return response()->view('emails.'.$key, array_merge($data, [
+        $html = view('emails.'.$key, array_merge($data, [
             'message' => $message,
             'templateBody' => $draft ? EmailTemplate::render($key, $draft, $data) : null,
-        ]));
+        ]))->render();
+
+        if ($request->wantsJson()) {
+            $defaultSubject = match ($key) {
+                'otp' => 'Kode OTP Verifikasi Pendaftaran MNCU Future Leader Scholarship',
+                'reset_password' => 'Atur Ulang Kata Sandi - MNCU Future Leader Scholarship',
+                'email_change_otp' => 'Kode OTP Verifikasi Perubahan Email',
+                'admin_changed_email' => 'Pemberitahuan Perubahan Email Akun MFLS',
+                'lolos_seleksi_ujian' => 'Pengumuman Lolos Seleksi Ujian MFLS',
+                'certificate' => 'Sertifikat Partisipasi MNCU Future Leader Scholarship',
+                'ujian_link' => 'Undangan Ujian Online MNCU Future Leader Scholarship',
+                default => 'Notifikasi MFLS',
+            };
+            $subject = $draftSubject ?: (EmailTemplate::get($key)?->subject ?: $defaultSubject);
+            $renderedSubject = EmailTemplate::render($key, $subject, $data);
+
+            return response()->json([
+                'html' => $html,
+                'subject' => $renderedSubject,
+            ]);
+        }
+
+        return response($html);
     }
 
     public function update(Request $request, string $key)

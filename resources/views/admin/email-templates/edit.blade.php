@@ -113,8 +113,14 @@
                 @endif
             </div>
 
+            <!-- Subject Preview Bar -->
+            <div class="px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center gap-2.5 text-xs">
+                <span class="font-bold text-slate-400 uppercase tracking-wider shrink-0 text-[10px]">Subject:</span>
+                <span id="previewSubjectDisplay" class="font-semibold text-slate-800 truncate">Memuat subjek...</span>
+            </div>
+
             <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-100/50 min-h-[500px]">
-                <iframe id="previewFrame" class="w-full h-[600px] bg-white border-0" srcdoc="<p style='font-family:sans-serif;font-size:13px;color:#94a3b8;padding:20px;text-align:center;'>Klik tombol 'Muat Pratinjau' untuk melihat tampilan email.</p>"></iframe>
+                <iframe id="previewFrame" class="w-full h-[600px] bg-white border-0" srcdoc="<p style='font-family:sans-serif;font-size:13px;color:#94a3b8;padding:20px;text-align:center;'>Memuat pratinjau tampilan email...</p>"></iframe>
             </div>
         </div>
 
@@ -131,33 +137,66 @@ function insertPlaceholder(text) {
     textarea.value = value.substring(0, start) + text + value.substring(end);
     textarea.selectionStart = textarea.selectionEnd = start + text.length;
     textarea.focus();
+    loadPreview();
 }
 
+let debounceTimer = null;
+
 function loadPreview() {
-    const form = document.getElementById('saveForm');
     const body = document.getElementById('body').value;
     const subject = document.getElementById('subject').value;
     const frame = document.getElementById('previewFrame');
+    const subjectDisplay = document.getElementById('previewSubjectDisplay');
 
     fetch("{{ route('admin.email-templates.preview', $key) }}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
         },
         body: JSON.stringify({ body: body, subject: subject })
     })
-    .then(r => r.json())
+    .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const ct = r.headers.get('content-type') || '';
+        if (ct.includes('application/json')) {
+            return r.json();
+        }
+        return r.text().then(text => ({ html: text }));
+    })
     .then(data => {
-        frame.srcdoc = data.html || "<p style='padding:20px;'>Gagal merender preview</p>";
+        const html = typeof data === 'object' ? data.html : data;
+        frame.srcdoc = html || "<p style='padding:20px;text-align:center;color:#94a3b8;font-family:sans-serif;'>Template kosong.</p>";
+        if (subjectDisplay && data.subject) {
+            subjectDisplay.textContent = data.subject;
+        }
     })
     .catch(err => {
-        frame.srcdoc = "<p style='padding:20px;color:red;'>Terjadi kesalahan saat memuat preview</p>";
+        console.error('Preview error:', err);
+        frame.srcdoc = "<p style='padding:20px;color:#dc2626;font-family:sans-serif;font-size:13px;'>Terjadi kesalahan saat memuat preview. Silakan coba lagi.</p>";
     });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     loadPreview();
+
+    const bodyEl = document.getElementById('body');
+    if (bodyEl) {
+        bodyEl.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(loadPreview, 400);
+        });
+    }
+
+    const subjectEl = document.getElementById('subject');
+    if (subjectEl) {
+        subjectEl.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(loadPreview, 400);
+        });
+    }
 });
 </script>
 @endsection

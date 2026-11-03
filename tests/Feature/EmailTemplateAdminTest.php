@@ -111,6 +111,21 @@ class EmailTemplateAdminTest extends TestCase
         $this->assertDatabaseMissing('email_templates', ['key' => 'otp']);
     }
 
+    public function test_preview_mendukung_json_dan_merender_subject_serta_html(): void
+    {
+        $resp = $this->actingAs($this->akun('admin'))->postJson('/admin/email-templates/otp/preview', [
+            'subject' => 'Kode OTP untuk {nama}',
+            'body' => '<p>Hai {nama}, OTP kamu: {otp}</p>',
+        ]);
+
+        $resp->assertOk();
+        $resp->assertJsonStructure(['html', 'subject']);
+        $resp->assertJsonFragment([
+            'subject' => 'Kode OTP untuk Budi Santoso',
+        ]);
+        $this->assertStringContainsString('Hai Budi Santoso, OTP kamu: 123456', $resp->json('html'));
+    }
+
     public function test_form_edit_menampilkan_peringatan_placeholder_wajib_hilang(): void
     {
         EmailTemplate::create(['key' => 'otp', 'body' => 'Halo {nama} tanpa kode']);
