@@ -1,163 +1,331 @@
 @extends('layouts.quiz')
 
+@section('title', 'Quiz Rekomendasi Program Studi - MFLS')
+
 @section('content')
-<div class="max-w-4xl mx-auto space-y-10 pb-32">
-    {{-- 1. SOPHISTICATED HEADER --}}
-    <div class="relative overflow-hidden bg-slate-900 rounded-[3.5rem] p-10 md:p-16 text-white shadow-2xl border border-white/5">
-        <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-primary-gold/5 rounded-full blur-[120px] -mr-40 -mt-40"></div>
-        
-        <div class="relative z-10 flex flex-col md:flex-row items-center gap-10">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 space-y-8 pb-32">
+
+    <!-- Hero Header Card -->
+    <div class="relative overflow-hidden bg-[#0B1120] rounded-3xl p-6 sm:p-10 md:p-12 text-white border border-slate-800 shadow-xl">
+        <div class="absolute -top-24 -right-24 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col md:flex-row items-center gap-6 sm:gap-8">
             <!-- Arion Mascot -->
             <div class="shrink-0 relative group">
-                <div class="absolute -inset-4 bg-primary-gold/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
-                <img src="{{ asset('icon/scholarr.webp') }}" alt="Arion Mascot" class="w-32 h-32 md:w-48 md:h-48 object-contain relative z-10 drop-shadow-[0_20px_50px_rgba(212,175,55,0.2)] transform hover:scale-110 transition-transform duration-700">
+                <div class="absolute -inset-3 bg-amber-500/20 rounded-full blur-xl opacity-75 group-hover:opacity-100 transition duration-700"></div>
+                <img src="{{ asset('icon/scholarr.webp') }}" alt="Arion Mascot" 
+                     class="w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 object-contain relative z-10 drop-shadow-xl transform group-hover:scale-105 transition-transform duration-500">
             </div>
 
-            <div class="text-center md:text-left flex-1 items-center md:items-start flex flex-col">
-                <div class="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-2xl mb-8 backdrop-blur-md">
-                    <span class="iconify text-primary-gold text-lg" data-icon="solar:star-bold-duotone"></span>
-                    <span class="text-[9px] font-black uppercase tracking-[0.3em] text-primary-gold">Interest Assessment</span>
+            <!-- Header Text -->
+            <div class="text-center md:text-left flex-1 space-y-3">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-bold text-amber-300">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span>AI MATCHING ASSESSMENT 2027</span>
                 </div>
-                <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-6 leading-tight">Analisis <span class="text-primary-gold italic text-gradient-gold">Minat & Bakat</span></h1>
-                <p class="text-slate-400 text-sm md:text-base font-medium max-w-2xl leading-relaxed">
-                    Kami akan menganalisis pola minat dan kepribadianmu melalui {{ count($questions) }} pertanyaan singkat untuk merekomendasikan Program Studi yang paling sesuai dengan potensi dirimu.
+                <h1 class="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight leading-tight">
+                    Quiz Rekomendasi <span class="text-amber-400">Program Studi</span>
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed max-w-2xl">
+                    Jawab {{ count($questions) }} pertanyaan singkat seputar ketertarikan, cara berpikir, dan impian karirmu. Sistem cerdas kami akan menganalisis Program Studi MNC University yang paling sesuai dengan potensimu.
                 </p>
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1 text-[11px] font-semibold text-slate-400">
+                    <span class="flex items-center gap-1.5">
+                        <span class="iconify text-amber-400 text-sm" data-icon="solar:check-circle-bold"></span>
+                        {{ count($questions) }} Pertanyaan
+                    </span>
+                    <span>&bull;</span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="iconify text-amber-400 text-sm" data-icon="solar:clock-circle-bold"></span>
+                        Estimasi 3 Menit
+                    </span>
+                    <span>&bull;</span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="iconify text-amber-400 text-sm" data-icon="solar:stars-minimalistic-bold"></span>
+                        Akurasi Berbasis Minat
+                    </span>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Error Alert if any -->
     @if(session('error'))
-    <div class="bg-slate-900 border border-red-500/30 p-6 rounded-[2rem] shadow-xl animate-fade-in flex items-center gap-4">
-        <div class="w-10 h-10 bg-red-500 text-white rounded-xl flex items-center justify-center shrink-0">
-            <span class="iconify text-xl" data-icon="solar:danger-bold"></span>
-        </div>
-        <div>
-            <h3 class="text-white font-black uppercase tracking-widest text-[10px] mb-1">Analisis Terhenti</h3>
-            <p class="text-slate-400 text-[10px] font-medium">{{ session('error') }}</p>
-        </div>
+    <div class="p-4 rounded-2xl bg-rose-50 border border-rose-300 text-rose-800 text-xs font-semibold flex items-center gap-3">
+        <span class="iconify text-xl text-rose-600 shrink-0" data-icon="solar:danger-triangle-bold-duotone"></span>
+        <p>{{ session('error') }}</p>
     </div>
     @endif
 
-    {{-- 2. DYNAMIC PROGRESS --}}
-    <div class="sticky top-6 z-40 px-2" x-data="{ progress: 0 }">
-        <div class="bg-white/90 backdrop-blur-2xl p-4 rounded-[2rem] border border-slate-100 shadow-2xl max-w-2xl mx-auto ring-1 ring-black/5">
-            <div class="flex items-center justify-between mb-2 px-2">
-                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Progress Analisis</span>
-                <span class="text-[9px] font-black text-primary-gold uppercase tracking-widest" id="progressText">0% Selesai</span>
+    <!-- Sticky Progress Bar & Question Navigator Bar -->
+    <div class="sticky top-20 sm:top-24 z-40 bg-white/95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-md">
+        <div class="flex items-center justify-between gap-4 mb-2">
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+                <span class="text-xs font-bold text-slate-800">
+                    Progress: <span id="answeredCount" class="text-amber-600 font-extrabold">0</span> / {{ count($questions) }} Terjawab
+                </span>
             </div>
-            <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                <div id="progressBar" class="h-full bg-primary-gold w-0 transition-all duration-700 ease-out"></div>
+            
+            <div class="flex items-center gap-3">
+                <span id="progressText" class="text-xs font-extrabold text-amber-600">0%</span>
+                <button type="button" id="toggleMapBtn" 
+                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer">
+                    <span class="iconify" data-icon="solar:widget-2-bold-duotone"></span>
+                    <span>Peta Soal</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress Bar Line -->
+        <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div id="progressBar" class="h-full bg-gradient-to-r from-amber-500 to-amber-400 rounded-full w-0 transition-all duration-300 ease-out"></div>
+        </div>
+
+        <!-- Collapsible Question Mini-Map Drawer -->
+        <div id="questionMap" class="hidden pt-4 mt-3 border-t border-slate-100">
+            <div class="flex items-center justify-between mb-2 text-xs font-bold text-slate-600">
+                <span>Klik nomor soal untuk melompat langsung:</span>
+                <span class="text-[11px] text-slate-400 font-normal">Hijau = Terisi</span>
+            </div>
+            <div class="grid grid-cols-6 sm:grid-cols-10 gap-1.5 text-xs font-bold">
+                @for($i = 0; $i < count($questions); $i++)
+                <button type="button" 
+                        onclick="scrollToQuestion({{ $i }})" 
+                        id="nav-badge-{{ $i }}"
+                        class="h-8 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 flex items-center justify-center hover:border-amber-500 hover:text-amber-600 transition-all cursor-pointer">
+                    {{ $i + 1 }}
+                </button>
+                @endfor
             </div>
         </div>
     </div>
 
-    {{-- 3. QUESTIONS GRID --}}
-    <form action="{{ route('quiz.submit') }}" method="POST" id="quizForm" class="space-y-8">
+    <!-- Questions Form -->
+    <form action="{{ route('quiz.submit') }}" method="POST" id="quizForm" class="space-y-6">
         @csrf
 
+        @php
+            $prodiMeta = [
+                'Manajemen' => ['icon' => 'solar:case-round-bold-duotone', 'badge' => 'Bisnis & Manajemen'],
+                'Akuntansi' => ['icon' => 'solar:calculator-bold-duotone', 'badge' => 'Akuntansi & Keuangan'],
+                'Sains Komunikasi' => ['icon' => 'solar:chat-round-dots-bold-duotone', 'badge' => 'Komunikasi & Media'],
+                'Pendidikan Matematika' => ['icon' => 'solar:square-academic-cap-bold-duotone', 'badge' => 'Matematika & Edukasi'],
+                'Pendidikan Bahasa Inggris' => ['icon' => 'solar:global-bold-duotone', 'badge' => 'Bahasa & Global'],
+                'Sistem Informasi' => ['icon' => 'solar:database-bold-duotone', 'badge' => 'Sistem Informasi'],
+                'DKV' => ['icon' => 'solar:palette-bold-duotone', 'badge' => 'Desain & Kreatif'],
+                'Ilmu Komputer' => ['icon' => 'solar:code-square-bold-duotone', 'badge' => 'Komputer & Software'],
+            ];
+        @endphp
+
         @foreach($questions as $index => $q)
-        <div class="bg-white rounded-[3rem] p-8 md:p-12 border border-slate-100 shadow-sm relative group overflow-hidden transition-all duration-500">
-            <div class="absolute -top-6 -right-6 w-32 h-32 bg-slate-50 rounded-full flex items-center justify-center opacity-40 transition-colors">
-                <span class="text-6xl font-black text-slate-100 group-hover:text-primary-gold/10 transition-colors translate-y-4 -translate-x-4">{{ $index + 1 }}</span>
+        <div id="question-card-{{ $index }}" 
+             class="question-box bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 md:p-8 border border-slate-200 shadow-xs hover:border-slate-300 transition-all scroll-mt-36">
+            
+            <!-- Question Header -->
+            <div class="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-50 text-amber-700 font-extrabold text-xs sm:text-sm flex items-center justify-center border border-amber-200 shrink-0">
+                        {{ $index + 1 }}
+                    </span>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        Pertanyaan {{ $index + 1 }} dari {{ count($questions) }}
+                    </span>
+                </div>
+                <span id="badge-status-{{ $index }}" class="text-[11px] font-semibold text-slate-400">
+                    Belum dipilih
+                </span>
             </div>
 
-            <div class="relative z-10 space-y-10">
-                <div class="space-y-3">
-                    <h3 class="text-[9px] font-black text-primary-gold uppercase tracking-[0.3em]">Pertanyaan 0{{ $index + 1 }}</h3>
-                    <p class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight leading-tight max-w-2xl">{{ $q['question'] }}</p>
-                </div>
+            <!-- Question Title -->
+            <h3 class="text-base sm:text-lg md:text-xl font-bold text-slate-900 leading-snug mb-5">
+                {{ $q['question'] }}
+            </h3>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    @foreach($q['options'] as $major => $text)
-                    <label class="relative group/opt cursor-pointer">
-                        <input type="radio" name="answers[{{ $index }}]" value="{{ $major }}" 
-                               class="peer absolute opacity-0 w-0 h-0" required
-                               onclick="updateProgress({{ $index }}, {{ count($questions) }})">
-                        
-                        <div class="p-6 rounded-2xl border border-slate-100 bg-slate-50 transition-all duration-300 flex items-start gap-5 peer-checked:border-primary-gold peer-checked:bg-white peer-checked:ring-4 peer-checked:ring-primary-gold/5 group-hover/opt:translate-x-1">
-                            <div class="w-6 h-6 rounded-full border-2 border-slate-200 bg-white flex items-center justify-center shrink-0 transition-all peer-checked:border-primary-gold group-hover/opt:scale-110">
-                                <div class="w-2.5 h-2.5 rounded-full bg-primary-gold opacity-0 transition-opacity peer-checked:opacity-100"></div>
+            <!-- 8 Options Grid (Responsive 2 to 4 cols) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                @foreach($q['options'] as $major => $text)
+                @php
+                    $meta = $prodiMeta[$major] ?? ['icon' => 'solar:star-bold-duotone', 'badge' => $major];
+                @endphp
+                <label class="option-label relative block cursor-pointer group">
+                    <input type="radio" 
+                           name="answers[{{ $index }}]" 
+                           value="{{ $major }}" 
+                           class="peer sr-only" 
+                           required
+                           onchange="onSelectOption({{ $index }}, {{ count($questions) }})">
+                    
+                    <div class="h-full p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 peer-checked:border-amber-500 peer-checked:bg-amber-50/60 peer-checked:ring-2 peer-checked:ring-amber-500/20 transition-all flex flex-col justify-between space-y-2">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-600 peer-checked:border-amber-400 peer-checked:text-amber-700 flex items-center justify-center shrink-0">
+                                <span class="iconify text-base" data-icon="{{ $meta['icon'] }}"></span>
                             </div>
-                            <p class="text-sm font-bold text-slate-500 transition-colors peer-checked:text-slate-900 group-hover/opt:text-slate-700 leading-relaxed">{{ $text }}</p>
+                            <div class="w-4 h-4 rounded-full border-2 border-slate-300 bg-white flex items-center justify-center shrink-0 peer-checked:border-amber-500 peer-checked:bg-amber-500 transition-colors mt-0.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-white opacity-0 peer-checked:opacity-100"></span>
+                            </div>
                         </div>
-                    </label>
-                    @endforeach
-                </div>
+
+                        <div>
+                            <div class="text-sm font-bold text-slate-800 peer-checked:text-amber-950 transition-colors">
+                                {{ $text }}
+                            </div>
+                            <div class="text-[10px] font-semibold text-slate-400 peer-checked:text-amber-700/80 transition-colors mt-0.5 truncate">
+                                {{ $meta['badge'] }}
+                            </div>
+                        </div>
+                    </div>
+                </label>
+                @endforeach
             </div>
+
         </div>
         @endforeach
 
-        {{-- 4. ANALYZE ACTION --}}
-        <div class="text-center pt-8 space-y-10">
-            <button type="submit" id="submitBtn" class="group relative inline-flex items-center justify-center gap-4 bg-slate-900 text-white px-12 py-5 rounded-2xl font-black hover:bg-primary-gold hover:text-slate-900 transition-all shadow-xl active:scale-95 overflow-hidden">
-                <div class="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
-                <span class="iconify text-2xl text-primary-gold group-hover:text-slate-900" data-icon="solar:magic-stick-3-bold-duotone"></span>
-                <span class="uppercase tracking-[0.2em] text-[10px] relative z-10">Lihat Rekomendasi Program Studi</span>
-            </button>
-            
-            <div class="flex flex-col items-center gap-3 opacity-30">
-                <div class="h-px w-12 bg-slate-400"></div>
-                <p class="text-[8px] font-black text-slate-500 uppercase tracking-[0.4em]">Integrated Assessment Portal</p>
+        <!-- Bottom Action Card -->
+        <div class="sticky bottom-4 z-40 bg-slate-900/95 backdrop-blur-md text-white p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="space-y-0.5 text-center sm:text-left">
+                <div class="text-sm font-extrabold text-white flex items-center justify-center sm:justify-start gap-2">
+                    <span class="iconify text-amber-400 text-base" data-icon="solar:magic-stick-3-bold-duotone"></span>
+                    <span>Analisis Program Studi Impian</span>
+                </div>
+                <p id="bottomStatus" class="text-xs text-slate-400">
+                    Silakan lengkapi semua {{ count($questions) }} pertanyaan di atas.
+                </p>
             </div>
+
+            <button type="submit" id="submitBtn"
+                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-black text-sm bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-lg shadow-amber-400/20 hover:shadow-xl transition-all cursor-pointer shrink-0">
+                <span class="iconify text-lg" data-icon="solar:stars-minimalistic-bold"></span>
+                <span id="btnSubmitText">Lihat Rekomendasi Prodi</span>
+            </button>
         </div>
     </form>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- JavaScript Logic: Auto-advance, Progress Tracking, Question Map Jump -->
 <script>
-    const answeredIndices = new Set();
-    
-    function updateProgress(index, total) {
-        answeredIndices.add(index);
-        const percent = Math.round((answeredIndices.size / total) * 100);
-        const bar = document.getElementById('progressBar');
-        const text = document.getElementById('progressText');
-        
-        bar.style.width = percent + '%';
-        text.textContent = percent + '% Selesai';
-        
-        if (percent === 100) {
-            text.classList.remove('text-primary-gold');
-            text.classList.add('text-slate-900');
-            text.textContent = 'Analisis Siap • 100%';
+    const totalQuestions = {{ count($questions) }};
+    const answeredMap = new Map();
+
+    function onSelectOption(index, total) {
+        answeredMap.set(index, true);
+        updateProgress();
+
+        // Update question card status badge
+        const badge = document.getElementById('badge-status-' + index);
+        if (badge) {
+            badge.textContent = '✓ Terjawab';
+            badge.className = 'text-[11px] font-bold text-emerald-600';
+        }
+
+        // Update nav badge in mini-map
+        const navBadge = document.getElementById('nav-badge-' + index);
+        if (navBadge) {
+            navBadge.className = 'h-8 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold';
+        }
+
+        // Optional smooth auto-advance to next unanswered question after 280ms
+        setTimeout(() => {
+            for (let next = index + 1; next < total; next++) {
+                if (!answeredMap.has(next)) {
+                    scrollToQuestion(next);
+                    return;
+                }
+            }
+        }, 280);
+    }
+
+    function updateProgress() {
+        const count = answeredMap.size;
+        const percent = Math.round((count / totalQuestions) * 100);
+
+        const countEl = document.getElementById('answeredCount');
+        const textEl = document.getElementById('progressText');
+        const barEl = document.getElementById('progressBar');
+        const bottomStatus = document.getElementById('bottomStatus');
+
+        if (countEl) countEl.textContent = count;
+        if (textEl) textEl.textContent = percent + '%';
+        if (barEl) barEl.style.width = percent + '%';
+
+        if (bottomStatus) {
+            if (count === totalQuestions) {
+                bottomStatus.textContent = '✨ Semua pertanyaan lengkap! Klik tombol untuk melihat hasil.';
+                bottomStatus.className = 'text-xs text-emerald-400 font-bold';
+            } else {
+                bottomStatus.textContent = `Masih ada ${totalQuestions - count} pertanyaan yang belum dipilih.`;
+                bottomStatus.className = 'text-xs text-slate-400';
+            }
         }
     }
 
+    function scrollToQuestion(index) {
+        const card = document.getElementById('question-card-' + index);
+        if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.classList.add('ring-2', 'ring-amber-500/30');
+            setTimeout(() => card.classList.remove('ring-2', 'ring-amber-500/30'), 1200);
+        }
+    }
+
+    // Toggle mini-map
+    const toggleMapBtn = document.getElementById('toggleMapBtn');
+    const questionMap = document.getElementById('questionMap');
+    if (toggleMapBtn && questionMap) {
+        toggleMapBtn.addEventListener('click', function() {
+            questionMap.classList.toggle('hidden');
+        });
+    }
+
+    // Form Submit Validation
     document.getElementById('quizForm').addEventListener('submit', function(e) {
-        const total = {{ count($questions) }};
-        if (answeredIndices.size < total) {
+        if (answeredMap.size < totalQuestions) {
             e.preventDefault();
-            Swal.fire({
-                icon: 'warning',
-                title: 'Data Belum Lengkap',
-                text: `Selesaikan seluruh pertanyaan sebelum melanjutkan analisis.`,
-                confirmButtonColor: '#0f172a',
-                customClass: { popup: 'rounded-[2.5rem]' }
-            });
+            // Find first unanswered question
+            let firstUnanswered = 0;
+            for (let i = 0; i < totalQuestions; i++) {
+                if (!answeredMap.has(i)) {
+                    firstUnanswered = i;
+                    break;
+                }
+            }
+            scrollToQuestion(firstUnanswered);
+
+            if (window.Swal) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Jawaban Belum Lengkap',
+                    text: `Anda baru menjawab ${answeredMap.size} dari ${totalQuestions} pertanyaan. Silakan lengkapi seluruh pertanyaan untuk hasil analisis yang akurat.`,
+                    confirmButtonColor: '#0B1120',
+                    confirmButtonText: 'Lengkapi Sekarang'
+                });
+            } else {
+                alert(`Mohon lengkapi semua pertanyaan (${answeredMap.size}/${totalQuestions} terjawab).`);
+            }
             return;
         }
 
-        const btn = document.getElementById('submitBtn');
-        btn.innerHTML = `<span class="iconify text-2xl animate-spin" data-icon="solar:restart-bold"></span> <span class="uppercase tracking-[0.2em] text-[10px]">Menghitung Hasil...</span>`;
-        btn.classList.add('pointer-events-none', 'opacity-80');
-        
-        Swal.fire({
-            title: 'MENGANALISIS MINAT',
-            text: 'Tunggu sebentar, kami sedang memproses profil Anda...',
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading(),
-            customClass: { popup: 'rounded-[2.5rem]' }
-        });
+        // Loading state
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnSubmitText');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-80', 'cursor-wait');
+        }
+        if (btnText) {
+            btnText.textContent = 'Menganalisis Potensi...';
+        }
+
+        if (window.Swal) {
+            Swal.fire({
+                title: 'Menganalisis Karakter & Minat',
+                text: 'Mohon tunggu sebentar, sistem sedang memproses tingkat kecocokan Program Studi...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+        }
     });
 </script>
-
-<style>
-    .text-gradient-gold {
-        background: linear-gradient(135deg, #d4af37 0%, #f1d37e 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fade-in { animation: fadeIn 0.5s ease-out; }
-</style>
 @endsection
