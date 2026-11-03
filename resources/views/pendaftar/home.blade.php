@@ -363,7 +363,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Manajemen</h3>
                     <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Mempelajari strategi kepemimpinan korporasi, manajemen finansial, serta kewirausahaan modern yang adaptif di era digital.
+                        Program Studi Manajemen di MNC University dirancang untuk membekali mahasiswa dengan keterampilan manajerial dan kepemimpinan yang relevan dengan kebutuhan dunia bisnis modern. Program ini menekankan penguasaan konsep manajemen secara komprehensif yang meliputi manajemen sumber daya manusia, pemasaran, keuangan, operasional, hingga manajemen strategis.
                     </p>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
@@ -383,7 +383,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Akuntansi</h3>
                     <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Fokus pada analisis laporan keuangan, perpajakan, audit korporat, dan sistem informasi akuntansi berbasis automasi data.
+                        Dibekali kurikulum berbasis OBE, Program Studi Akuntansi dirancang untuk menghasilkan lulusan yang kompeten di bidang akuntansi dengan selaras dengan kebutuhan industri serta koneksi dengan MNC Group. Program Studi Akuntansi MNCU berfokus pada environmental dan sustainability yang mencerminkan kompetensi utama dalam bidang akuntansi media dan akuntansi keberlanjutan yang sedang ramai menjadi topik yang diperbincangkan sampai saat ini. Dengan dukungan ekosistem industri MNC Group, mahasiswa memperoleh peluang pembelajaran kontekstual yang memperkuat kesiapan mereka memasuki dunia kerja secara kompetitif.
                     </p>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
@@ -403,7 +403,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Pendidikan Matematika</h3>
                     <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Mencetak pendidik matematika inovatif, analis kuantitatif, dan problem solver berdaya saing internasional.
+                        Program Studi Pendidikan Matematika dirancang untuk menghasilkan pendidik matematika yang kompeten dan memenuhi kebutuhan pendidikan di Indonesia, sekaligus memiliki kemampuan menjadi Pengembang Pembelajaran & Pelatihan, Data Analis, dan juga Aktuaris. Didukung penuh oleh MNC Group yang menawarkan akses full ke seluruh rantai usahanya, terutama dalam bidang pengembangan media, securitas, dan perbankan, membuat lulusan Pendidikan Matematika MNC University memiliki prospek yang sangat besar dalam dunia kerja. Program ini menekankan penguasaan konsep matematika secara mendalam yang dipadukan dengan pendekatan pedagogi modern berbasis teknologi digital. Mahasiswa dibekali keterampilan analitis, pemecahan masalah, serta kemampuan berpikir logis dan kritis yang relevan dengan kebutuhan industri saat ini.
                     </p>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
@@ -423,7 +423,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Sains Komunikasi</h3>
                     <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Kurikulum komprehensif penyiaran media (broadcasting), jurnalisme digital, dan public relations terhubung langsung ke MNC Media.
+                        Hadir untuk menjawab tantangan era digital di tengah perkembangan pesat teknologi dan kebutuhan industri kreatif pada tahun 2025. Dengan visi menjadi Program Studi Sains Komunikasi yang mengembangkan ilmu komunikasi dengan penguasaan media digital dan industri kreatif berkelas dunia pada tahun 2037, program studi ini mempersiapkan lulusan yang mampu bersaing di tengah transformasi digital global.
                     </p>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
@@ -443,7 +443,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Desain Komunikasi Visual</h3>
                     <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Pengembangan talenta branding, animasi, visual storytelling, UI/UX, dan creative directing dalam ekosistem media nasional.
+                        Dibekali kurikulum berbasis OBE, Program Studi Desain Komunikasi Visual dirancang untuk menghasilkan lulusan yang kompeten dan kreatif di bidang desain visual, sesuai dengan kebutuhan industri kreatif dan didukung oleh koneksi strategis dengan MNC Group. Program Studi DKV MNCU menekankan pada aspek desain yang berkelanjutan dan komunikasi visual yang berdampak, mencerminkan kompetensi utama dalam desain media, branding, serta isu-isu keberlanjutan yang relevan dan menjadi sorotan global saat ini. Selain kemampuan teknis, mahasiswa dilatih untuk memiliki kepekaan estetika, kemampuan berpikir kritis, serta keterampilan komunikasi yang efektif dalam menyampaikan pesan visual secara strategis.
                     </p>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
@@ -463,7 +463,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Ilmu Komputer</h3>
                     <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Fokus pada rekayasa perangkat lunak (software engineering), kecerdasan buatan (AI), data science, dan komputasi awan.
+                        Ilmu Komputer adalah sebuah ilmu yang mempelajari baik tentang komputasi, perangkat keras (hardware) maupun perangkat lunak (software). Ilmu komputer mencakup beragam topik yang berkaitan dengan komputer, mulai dari analisis abstrak algoritma sampai subyek yang lebih konkret seperti bahasa pemrograman, perangkat lunak, termasuk perangkat keras. Berbeda dengan Teknik Informatika yang lebih menekankan pada sisi penerapannya, program studi Ilmu Komputer lebih fokus pada 'sains' dari bidang komputer itu sendiri.
                     </p>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
@@ -483,7 +483,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Sistem Informasi</h3>
                     <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Mengintegrasikan teknologi informasi dengan arsitektur bisnis korporat, analitik data, dan transformasi digital.
+                        Program Studi S1 Sistem Informasi dirancang untuk menghasilkan lulusan yang mampu menganalisis, merancang, membangun, serta mengevaluasi sistem informasi yang mendukung pencapaian tujuan organisasi. Mahasiswa dibekali pemahaman mendalam mengenai integrasi model sistem, penerapan metode peningkatan proses bisnis, serta pengelolaan siklus hidup proyek berbasis pendekatan Manajemen Proyek. Program ini juga menekankan kemampuan dalam merancang dan memodifikasi sistem informasi yang mencakup arsitektur teknologi, proses bisnis, dan aspek keamanan informasi. Selain itu, lulusan diharapkan mampu menggabungkan ide-ide kreatif dan keahlian teknis untuk merancang, mengimplementasikan, serta menjamin keamanan produk digital dalam berbagai konteks bisnis dan teknologi.
                     </p>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
@@ -503,7 +503,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Pendidikan Bahasa Inggris</h3>
                     <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Mempersiapkan komunikator dan pendidik bahasa Inggris profesional yang kompeten di tingkat global dan industri komunikasi.
+                        Dibekali kurikulum berbasis Outcome Based Education (OBE), Program Studi Pendidikan Bahasa Inggris dirancang untuk menghasilkan lulusan yang kompeten di bidang Pendidikan Bahasa Inggris dengan selaras dengan kebutuhan industri serta koneksi dengan MNC Group. Program Studi Pendidikan Bahasa Inggris MNCU berfokus pada edutechnopreneurship dan news and entertainment yang mencerminkan kompetensi utama dalam bidang wirausaha pendidikan dan Bahasa Inggris pada media pemberitaan dan hiburan yang sedang ramai menjadi topik yang diperbincangkan sampai saat ini.
                     </p>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
