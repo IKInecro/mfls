@@ -188,6 +188,8 @@ Route::middleware(['auth'])->group(function () {
                     Route::post('/{id}/update-email', [App\Http\Controllers\AdminController::class, 'updateEmailPendaftar'])->name('update_email');
                     Route::post('/{id}/update-tahun-lulus', [App\Http\Controllers\AdminController::class, 'updateTahunLulus'])->name('update_tahun_lulus');
                     Route::post('/{id}/dispensasi-ujian', [App\Http\Controllers\AdminController::class, 'storeDispensasiUjian'])->name('dispensasi_ujian');
+                    Route::post('/{id}/buka-kunci-cbt/{sesiId}', [App\Http\Controllers\AdminController::class, 'bukaKunciCbt'])->name('buka_kunci_cbt');
+                    Route::post('/{id}/reset-sesi-cbt/{sesiId}', [App\Http\Controllers\AdminController::class, 'resetSesiCbt'])->name('reset_sesi_cbt');
                     Route::delete('/{id}', [App\Http\Controllers\AdminController::class, 'destroyPendaftar'])->name('destroy');
                 });
             }
@@ -237,6 +239,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::put('/{id}', [App\Http\Controllers\PanelUjianController::class, 'update'])->name('update');
                 Route::delete('/{id}', [App\Http\Controllers\PanelUjianController::class, 'destroy'])->name('destroy');
                 Route::post('/{id}/kirim-undangan', [App\Http\Controllers\PanelUjianController::class, 'kirimUndangan'])->name('kirim_undangan');
+                Route::post('/buka-kunci/{sesiId}', [App\Http\Controllers\PanelUjianController::class, 'bukaKunci'])->name('buka_kunci');
+                Route::post('/reset-sesi/{sesiId}', [App\Http\Controllers\PanelUjianController::class, 'resetSesi'])->name('reset_sesi');
             });
 
             // Manajemen Soal
@@ -298,6 +302,7 @@ Route::middleware(['auth'])->group(function () {
                     Route::post('/ujian/{id}/selesai', [\App\Http\Controllers\UjianPesertaController::class, 'selesai'])->name('ujian.selesai');
                     Route::post('/ujian/{id}/submit', [\App\Http\Controllers\UjianPesertaController::class, 'submit'])->name('ujian.submit');
                     Route::post('/ujian/{id}/reset-pelanggaran', [\App\Http\Controllers\UjianPesertaController::class, 'resetPelanggaran'])->name('ujian.reset_pelanggaran');
+                    Route::post('/ujian/{id}/kunci-pelanggaran', [\App\Http\Controllers\UjianPesertaController::class, 'kunciPelanggaran'])->name('ujian.kunci_pelanggaran');
 
 
                     // Aksi tulis pendaftar: jalan hanya saat pendaftaran terbuka (lihat PengaturanPendaftaran::aktif)

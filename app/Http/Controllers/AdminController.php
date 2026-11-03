@@ -1524,7 +1524,43 @@ class AdminController extends Controller
         $user = Akun::with(['peserta.daftar', 'peserta.berkas', 'peserta.nilais.matpel', 'peserta.jawabanUjians.ujian'])->findOrFail($id);
         $ujians = \App\Models\Ujian::where('is_active', true)->get();
         $dispensasiUjian = \App\Models\DispensasiUjian::where('peserta_id', $user->peserta->id ?? 0)->get();
-        return view('admin.pendaftar.show', compact('user', 'ujians', 'dispensasiUjian'));
+        $sesiTerkunci = \App\Models\SesiUjian::where('peserta_id', $user->peserta->id ?? 0)
+            ->where('terkunci', true)
+            ->with('ujian')
+            ->get();
+        return view('admin.pendaftar.show', compact('user', 'ujians', 'dispensasiUjian', 'sesiTerkunci'));
+    }
+
+    public function bukaKunciCbt($id, $sesiId)
+    {
+        $sesi = \App\Models\SesiUjian::with(['peserta.akun', 'ujian'])->findOrFail($sesiId);
+        $namaPeserta = $sesi->peserta?->nama ?? $sesi->peserta?->akun?->nama ?? 'Peserta';
+        $namaUjian = $sesi->ujian?->nama ?? 'Ujian';
+
+        $sesi->update([
+            'terkunci' => false,
+            'pelanggaran_count' => 0,
+            'dibuka_pada' => now(),
+            'dibuka_oleh' => auth()->user()->nama ?? auth()->user()->name ?? 'Administrator',
+        ]);
+
+        $this->logAktivitas('Buka Kunci CBT', 'Peserta', $sesi->peserta_id, "Membuka kunci CBT {$namaUjian} untuk {$namaPeserta}");
+
+        return back()->with('success', "Kunci CBT \"{$namaUjian}\" untuk {$namaPeserta} berhasil dibuka. Peserta dapat kembali melanjutkan ujian.");
+    }
+
+    public function resetSesiCbt($id, $sesiId)
+    {
+        $sesi = \App\Models\SesiUjian::with(['peserta.akun', 'ujian'])->findOrFail($sesiId);
+        $namaPeserta = $sesi->peserta?->nama ?? $sesi->peserta?->akun?->nama ?? 'Peserta';
+        $namaUjian = $sesi->ujian?->nama ?? 'Ujian';
+        $pesertaId = $sesi->peserta_id;
+
+        $sesi->delete();
+
+        $this->logAktivitas('Reset Sesi CBT', 'Peserta', $pesertaId, "Mereset sesi CBT {$namaUjian} untuk {$namaPeserta}");
+
+        return back()->with('success', "Sesi CBT \"{$namaUjian}\" untuk {$namaPeserta} telah di-reset dari awal.");
     }
 
     public function generateCertificate($id, \App\Services\CertificateService $certificateService)

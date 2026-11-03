@@ -78,7 +78,7 @@
             <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">MNC University • Future Leader Scholarship 2026</p>
             <div class="flex justify-center gap-6">
                 <a href="/" class="text-[9px] font-bold text-slate-500 hover:text-primary-gold transition-colors uppercase tracking-widest">Landing Page</a>
-                <a href="https://wa.me/6285880059189" class="text-[9px] font-bold text-slate-500 hover:text-primary-gold transition-colors uppercase tracking-widest">Hubungi Kami</a>
+                <a href="https://wa.me/6287867813183" class="text-[9px] font-bold text-slate-500 hover:text-primary-gold transition-colors uppercase tracking-widest">Hubungi Kami (087867813183)</a>
             </div>
         </div>
     </footer>

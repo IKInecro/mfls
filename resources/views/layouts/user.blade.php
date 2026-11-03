@@ -108,6 +108,8 @@
                             class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">S&K</a>
                         <a href="{{ url('/') }}#berita"
                             class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">Berita</a>
+                        <a href="{{ url('/') }}#komunitas"
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">Komunitas & IG</a>
                         <a href="{{ url('/') }}#contact"
                             class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link">Kontak</a>
                         <a href="{{ route('quiz.show') }}"
@@ -157,6 +159,8 @@
                             class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">S&K</a>
                         <a href="{{ url('/') }}#berita"
                             class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">Berita</a>
+                        <a href="{{ url('/') }}#komunitas"
+                            class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">Komunitas & Saluran</a>
                         <a href="{{ url('/') }}#contact"
                             class="text-sm font-semibold text-slate-600 hover:text-primary-blue transition-colors nav-link mobile-nav-link">Kontak</a>
                         <a href="{{ route('quiz.show') }}"
@@ -203,12 +207,20 @@
 
                     <!-- Links 2 -->
                     <div>
-                        <h4 class="text-white font-bold mb-6">Bantuan</h4>
-                        <ul class="space-y-4 text-sm">
-                            <li><a href="https://wa.me/6285880059189" target="_blank"
-                                    class="hover:text-primary-yellow transition-colors">Pusat Bantuan</a></li>
+                        <h4 class="text-white font-bold mb-6">Bantuan & Komunitas</h4>
+                        <ul class="space-y-3 text-sm">
+                            <li><a href="https://wa.me/6287867813183" target="_blank"
+                                    class="hover:text-primary-yellow transition-colors">WhatsApp Admin (087867813183)</a></li>
+                            <li><a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" target="_blank"
+                                    class="hover:text-primary-yellow transition-colors">Saluran WhatsApp MFLS</a></li>
+                            <li><a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0" target="_blank"
+                                    class="hover:text-primary-yellow transition-colors">Instagram @beasiswamncu</a></li>
+                            <li><a href="https://www.instagram.com/mncunation?vrfl=N3F1bXZyNHR3ZDNt" target="_blank"
+                                    class="hover:text-primary-yellow transition-colors">Instagram @mncunation</a></li>
+                            <li><a href="https://www.instagram.com/thearetegen.id?vrfl=MW9iaHBybzNhcWt2OA==" target="_blank"
+                                    class="hover:text-primary-yellow transition-colors">Instagram @thearetegen.id</a></li>
                             <li><a href="https://aistudio.instagram.com/ai/4228437274072360/?utm_source=share"
-                                    target="_blank" class="hover:text-primary-yellow transition-colors">FAQ</a></li>
+                                    target="_blank" class="hover:text-primary-yellow transition-colors">FAQ & Tanya AI</a></li>
                         </ul>
                     </div>
 

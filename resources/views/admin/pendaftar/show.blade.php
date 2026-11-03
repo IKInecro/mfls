@@ -94,6 +94,59 @@
             </div>
         </div>
 
+        {{-- Alert & Action: Sesi Ujian Terkunci --}}
+        @if(!empty($sesiTerkunci) && $sesiTerkunci->count() > 0)
+        <div class="bg-rose-50 border-2 border-rose-200 p-6 sm:p-8 rounded-[2.5rem] shadow-sm overflow-hidden mb-8 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-rose-600/20">
+                        <span class="iconify text-2xl" data-icon="solar:lock-bold"></span>
+                    </div>
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-200/80 text-rose-800">
+                            Peringatan Pelanggaran CBT
+                        </span>
+                        <h3 class="text-base sm:text-lg font-black text-rose-950 mt-0.5">
+                            Peserta Ini Terkunci dari Ujian CBT
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divide-y divide-rose-200/60 bg-white/80 rounded-2xl border border-rose-200 p-4 space-y-3">
+                @foreach($sesiTerkunci as $st)
+                <div class="pt-3 first:pt-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <div class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+                            <span>{{ $st->ujian?->nama ?? 'Ujian' }}</span>
+                            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-100 text-rose-700">3x Pindah Layar</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            Terkunci pada: {{ $st->terkunci_pada ? $st->terkunci_pada->format('d M Y, H:i') . ' WIB' : 'Baru saja' }}
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <form method="POST" action="{{ route('admin.pendaftar.buka_kunci_cbt', ['id' => $user->id, 'sesiId' => $st->id]) }}" onsubmit="return confirm('Buka kunci CBT untuk ujian ini? Jawaban peserta tetap tersimpan dan pelanggaran di-reset ke 0.')">
+                            @csrf
+                            <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+                                <span class="iconify text-base" data-icon="solar:lock-unlocked-bold"></span>
+                                <span>Buka Kunci CBT</span>
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ route('admin.pendaftar.reset_sesi_cbt', ['id' => $user->id, 'sesiId' => $st->id]) }}" onsubmit="return confirm('Reset sesi ujian ini? Sesi akan dihapus dan peserta dapat mengulang dari awal.')">
+                            @csrf
+                            <button type="submit" class="px-4 py-2 bg-slate-100 hover:bg-rose-100 text-slate-700 hover:text-rose-700 font-bold text-xs rounded-xl border border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer">
+                                <span class="iconify text-base" data-icon="solar:restart-bold"></span>
+                                <span>Reset Ulang</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <!-- 1.5. Dispensasi Waktu Ujian -->
         @if(in_array(auth()->user()->role, ['admin', 'palugada']))
         <div class="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden mb-8">

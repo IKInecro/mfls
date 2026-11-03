@@ -72,6 +72,7 @@
                     'lanjut' => ['bg-blue-50 text-blue-700 border-blue-200', 'solar:refresh-circle-bold', 'Sedang berjalan'],
                     'waktu_habis' => ['bg-amber-50 text-amber-700 border-amber-200', 'solar:clock-circle-bold', 'Waktu habis'],
                     'selesai' => ['bg-slate-100 text-slate-700 border-slate-200', 'solar:check-circle-bold', 'Sudah dikerjakan'],
+                    'terkunci' => ['bg-rose-50 text-rose-700 border-rose-200', 'solar:lock-bold', 'Akses Terkunci (Melanggar)'],
                 ][$state];
             @endphp
             <div class="bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition-shadow p-4 sm:p-5 flex flex-col gap-4 self-start">
@@ -118,6 +119,17 @@
                                 <span class="iconify" data-icon="solar:check-circle-bold"></span>
                                 Selesai Dinilai
                             </span>
+                        </div>
+                    @elseif($state === 'terkunci')
+                        <div class="space-y-2">
+                            <div class="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-center">
+                                <p class="text-[10px] font-bold text-rose-800">Ujian Terkunci (3x Pelanggaran)</p>
+                                <p class="text-[9px] text-rose-600 mt-0.5">Sesi Anda terkunci karena melanggar fokus layar 3 kali. Hubungi panitia atau admin untuk membuka kunci.</p>
+                            </div>
+                            <button type="button" onclick="alert('Ujian Anda sedang terkunci akibat pelanggaran fokus layar (3x beralih tab/layar). Silakan hubungi Panitia MFLS atau Administrator untuk membuka kembali akses ujian Anda.')"
+                                class="w-full px-4 py-2.5 rounded-xl bg-rose-600 text-white font-bold text-xs uppercase tracking-wider text-center transition-all shadow-sm shadow-rose-600/20 cursor-pointer">
+                                Akses Ujian Terkunci
+                            </button>
                         </div>
                     @elseif($state === 'tertutup')
                         <button disabled class="w-full px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs uppercase tracking-wider cursor-not-allowed text-center">

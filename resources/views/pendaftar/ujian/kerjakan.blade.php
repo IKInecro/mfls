@@ -58,7 +58,7 @@
                     </div>
                     <div class="flex items-start gap-2.5 p-2.5 rounded-xl bg-red-950/30 border border-red-900/40">
                         <span class="iconify text-base text-red-400 shrink-0 mt-0.5" data-icon="solar:danger-triangle-bold-duotone"></span>
-                        <p><strong class="text-red-300">Anti Pindah Tab / Layar:</strong> Dilarang beralih tab atau aplikasi. Toleransi: <strong class="text-white">1x peringatan</strong>. Pada pelanggaran ke-2, <strong class="text-red-400">ujian di-reset dari nol</strong>.</p>
+                        <p><strong class="text-red-300">Anti Pindah Tab / Layar:</strong> Dilarang beralih tab atau aplikasi. Toleransi: <strong class="text-white">3x peringatan</strong>. Pada pelanggaran ke-3, <strong class="text-red-400">ujian akan terkunci otomatis</strong> dan harus dibuka oleh panitia/admin.</p>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@
             {{-- Indikator Pelanggaran Fokus --}}
             <div id="violationBadge" class="px-2 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-center flex items-center gap-1">
                 <span class="iconify text-xs text-slate-400" data-icon="solar:eye-scan-bold-duotone"></span>
-                <span class="text-[9px] sm:text-[10px] font-bold text-slate-300">Fokus: <strong id="violationCount" class="text-emerald-400">0/2</strong></span>
+                <span class="text-[9px] sm:text-[10px] font-bold text-slate-300">Fokus: <strong id="violationCount" class="text-emerald-400">0/3</strong></span>
             </div>
 
             {{-- Timer --}}
@@ -277,7 +277,7 @@
     </div>
 
     {{-- ======================================================== --}}
-    {{-- MODAL PERINGATAN PELANGGARAN 1 (STRIKE 1 WARNING)         --}}
+    {{-- MODAL PERINGATAN PELANGGARAN (STRIKE 1 & 2 WARNING)       --}}
     {{-- ======================================================== --}}
     <div id="violationWarningModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-red-950/90 backdrop-blur-xl animate-fade-in">
         <div class="relative w-full max-w-sm sm:max-w-md bg-slate-900 border-2 border-red-500 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl text-center space-y-4">
@@ -286,29 +286,28 @@
             </div>
 
             <div>
-                <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-red-500/20 text-red-400 border border-red-500/30">
-                    Peringatan 1 dari 2
+                <span id="violationWarningBadge" class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-red-500/20 text-red-400 border border-red-500/30">
+                    Peringatan 1 dari 3
                 </span>
-                <h3 class="text-base sm:text-lg font-black text-white mt-1.5">Terdeteksi Keluar Layar Ujian!</h3>
-                <p class="text-[11px] text-slate-300 mt-1.5 leading-relaxed">
-                    Anda terdeteksi beralih tab, meminimalkan jendela, atau membuka aplikasi lain. 
-                    Ini adalah <strong class="text-amber-400">peringatan terakhir</strong>.
+                <h3 id="violationWarningTitle" class="text-base sm:text-lg font-black text-white mt-1.5">Terdeteksi Keluar Layar Ujian!</h3>
+                <p id="violationWarningDesc" class="text-[11px] text-slate-300 mt-1.5 leading-relaxed">
+                    Anda terdeteksi beralih tab, meminimalkan jendela, atau membuka aplikasi lain. Harap tetap fokus pada lembar pengerjaan.
                 </p>
             </div>
 
             <div class="p-2.5 rounded-xl bg-red-950/50 border border-red-900/50 text-left space-y-1 text-xs text-red-200">
-                <p class="font-bold text-red-300 text-[11px] flex items-center gap-1">
+                <p id="violationRemainingTitle" class="font-bold text-red-300 text-[11px] flex items-center gap-1">
                     <span class="iconify text-sm" data-icon="solar:danger-triangle-bold"></span>
-                    Toleransi Tersisa: 1 Kali Lagi
+                    Toleransi Tersisa: 2 Kali Lagi
                 </p>
-                <p class="text-[10px] text-slate-400 leading-snug">
-                    Jika Anda meninggalkan layar ujian sekali lagi, ujian akan <strong class="text-white">di-reset dari nol</strong>.
+                <p id="violationRemainingDesc" class="text-[10px] text-slate-400 leading-snug">
+                    Jika Anda meninggalkan layar ujian hingga 3 kali, ujian akan <strong class="text-white">otomatis terkunci</strong> dan harus dibuka oleh panitia/admin.
                 </p>
             </div>
 
             <div>
                 <button type="button" onclick="tutupPeringatanDanFullscreen()"
-                    class="w-full px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase tracking-wider shadow-md shadow-red-600/30 transition-all flex items-center justify-center gap-1.5">
+                    class="w-full px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase tracking-wider shadow-md shadow-red-600/30 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
                     <span class="iconify text-sm" data-icon="solar:maximize-square-minimalistic-bold"></span>
                     <span>Kembali ke Layar Penuh</span>
                 </button>
@@ -317,34 +316,37 @@
     </div>
 
     {{-- ======================================================== --}}
-    {{-- MODAL RESET PELANGGARAN 2 (FINAL DISQUALIFY / RESET)      --}}
+    {{-- MODAL UJIAN TERKUNCI (STRIKE 3 - FINAL LOCKED)            --}}
     {{-- ======================================================== --}}
     <div id="violationResetModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/95 backdrop-blur-2xl">
         <div class="relative w-full max-w-sm sm:max-w-md bg-slate-900 border-2 border-red-600 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl text-center space-y-4">
             <div class="w-14 h-14 mx-auto rounded-2xl bg-red-600/20 border border-red-500/40 flex items-center justify-center">
-                <span class="iconify text-3xl text-red-500" data-icon="solar:alarm-play-bold-duotone"></span>
+                <span class="iconify text-3xl text-red-500" data-icon="solar:lock-bold-duotone"></span>
             </div>
 
             <div>
                 <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-red-600 text-white">
-                    Ujian Di-Reset
+                    Ujian Terkunci (3x Pelanggaran)
                 </span>
                 <h3 class="text-base sm:text-lg font-black text-white mt-1.5">Batas Pelanggaran Terlampaui</h3>
                 <p class="text-[11px] text-slate-300 mt-1 leading-relaxed">
-                    Anda meninggalkan layar ujian sebanyak <strong class="text-red-400">2 kali</strong>. Sesi jawaban Anda telah <strong class="text-white">di-reset kembali dari awal</strong>.
+                    Anda meninggalkan layar ujian sebanyak <strong class="text-red-400">3 kali</strong>. Sesi ujian Anda telah <strong class="text-white">dikunci oleh sistem</strong> demi menjaga integritas tes.
                 </p>
             </div>
 
-            <div class="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-[10px] text-slate-400 text-left">
-                <p class="font-bold text-slate-200">Silakan Mengulang dari Nol</p>
-                <p class="text-[10px] text-slate-400 mt-0.5">
-                    Pastikan koneksi internet stabil dan tetap fokus pada layar ujian saat mengulang.
+            <div class="p-3 rounded-xl bg-slate-800/80 border border-slate-700/80 text-[11px] text-slate-300 text-left space-y-1">
+                <p class="font-bold text-amber-400 flex items-center gap-1.5">
+                    <span class="iconify text-sm" data-icon="solar:info-circle-bold"></span>
+                    Hubungi Panitia / Administrator
+                </p>
+                <p class="text-[10px] text-slate-400 leading-snug">
+                    Kunci sesi ujian hanya dapat dibuka kembali oleh Administrator melalui Panel Admin MFLS.
                 </p>
             </div>
 
             <div id="resetLoadingState" class="flex items-center justify-center gap-2 text-xs font-bold text-slate-400">
                 <span class="w-3.5 h-3.5 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></span>
-                <span>Mereset sesi ujian...</span>
+                <span>Mengunci sesi ujian...</span>
             </div>
         </div>
     </div>
@@ -464,19 +466,50 @@ function handleFocusViolation(reason) {
 
     const badge = document.getElementById('violationCount');
     if (badge) {
-        badge.textContent = `${violationCount}/2`;
-        badge.className = violationCount === 1 ? 'text-amber-400 font-black' : 'text-red-400 font-black';
+        badge.textContent = `${violationCount}/3`;
+        badge.className = violationCount === 1 ? 'text-amber-400 font-black' : (violationCount === 2 ? 'text-orange-400 font-black' : 'text-red-400 font-black');
     }
 
     if (violationCount === 1) {
-        // Strike 1: Peringatan Keras
+        // Strike 1: Peringatan 1 dari 3 (Toleransi 2 lagi)
         const warnModal = document.getElementById('violationWarningModal');
+        const badgeEl = document.getElementById('violationWarningBadge');
+        const titleEl = document.getElementById('violationWarningTitle');
+        const descEl = document.getElementById('violationWarningDesc');
+        const remTitleEl = document.getElementById('violationRemainingTitle');
+        const remDescEl = document.getElementById('violationRemainingDesc');
+
+        if (badgeEl) badgeEl.textContent = 'Peringatan 1 dari 3';
+        if (titleEl) titleEl.textContent = 'Terdeteksi Keluar Layar Ujian!';
+        if (descEl) descEl.textContent = 'Anda terdeteksi beralih tab, meminimalkan jendela, atau membuka aplikasi lain. Harap tetap berada di lembar pengerjaan.';
+        if (remTitleEl) remTitleEl.innerHTML = '<span class="iconify text-sm" data-icon="solar:danger-triangle-bold"></span> Toleransi Tersisa: 2 Kali Lagi';
+        if (remDescEl) remDescEl.innerHTML = 'Jika Anda meninggalkan layar ujian hingga 3 kali, ujian akan <strong class="text-white">otomatis terkunci</strong>.';
+
         if (warnModal) {
             warnModal.classList.remove('hidden');
             warnModal.classList.add('flex');
         }
-    } else if (violationCount >= 2) {
-        // Strike 2: Eksekusi Reset Sesi ke Server
+    } else if (violationCount === 2) {
+        // Strike 2: Peringatan 2 dari 3 (Toleransi 1 lagi - TERAKHIR!)
+        const warnModal = document.getElementById('violationWarningModal');
+        const badgeEl = document.getElementById('violationWarningBadge');
+        const titleEl = document.getElementById('violationWarningTitle');
+        const descEl = document.getElementById('violationWarningDesc');
+        const remTitleEl = document.getElementById('violationRemainingTitle');
+        const remDescEl = document.getElementById('violationRemainingDesc');
+
+        if (badgeEl) badgeEl.textContent = 'Peringatan 2 dari 3 (Terakhir!)';
+        if (titleEl) titleEl.textContent = 'Peringatan Keras: Keluar Layar Ujian!';
+        if (descEl) descEl.textContent = 'Ini adalah peringatan ke-2 Anda. Jika Anda beralih tab atau membuka aplikasi lain SEKALI LAGI, sesi ujian Anda akan langsung TERKUNCI!';
+        if (remTitleEl) remTitleEl.innerHTML = '<span class="iconify text-sm" data-icon="solar:danger-triangle-bold"></span> Toleransi Tersisa: 1 Kali Lagi';
+        if (remDescEl) remDescEl.innerHTML = '<strong class="text-white">PERINGATAN:</strong> Pelanggaran berikutnya akan membuat ujian TERKUNCI dan hanya dapat dibuka oleh admin.';
+
+        if (warnModal) {
+            warnModal.classList.remove('hidden');
+            warnModal.classList.add('flex');
+        }
+    } else if (violationCount >= 3) {
+        // Strike 3: KUNCI SESI KE SERVER & TAMPILKAN MODAL TERKUNCI
         const warnModal = document.getElementById('violationWarningModal');
         if (warnModal) warnModal.classList.add('hidden');
 
@@ -486,8 +519,8 @@ function handleFocusViolation(reason) {
             resetModal.classList.add('flex');
         }
 
-        // Panggil endpoint reset di backend
-        eksekusiResetPelanggaran();
+        // Panggil endpoint kunci di backend
+        eksekusiKunciPelanggaran();
     }
 }
 
@@ -503,10 +536,10 @@ function tutupPeringatanDanFullscreen() {
     }, 500);
 }
 
-async function eksekusiResetPelanggaran() {
+async function eksekusiKunciPelanggaran() {
     submitted = true;
     try {
-        const res = await fetch(`/pendaftar/ujian/${UJIAN_ID}/reset-pelanggaran`, {
+        const res = await fetch(`/pendaftar/ujian/${UJIAN_ID}/kunci-pelanggaran`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -517,10 +550,16 @@ async function eksekusiResetPelanggaran() {
         const data = await res.json();
         setTimeout(() => {
             window.location.href = data.redirect || "{{ route('ujian.index') }}";
-        }, 1500);
+        }, 2500);
     } catch (err) {
-        window.location.href = "{{ route('ujian.index') }}";
+        setTimeout(() => {
+            window.location.href = "{{ route('ujian.index') }}";
+        }, 2500);
     }
+}
+
+async function eksekusiResetPelanggaran() {
+    return eksekusiKunciPelanggaran();
 }
 
 // 1. Deteksi Ganti Tab (visibilitychange)

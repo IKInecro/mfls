@@ -74,6 +74,97 @@
         </div>
     </form>
 
+    {{-- Section: Buka Kunci Peserta Terkunci (Pelanggaran Fokus Layar) --}}
+    <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider {{ ($sesiTerkunci->count() > 0) ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200' }}">
+                    <span class="w-1.5 h-1.5 rounded-full {{ ($sesiTerkunci->count() > 0) ? 'bg-rose-500 animate-ping' : 'bg-emerald-500' }}"></span>
+                    <span>{{ $sesiTerkunci->count() }} Peserta Terkunci</span>
+                </div>
+                <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight mt-1.5 flex items-center gap-2">
+                    <span class="iconify text-rose-600 text-xl" data-icon="solar:lock-bold-duotone"></span>
+                    <span>Buka Kunci Akses Ujian Peserta (Pelanggaran Fokus CBT)</span>
+                </h2>
+                <p class="text-xs text-slate-500 mt-0.5">
+                    Peserta yang terdeteksi beralih tab / aplikasi sebanyak 3 kali otomatis dikunci oleh sistem. Administrator dapat membuka kunci agar peserta dapat melanjutkan ujian atau mereset sesi dari awal.
+                </p>
+            </div>
+        </div>
+
+        @if($sesiTerkunci->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-slate-400 font-black uppercase tracking-wider text-[10px]">
+                            <th class="py-3 px-3">Nama & Kontak Peserta</th>
+                            <th class="py-3 px-3">Paket Ujian</th>
+                            <th class="py-3 px-3">Status Pelanggaran</th>
+                            <th class="py-3 px-3">Waktu Terkunci</th>
+                            <th class="py-3 px-3 text-right">Tindakan Admin</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach($sesiTerkunci as $s)
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="py-3 px-3">
+                                    <div class="font-extrabold text-slate-900 text-sm">{{ $s->peserta?->nama ?? $s->peserta?->akun?->nama ?? 'Peserta #' . $s->peserta_id }}</div>
+                                    <div class="text-[10px] text-slate-500 mt-0.5 flex items-center gap-2">
+                                        <span>NISN: <strong class="text-slate-700">{{ $s->peserta?->nisn ?? '—' }}</strong></span>
+                                        <span>&bull;</span>
+                                        <span>{{ $s->peserta?->akun?->email ?? '—' }}</span>
+                                        @if($s->peserta?->no_whatsapp)
+                                            <span>&bull;</span>
+                                            <span>WA: {{ $s->peserta->no_whatsapp }}</span>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="py-3 px-3">
+                                    <span class="inline-flex items-center gap-1 font-bold text-blue-800 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200/80">
+                                        <span class="iconify text-sm" data-icon="solar:diploma-bold"></span>
+                                        {{ $s->ujian?->nama ?? 'Ujian' }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-3">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                        <span class="iconify text-sm" data-icon="solar:lock-bold"></span>
+                                        <span>Terkunci ({{ $s->pelanggaran_count }}x Pindah Tab)</span>
+                                    </span>
+                                </td>
+                                <td class="py-3 px-3 text-slate-500 text-[11px] whitespace-nowrap">
+                                    {{ $s->terkunci_pada ? $s->terkunci_pada->format('d M Y, H:i') . ' WIB' : 'Baru saja' }}
+                                </td>
+                                <td class="py-3 px-3 text-right">
+                                    <div class="inline-flex items-center gap-2 justify-end">
+                                        <form method="POST" action="{{ route('admin.panel_ujian.buka_kunci', $s->id) }}" onsubmit="return confirm('Buka kunci ujian untuk {{ $s->peserta?->nama }}? Draft jawaban peserta tetap tersimpan dan pelanggaran di-reset ke 0.')">
+                                            @csrf
+                                            <button type="submit" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
+                                                <span class="iconify text-base" data-icon="solar:lock-unlocked-bold"></span>
+                                                <span>Buka Kunci</span>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('admin.panel_ujian.reset_sesi', $s->id) }}" onsubmit="return confirm('Reset ujian untuk {{ $s->peserta?->nama }}? Sesi akan dihapus dan peserta dapat mengulang dari awal.')">
+                                            @csrf
+                                            <button type="submit" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-600 font-bold text-xs uppercase tracking-wider border border-slate-200 transition-all flex items-center gap-1.5 cursor-pointer">
+                                                <span class="iconify text-base" data-icon="solar:restart-bold"></span>
+                                                <span>Reset Ulang</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/60 flex items-center gap-3 text-xs text-slate-500">
+                <span class="iconify text-xl text-emerald-600 shrink-0" data-icon="solar:check-circle-bold-duotone"></span>
+                <span>Semua sesi ujian tertib. Saat ini <strong>tidak ada peserta yang sedang terkunci</strong> akibat pelanggaran fokus layar.</span>
+            </div>
+        @endif
+    </div>
+
     @if(session('success'))
         <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-xs font-bold text-emerald-800 flex items-center gap-2">
             <span class="iconify text-lg text-emerald-600" data-icon="solar:check-circle-bold"></span>

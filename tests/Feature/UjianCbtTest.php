@@ -538,4 +538,80 @@ class UjianCbtTest extends TestCase
         $this->assertStringContainsString('Rata-rata CBT', $content);
         $this->assertStringContainsString('80.00', $content);
     }
+
+    public function test_pelanggaran_tiga_kali_mengunci_sesi_cbt_dan_menolak_akses(): void
+    {
+        $peserta = $this->akun('pendaftar');
+        $ujian = $this->ujian();
+        $this->soal($ujian, 'a');
+        $sesi = $this->mulaiSesi($ujian, $peserta->peserta);
+
+        // Peserta mengirim sinyal pelanggaran ke-3
+        $res = $this->actingAs($peserta)
+            ->postJson("/pendaftar/ujian/{$ujian->id}/kunci-pelanggaran")
+            ->assertOk()
+            ->assertJsonPath('status', 'locked');
+
+        // Pastikan status sesi terkunci dan pelanggaran = 3
+        $sesiFresh = $sesi->fresh();
+        $this->assertTrue((bool) $sesiFresh->terkunci);
+        $this->assertSame(3, (int) $sesiFresh->pelanggaran_count);
+
+        // Halaman daftar ujian menampilkan status kartu terkunci
+        $this->actingAs($peserta)
+            ->get('/pendaftar/ujian')
+            ->assertOk()
+            ->assertSee('Akses Terkunci (Melanggar)')
+            ->assertSee('Ujian Terkunci (3x Pelanggaran)');
+
+        // Akses masuk ke ujian ditolak dan diredirect dengan pesan error
+        $this->actingAs($peserta)
+            ->get("/pendaftar/ujian/{$ujian->id}")
+            ->assertRedirect(route('ujian.index'))
+            ->assertSessionHas('error');
+
+        // Mengirim draft juga ditolak dengan status 403
+        $this->actingAs($peserta)
+            ->postJson("/pendaftar/ujian/{$ujian->id}/draft", ['jawaban' => [1 => 'a']])
+            ->assertStatus(403);
+    }
+
+    public function test_admin_bisa_buka_kunci_sesi_cbt_dan_peserta_bisa_melanjutkan(): void
+    {
+        $admin = $this->akun('admin');
+        $peserta = $this->akun('pendaftar');
+        $ujian = $this->ujian();
+        $this->soal($ujian, 'a');
+        $sesi = $this->mulaiSesi($ujian, $peserta->peserta);
+
+        // Kunci sesi ujian peserta
+        $sesi->update([
+            'terkunci' => true,
+            'alasan_kunci' => 'Pelanggaran fokus 3x',
+            'pelanggaran_count' => 3,
+            'terkunci_pada' => now(),
+        ]);
+
+        // Admin melihat peserta terkunci di Panel Ujian
+        $this->actingAs($admin)
+            ->get('/admin/panel-ujian')
+            ->assertOk()
+            ->assertSee('Buka Kunci Akses Ujian Peserta')
+            ->assertSee($peserta->nama);
+
+        // Admin membuka kunci
+        $this->actingAs($admin)
+            ->post("/admin/panel-ujian/buka-kunci/{$sesi->id}")
+            ->assertRedirect();
+
+        // Status sesi di database kembali aktif
+        $sesiFresh = $sesi->fresh();
+        $this->assertFalse((bool) $sesiFresh->terkunci);
+        $this->assertSame(0, (int) $sesiFresh->pelanggaran_count);
+
+        // Peserta kini dapat kembali masuk ke ujian
+        $this->actingAs($peserta)
+            ->get("/pendaftar/ujian/{$ujian->id}")
+            ->assertOk();
+    }
 }

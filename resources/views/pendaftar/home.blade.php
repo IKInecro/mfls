@@ -1124,6 +1124,203 @@
     </div>
 </section>
 
+<!-- Social Channels & Official Community (Saluran WhatsApp, Admin & 3 Instagram) -->
+<section id="komunitas" class="py-20 lg:py-24 bg-white border-t border-slate-200/80 reveal-init">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="text-center max-w-3xl mx-auto mb-14">
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-rose-600 bg-rose-50 border border-rose-200 px-3.5 py-1.5 rounded-full mb-3 shadow-xs">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                Saluran & Komunitas Resmi MFLS
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                Ikuti Update Resmi & Terhubung Bersama Kami
+            </h2>
+            <p class="text-base sm:text-lg text-slate-600 mt-3">
+                Dapatkan broadcast informasi beasiswa tercepat, reminder jadwal seleksi, panduan CBT, serta konsultasi langsung dengan admin dan komunitas MNC University.
+            </p>
+        </div>
+
+        <!-- Featured Top Cards: Saluran WhatsApp & Kontak Admin -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            
+            <!-- Saluran WhatsApp Resmi -->
+            <div class="relative overflow-hidden rounded-3xl p-7 sm:p-9 bg-gradient-to-br from-[#0B1E36] via-[#0D2D52] to-[#044E45] text-white shadow-xl border border-teal-500/30 group hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
+                <div class="absolute -right-12 -top-12 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-500/30 transition-all"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-5">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-400/40 text-emerald-300">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            Broadcast Notifikasi Resmi
+                        </span>
+                        <span class="text-emerald-300/80 text-xs font-semibold">Saluran WhatsApp</span>
+                    </div>
+
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-400 shrink-0 group-hover:scale-105 transition-transform shadow-lg">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.05 20.15C10.57 20.15 9.12 19.75 7.85 19L7.55 18.82L4.43 19.64L5.26 16.6L5.06 16.29C4.24 14.99 3.8 13.47 3.8 11.91C3.8 7.37 7.5 3.67 12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.05 20.15ZM16.57 14.34C16.32 14.21 15.11 13.62 14.88 13.54C14.66 13.45 14.49 13.41 14.33 13.66C14.16 13.9 13.69 14.45 13.55 14.62C13.4 14.78 13.26 14.8 13.01 14.68C12.76 14.55 11.97 14.29 11.03 13.45C10.3 12.79 9.8 11.98 9.66 11.73C9.52 11.48 9.64 11.35 9.76 11.23C9.88 11.11 10.02 10.93 10.14 10.79C10.27 10.64 10.31 10.54 10.39 10.37C10.47 10.21 10.43 10.06 10.37 9.94C10.31 9.82 9.81 8.59 9.6 8.08C9.4 7.59 9.19 7.65 9.04 7.64C8.89 7.64 8.73 7.63 8.56 7.63C8.4 7.63 8.13 7.69 7.9 7.94C7.68 8.19 7.05 8.78 7.05 9.97C7.05 11.16 7.92 12.31 8.04 12.47C8.16 12.63 9.74 15.08 12.18 16.13C12.76 16.38 13.21 16.53 13.57 16.64C14.16 16.83 14.7 16.8 15.12 16.74C15.6 16.67 16.58 16.14 16.79 15.56C16.99 14.97 16.99 14.47 16.93 14.37C16.87 14.26 16.72 14.2 16.47 14.08L16.57 14.34Z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-bold tracking-tight">Saluran WhatsApp Resmi</h3>
+                            <p class="text-xs sm:text-sm text-teal-200/90 mt-0.5">MNCU Future Leader Scholarship (MFLS)</p>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-slate-200 leading-relaxed mb-6">
+                        Dapatkan broadcast informasi seleksi beasiswa, link tes CBT online, panduan administrasi, dan reminder jadwal resmi langsung ke aplikasi WhatsApp Anda tanpa tertimbun chat grup.
+                    </p>
+                </div>
+
+                <div class="relative z-10 pt-2">
+                    <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center justify-center gap-2.5 w-full sm:w-auto px-6 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 shadow-lg shadow-emerald-950/40 hover:-translate-y-0.5 transition-all duration-200">
+                        <span class="iconify text-lg" data-icon="solar:chat-round-dots-bold"></span>
+                        <span>Gabung Saluran WhatsApp Resmi</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- WhatsApp Admin & Helpdesk -->
+            <div class="relative overflow-hidden rounded-3xl p-7 sm:p-9 bg-gradient-to-br from-[#0B172C] via-[#0E274D] to-[#123E78] text-white shadow-xl border border-blue-500/30 group hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
+                <div class="absolute -right-12 -top-12 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/30 transition-all"></div>
+
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-5">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 border border-blue-400/40 text-blue-300">
+                            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                            Konsultasi & Helpdesk Pendaftar
+                        </span>
+                        <span class="text-blue-300/80 text-xs font-semibold">Senin - Jumat: 08.30 - 17.00 WIB</span>
+                    </div>
+
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-300 shrink-0 group-hover:scale-105 transition-transform shadow-lg">
+                            <span class="iconify text-3xl" data-icon="solar:user-speak-bold"></span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-bold tracking-tight">Nomor WhatsApp Admin</h3>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-xl sm:text-2xl font-black text-amber-400 tracking-wide font-mono">087867813183</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-white/10 text-slate-200">Helpdesk</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-slate-200 leading-relaxed mb-6">
+                        Mengalami kendala saat registrasi akun, verifikasi dokumen, lupa kata sandi, atau butuh konfirmasi akses CBT? Hubungi nomor admin resmi panitia MFLS untuk pendampingan cepat.
+                    </p>
+                </div>
+
+                <div class="relative z-10 pt-2">
+                    <a href="https://wa.me/6287867813183?text=Halo%20Admin%20MFLS,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20dan%20seleksi%20beasiswa" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center justify-center gap-2.5 w-full sm:w-auto px-6 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 shadow-lg shadow-blue-950/40 hover:-translate-y-0.5 transition-all duration-200">
+                        <span class="iconify text-lg" data-icon="solar:chat-round-dots-bold"></span>
+                        <span>Chat WhatsApp Admin (087867813183)</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 Instagram Accounts Section -->
+        <div class="pt-8 border-t border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
+                <div>
+                    <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 border border-blue-200 px-3 py-1 rounded-full mb-2">
+                        Instagram Resmi
+                    </span>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        Ikuti 3 Akun Instagram Resmi Kami
+                    </h3>
+                </div>
+                <p class="text-sm text-slate-500 max-w-md">
+                    Follow untuk liputan beasiswa terkini, cerita inspiratif awardee, dinamika kampus, serta pengembangan talenta kepemimpinan muda.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- IG 1: @beasiswamncu -->
+                <div class="rounded-2xl p-6 bg-slate-50 border border-slate-200/90 hover:border-rose-300 hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="w-13 h-13 p-3 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+                                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-100 text-rose-700">Official Beasiswa</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-lg">Beasiswa MNC University</h4>
+                        <a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0" target="_blank" rel="noopener noreferrer" class="inline-block text-sm font-bold text-rose-600 hover:text-rose-700 mb-3">
+                            @beasiswamncu
+                        </a>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-6">
+                            Kanal informasi resmi beasiswa MFLS. Menyajikan info pembukaan pendaftaran, live FAQ, jadwal seleksi, dan pengumuman penerima beasiswa.
+                        </p>
+                    </div>
+                    <a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 shadow-md shadow-rose-900/20 hover:-translate-y-0.5 transition-all">
+                        <span>Follow @beasiswamncu</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+
+                <!-- IG 2: @mncunation -->
+                <div class="rounded-2xl p-6 bg-slate-50 border border-slate-200/90 hover:border-blue-300 hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="w-13 h-13 p-3 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+                                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-100 text-blue-700">Komunitas Kampus</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-lg">MNCU Nation</h4>
+                        <a href="https://www.instagram.com/mncunation?vrfl=N3F1bXZyNHR3ZDNt" target="_blank" rel="noopener noreferrer" class="inline-block text-sm font-bold text-primary-blue hover:text-blue-700 mb-3">
+                            @mncunation
+                        </a>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-6">
+                            Ruang gerak dan kreativitas mahasiswa MNC University. Liputan agenda seru kampus, organisasi mahasiswa, inovasi, dan prestasi pemuda.
+                        </p>
+                    </div>
+                    <a href="https://www.instagram.com/mncunation?vrfl=N3F1bXZyNHR3ZDNt" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-900/20 hover:-translate-y-0.5 transition-all">
+                        <span>Follow @mncunation</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+
+                <!-- IG 3: @thearetegen.id -->
+                <div class="rounded-2xl p-6 bg-slate-50 border border-slate-200/90 hover:border-purple-300 hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <div class="w-13 h-13 p-3 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+                                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-purple-100 text-purple-700">Leadership & Character</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-lg">The Arete Generation</h4>
+                        <a href="https://www.instagram.com/thearetegen.id?vrfl=MW9iaHBybzNhcWt2OA==" target="_blank" rel="noopener noreferrer" class="inline-block text-sm font-bold text-purple-600 hover:text-purple-700 mb-3">
+                            @thearetegen.id
+                        </a>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-6">
+                            Gerakan kepemimpinan dan pembentukan karakter generasi unggul berlandaskan integritas, virtue (arete), dan dampak sosial nyata.
+                        </p>
+                    </div>
+                    <a href="https://www.instagram.com/thearetegen.id?vrfl=MW9iaHBybzNhcWt2OA==" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-md shadow-purple-900/20 hover:-translate-y-0.5 transition-all">
+                        <span>Follow @thearetegen.id</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
 <!-- Contact & Information Desk -->
 <section id="contact" class="py-20 lg:py-28 bg-slate-50 border-t border-slate-200/80 reveal-init">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1142,15 +1339,15 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <!-- WhatsApp -->
+            <!-- WhatsApp Admin Center -->
             <div class="p-8 rounded-2xl bg-white border border-slate-200 text-center hover:border-primary-blue hover:shadow-xl transition-all duration-300">
                 <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
                     <span class="iconify text-3xl" data-icon="solar:chat-round-dots-bold"></span>
                 </div>
-                <h3 class="font-bold text-slate-900 text-lg mb-1">WhatsApp Center</h3>
-                <p class="text-xs text-slate-500 mb-4">Senin - Jumat: 09.00 - 17.00 WIB</p>
-                <a href="https://wa.me/6285880059189" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-bold text-sm text-emerald-600 hover:text-emerald-700">
-                    <span>+62 858-8005-9189</span>
+                <h3 class="font-bold text-slate-900 text-lg mb-1">WhatsApp Admin Center</h3>
+                <p class="text-xs text-slate-500 mb-4">Senin - Jumat: 08.30 - 17.00 WIB</p>
+                <a href="https://wa.me/6287867813183" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-bold text-sm text-emerald-600 hover:text-emerald-700">
+                    <span>0878-6781-3183 (+62 878)</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                 </a>
             </div>
@@ -1168,17 +1365,24 @@
                 </a>
             </div>
 
-            <!-- Instagram -->
+            <!-- Instagram Resmi (3 Akun) -->
             <div class="p-8 rounded-2xl bg-white border border-slate-200 text-center hover:border-primary-blue hover:shadow-xl transition-all duration-300">
                 <div class="w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-4">
                     <span class="iconify text-3xl" data-icon="solar:camera-bold"></span>
                 </div>
                 <h3 class="font-bold text-slate-900 text-lg mb-1">Instagram Resmi</h3>
-                <p class="text-xs text-slate-500 mb-4">Update live & pengumuman awardee</p>
-                <a href="https://www.instagram.com/beasiswamncu/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 font-bold text-sm text-rose-600 hover:text-rose-700">
-                    <span>@beasiswamncu</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                </a>
+                <p class="text-xs text-slate-500 mb-3">Update live & pengumuman awardee</p>
+                <div class="flex flex-col gap-1.5 items-center">
+                    <a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-rose-600 hover:text-rose-700">
+                        <span>@beasiswamncu</span>
+                    </a>
+                    <a href="https://www.instagram.com/mncunation?vrfl=N3F1bXZyNHR3ZDNt" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-primary-blue hover:text-blue-700">
+                        <span>@mncunation</span>
+                    </a>
+                    <a href="https://www.instagram.com/thearetegen.id?vrfl=MW9iaHBybzNhcWt2OA==" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-purple-600 hover:text-purple-700">
+                        <span>@thearetegen.id</span>
+                    </a>
+                </div>
             </div>
 
         </div>
@@ -1206,8 +1410,8 @@
                     <span>Lihat Jadwal Seleksi Gelombang Berikutnya</span>
                 </a>
             @endif
-            <a href="https://wa.me/6285880059189" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all duration-200">
-                <span>Tanya Panitia via WhatsApp</span>
+            <a href="https://wa.me/6287867813183" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all duration-200">
+                <span>Tanya Admin via WhatsApp (087867813183)</span>
             </a>
         </div>
     </div>
@@ -1463,8 +1667,8 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
 
             <div class="space-y-2">
-                <!-- WhatsApp Live Chat -->
-                <a href="https://wa.me/6285880059189?text=Halo%20Panitia%20MFLS%20Batch%203,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20dan%20seleksi%20beasiswa" 
+                <!-- WhatsApp Live Chat Admin -->
+                <a href="https://wa.me/6287867813183?text=Halo%20Admin%20MFLS%20Batch%203,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20dan%20seleksi%20beasiswa" 
                    target="_blank" rel="noopener noreferrer"
                    class="group flex items-center justify-between p-3 rounded-xl bg-white hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-300 transition-all duration-200 shadow-xs">
                     <div class="flex items-center gap-2.5">
@@ -1472,8 +1676,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             <span class="iconify text-lg" data-icon="solar:chat-round-dots-bold"></span>
                         </div>
                         <div class="text-left">
-                            <span class="block text-xs font-bold text-slate-800 group-hover:text-emerald-700">Chat WhatsApp Panitia</span>
-                            <span class="block text-[10px] text-slate-500 font-medium">+62 858-8005-9189</span>
+                            <span class="block text-xs font-bold text-slate-800 group-hover:text-emerald-700">Chat WhatsApp Admin</span>
+                            <span class="block text-[10px] text-slate-500 font-medium">0878-6781-3183 (Online)</span>
                         </div>
                     </div>
                     <span class="iconify text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all text-sm" data-icon="solar:arrow-right-bold"></span>
@@ -1482,17 +1686,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 <!-- Saluran WhatsApp Resmi -->
                 <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" 
                    target="_blank" rel="noopener noreferrer"
-                   class="group flex items-center justify-between p-3 rounded-xl bg-white hover:bg-blue-50 border border-slate-200/80 hover:border-blue-300 transition-all duration-200 shadow-xs">
+                   class="group flex items-center justify-between p-3 rounded-xl bg-white hover:bg-teal-50 border border-slate-200/80 hover:border-teal-300 transition-all duration-200 shadow-xs">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-primary-blue flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <div class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                             <span class="iconify text-lg" data-icon="solar:bell-bing-bold"></span>
                         </div>
                         <div class="text-left">
-                            <span class="block text-xs font-bold text-slate-800 group-hover:text-primary-blue">Saluran Info & Update MFLS</span>
-                            <span class="block text-[10px] text-slate-500 font-medium">Broadcast Pengumuman Resmi</span>
+                            <span class="block text-xs font-bold text-slate-800 group-hover:text-teal-700">Saluran WhatsApp MFLS</span>
+                            <span class="block text-[10px] text-slate-500 font-medium">Broadcast Info & Pengumuman</span>
                         </div>
                     </div>
-                    <span class="iconify text-slate-400 group-hover:text-primary-blue group-hover:translate-x-0.5 transition-all text-sm" data-icon="solar:arrow-right-bold"></span>
+                    <span class="iconify text-slate-400 group-hover:text-teal-600 group-hover:translate-x-0.5 transition-all text-sm" data-icon="solar:arrow-right-bold"></span>
+                </a>
+
+                <!-- Quick Nav to Media Sosial & Komunitas -->
+                <a href="#komunitas" onclick="toggleMflsHelp()"
+                   class="group flex items-center justify-between p-3 rounded-xl bg-white hover:bg-rose-50 border border-slate-200/80 hover:border-rose-300 transition-all duration-200 shadow-xs">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <span class="iconify text-lg" data-icon="solar:camera-bold"></span>
+                        </div>
+                        <div class="text-left">
+                            <span class="block text-xs font-bold text-slate-800 group-hover:text-rose-700">Instagram & Komunitas MFLS</span>
+                            <span class="block text-[10px] text-slate-500 font-medium">@beasiswamncu, @mncunation, @thearetegen.id</span>
+                        </div>
+                    </div>
+                    <span class="iconify text-slate-400 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-all text-sm" data-icon="solar:arrow-right-bold"></span>
                 </a>
 
                 <!-- Quick Nav to Timeline -->

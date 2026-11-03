@@ -58,6 +58,8 @@ class UjianPesertaController extends Controller
                         ->value('nilai');
                 }
                 $state = 'selesai';
+            } elseif ($sesi && $sesi->terkunci) {
+                $state = 'terkunci';
             } elseif (!$ujian->isOpen() && !$sesi) {
                 $state = 'tertutup';
             } elseif ($sesi && $sisa <= 0 && !$redo) {
@@ -92,6 +94,14 @@ class UjianPesertaController extends Controller
         $dispensasi = DispensasiUjian::where('ujian_id', $ujian->id)
             ->where('peserta_id', $peserta->id)
             ->sum('tambahan_menit') > 0;
+
+        $existingSesi = SesiUjian::where('ujian_id', $ujian->id)
+            ->where('peserta_id', $peserta->id)
+            ->first();
+
+        if ($existingSesi && $existingSesi->terkunci) {
+            return redirect()->route('ujian.index')->with('error', "Ujian \"{$ujian->nama}\" Anda TERKUNCI karena terdeteksi melanggar batas fokus layar (3x beralih tab/aplikasi). Silakan hubungi Panitia atau Administrator untuk membuka kunci ujian Anda.");
+        }
 
         $sesi = SesiUjian::firstOrCreate(
             ['ujian_id' => $ujian->id, 'peserta_id' => $peserta->id],
@@ -175,6 +185,10 @@ class UjianPesertaController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Sesi belum dimulai.'], 403);
         }
 
+        if ($sesi->terkunci) {
+            return response()->json(['status' => 'error', 'message' => 'Sesi ujian Anda sedang terkunci akibat pelanggaran fokus layar.'], 403);
+        }
+
         if (!$ujian->isOpen()) {
             return response()->json(['status' => 'error', 'message' => 'Ujian sudah ditutup panitia.'], 403);
         }
@@ -225,11 +239,44 @@ class UjianPesertaController extends Controller
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'status' => 'reset',
-                'message' => 'Ujian telah di-reset karena terdeteksi meninggalkan layar ujian sebanyak 2 kali.',
+                'message' => 'Ujian telah di-reset karena terdeteksi meninggalkan layar ujian.',
                 'redirect' => route('ujian.index'),
             ]);
         }
 
-        return redirect()->route('ujian.index')->with('error', 'Ujian Anda telah di-reset dari nol karena terdeteksi meninggalkan layar ujian sebanyak 2 kali. Pastikan koneksi internet stabil dan tetap fokus pada layar ujian saat mengulang!');
+        return redirect()->route('ujian.index')->with('error', 'Ujian Anda telah di-reset dari nol karena terdeteksi meninggalkan layar ujian. Pastikan koneksi internet stabil dan tetap fokus pada layar ujian saat mengulang!');
+    }
+
+    /**
+     * Kunci sesi ujian akibat pelanggaran fokus (meninggalkan layar ujian / beralih tab sebanyak 3 kali).
+     * Sesi ditandai terkunci dan peserta tidak bisa masuk lagi sampai dibuka oleh admin.
+     */
+    public function kunciPelanggaran(Request $request, $id)
+    {
+        $peserta = $this->peserta();
+        $ujian = Ujian::findOrFail($id);
+
+        $sesi = SesiUjian::where('ujian_id', $ujian->id)
+            ->where('peserta_id', $peserta->id)
+            ->first();
+
+        if ($sesi) {
+            $sesi->update([
+                'terkunci' => true,
+                'alasan_kunci' => 'Pelanggaran fokus layar (meninggalkan layar ujian / beralih tab 3 kali)',
+                'pelanggaran_count' => 3,
+                'terkunci_pada' => now(),
+            ]);
+        }
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'status' => 'locked',
+                'message' => 'Ujian telah dikunci karena terdeteksi meninggalkan layar ujian sebanyak 3 kali.',
+                'redirect' => route('ujian.index'),
+            ]);
+        }
+
+        return redirect()->route('ujian.index')->with('error', "Ujian \"{$ujian->nama}\" Anda telah dikunci karena terdeteksi meninggalkan layar ujian sebanyak 3 kali. Silakan hubungi panitia atau admin untuk membuka kunci ujian.");
     }
 }

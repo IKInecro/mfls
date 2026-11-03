@@ -343,11 +343,11 @@
                         Tim panitia seleksi siap membantu kendala formulir dan berkas Anda.
                     </p>
                 </div>
-                <a href="https://wa.me/6285880059189" 
+                <a href="https://wa.me/6287867813183" 
                    target="_blank" 
                    rel="noopener noreferrer" 
                    class="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-xs active:scale-[0.98]">
-                    <span>Hubungi via WhatsApp</span>
+                    <span>Hubungi WhatsApp Admin (087867813183)</span>
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>

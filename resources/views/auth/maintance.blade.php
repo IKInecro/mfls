@@ -145,11 +145,11 @@
         </div>
 
         <div class="mt-12 flex flex-wrap justify-center md:justify-start gap-4">
-            <a href="https://wa.me/6285880059189"
+            <a href="https://wa.me/6287867813183"
                 class="px-6 py-3 bg-white text-black font-black text-xs uppercase tracking-widest rounded hover:bg-[--mfls-orange] transition-colors">
-                Tanya Panitia
+                Tanya Panitia (087867813183)
             </a>
-            <a href="https://instagram.com/beasiswamncu"
+            <a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0"
                 class="px-6 py-3 border border-white/20 text-white font-black text-xs uppercase tracking-widest rounded hover:bg-white/10 transition-colors">
                 Instagram
             </a>

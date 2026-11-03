@@ -16,10 +16,20 @@ class SesiUjian extends Model
         'peserta_id',
         'mulai_pada',
         'jawaban',
+        'terkunci',
+        'alasan_kunci',
+        'pelanggaran_count',
+        'terkunci_pada',
+        'dibuka_pada',
+        'dibuka_oleh',
     ];
 
     protected $casts = [
         'mulai_pada' => 'datetime',
+        'terkunci' => 'boolean',
+        'terkunci_pada' => 'datetime',
+        'dibuka_pada' => 'datetime',
+        'pelanggaran_count' => 'integer',
     ];
 
     public function ujian()

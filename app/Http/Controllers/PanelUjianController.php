@@ -37,7 +37,12 @@ class PanelUjianController extends Controller
 
         $totalPeserta = Peserta::count();
 
-        return view('admin.panel_ujian.index', compact('ujians', 'totalPeserta'));
+        $sesiTerkunci = \App\Models\SesiUjian::where('terkunci', true)
+            ->with(['peserta.akun', 'ujian'])
+            ->orderByDesc('terkunci_pada')
+            ->get();
+
+        return view('admin.panel_ujian.index', compact('ujians', 'totalPeserta', 'sesiTerkunci'));
     }
 
     public function store(Request $request)
@@ -165,5 +170,45 @@ class PanelUjianController extends Controller
             $sukses > 0 ? 'success' : 'error',
             "Undangan ujian \"{$ujian->nama}\": {$sukses} terkirim" . ($gagal ? ", {$gagal} gagal." : ".")
         );
+    }
+
+    /**
+     * Buka kunci akses CBT peserta yang terkunci akibat 3x pelanggaran fokus layar.
+     * Mengembalikan status sesi ke aktif (terkunci = false) dan mereset hitungan pelanggaran ke 0,
+     * sehingga peserta dapat melanjutkan ujian dengan draft jawaban tersimpan.
+     */
+    public function bukaKunci($sesiId)
+    {
+        $sesi = \App\Models\SesiUjian::with(['peserta.akun', 'ujian'])->findOrFail($sesiId);
+        $namaPeserta = $sesi->peserta?->nama ?? $sesi->peserta?->akun?->nama ?? 'Peserta';
+        $namaUjian = $sesi->ujian?->nama ?? 'Ujian';
+
+        $sesi->update([
+            'terkunci' => false,
+            'pelanggaran_count' => 0,
+            'dibuka_pada' => now(),
+            'dibuka_oleh' => auth()->user()->nama ?? auth()->user()->name ?? 'Administrator',
+        ]);
+
+        $this->logAktivitas('Buka Kunci CBT', 'Peserta', $sesi->peserta_id, "Membuka kunci CBT {$namaUjian} untuk {$namaPeserta} (pelanggaran di-reset ke 0)");
+
+        return back()->with('success', "Kunci CBT \"{$namaUjian}\" untuk peserta {$namaPeserta} berhasil dibuka. Peserta kini dapat kembali melanjutkan ujian.");
+    }
+
+    /**
+     * Reset sesi CBT yang terkunci agar peserta dapat mengulang kembali dari awal secara bersih.
+     */
+    public function resetSesi($sesiId)
+    {
+        $sesi = \App\Models\SesiUjian::with(['peserta.akun', 'ujian'])->findOrFail($sesiId);
+        $namaPeserta = $sesi->peserta?->nama ?? $sesi->peserta?->akun?->nama ?? 'Peserta';
+        $namaUjian = $sesi->ujian?->nama ?? 'Ujian';
+        $pesertaId = $sesi->peserta_id;
+
+        $sesi->delete();
+
+        $this->logAktivitas('Reset Sesi CBT', 'Peserta', $pesertaId, "Mereset sesi CBT {$namaUjian} untuk {$namaPeserta} agar mengulang dari awal");
+
+        return back()->with('success', "Sesi CBT \"{$namaUjian}\" untuk peserta {$namaPeserta} telah di-reset dari awal. Peserta dapat memulai kembali ujian dari nol.");
     }
 }
