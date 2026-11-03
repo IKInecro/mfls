@@ -883,7 +883,7 @@
                                 <p class="text-xs text-slate-500 mt-0.5">Khusus siswa aktif (Alumni tidak wajib)</p>
                             </div>
                         </div>
-                        <a href="{{ asset('icon/Surat Rekomendasi MFLS_2.pdf') }}" download class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:underline mt-1">
+                        <a href="{{ asset('icon/Surat_Rekomendasi_MFLS.pdf') }}" download="Surat_Rekomendasi_MFLS.pdf" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:underline mt-1">
                             <span class="iconify" data-icon="solar:download-square-bold"></span>
                             <span>Unduh Template Rekomendasi PDF</span>
                         </a>
