@@ -500,13 +500,15 @@
                         <span class="iconify text-lg text-pink-500" data-icon="solar:camera-minimalistic-bold"></span>
                         Follow Proof Screenshots
                     </h4>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                         @php
                             $followProofs = [
-                                ['field' => 'bukti_follow_ig_beasiswamncu', 'label' => 'IG Beasiswa'],
-                                ['field' => 'bukti_follow_ig_mncu', 'label' => 'IG MNCO'],
-                                ['field' => 'bukti_follow_tiktok_beasiswamncu', 'label' => 'TikTok Beasiswa'],
-                                ['field' => 'bukti_follow_tiktok_mncu', 'label' => 'TikTok MNCU'],
+                                ['field' => 'bukti_follow_ig_beasiswamncu', 'label' => 'IG @beasiswamncu'],
+                                ['field' => 'bukti_follow_ig_mncu', 'label' => 'IG @mncuniversity'],
+                                ['field' => 'bukti_follow_ig_mncunation', 'label' => 'IG @mncunation'],
+                                ['field' => 'bukti_follow_ig_thearetegen', 'label' => 'IG @thearetegen.id'],
+                                ['field' => 'bukti_follow_tiktok_beasiswamncu', 'label' => 'TikTok @beasiswamncu'],
+                                ['field' => 'bukti_follow_tiktok_mncu', 'label' => 'TikTok @mncuniversity'],
                             ];
                         @endphp
                         @foreach($followProofs as $proof)

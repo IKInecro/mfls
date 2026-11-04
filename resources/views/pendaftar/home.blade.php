@@ -1227,93 +1227,187 @@
             </div>
         </div>
 
-        <!-- 3 Instagram Accounts Section -->
+        <!-- Instagram & TikTok Official Accounts Section -->
         <div class="pt-8 border-t border-slate-200">
             <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-3">
                 <div>
                     <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary-blue bg-blue-50 border border-blue-200 px-3 py-1 rounded-full mb-2">
-                        Instagram Resmi
+                        Media Sosial Resmi
                     </span>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                        Ikuti 3 Akun Instagram Resmi Kami
+                        Ikuti Media Sosial Resmi MNC University & MFLS
                     </h3>
                 </div>
                 <p class="text-sm text-slate-500 max-w-md">
-                    Follow untuk liputan beasiswa terkini, cerita inspiratif awardee, dinamika kampus, serta pengembangan talenta kepemimpinan muda.
+                    Follow akun Instagram dan TikTok resmi kami untuk liputan beasiswa terkini, cerita inspiratif awardee, dinamika perkuliahan, serta tips sukses seleksi.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- IG 1: @beasiswamncu -->
-                <div class="rounded-2xl p-6 bg-slate-50 border border-slate-200/90 hover:border-rose-300 hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
-                    <div>
-                        <div class="flex items-center justify-between mb-5">
-                            <div class="w-13 h-13 p-3 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
-                                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                            </div>
-                            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-100 text-rose-700">Official Beasiswa</span>
-                        </div>
-                        <h4 class="font-bold text-slate-900 text-lg">Beasiswa MNC University</h4>
-                        <a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0" target="_blank" rel="noopener noreferrer" class="inline-block text-sm font-bold text-rose-600 hover:text-rose-700 mb-3">
-                            @beasiswamncu
-                        </a>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-6">
-                            Kanal informasi resmi beasiswa MFLS. Menyajikan info pembukaan pendaftaran, live FAQ, jadwal seleksi, dan pengumuman penerima beasiswa.
-                        </p>
-                    </div>
-                    <a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 shadow-md shadow-rose-900/20 hover:-translate-y-0.5 transition-all">
-                        <span>Follow @beasiswamncu</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    </a>
+            <!-- Instagram Grid (4 Akun) -->
+            <div class="mb-8">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-xs">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </span>
+                    <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Instagram Resmi (4 Akun)</h4>
                 </div>
 
-                <!-- IG 2: @mncunation -->
-                <div class="rounded-2xl p-6 bg-slate-50 border border-slate-200/90 hover:border-blue-300 hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
-                    <div>
-                        <div class="flex items-center justify-between mb-5">
-                            <div class="w-13 h-13 p-3 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
-                                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    <!-- IG 1: @beasiswamncu -->
+                    <div class="rounded-2xl p-5 bg-slate-50 border border-slate-200/90 hover:border-rose-300 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-11 h-11 p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">Official Beasiswa</span>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-100 text-blue-700">Komunitas Kampus</span>
+                            <h5 class="font-bold text-slate-900 text-base">Beasiswa MNCU</h5>
+                            <a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0" target="_blank" rel="noopener noreferrer" class="inline-block text-xs font-bold text-rose-600 hover:text-rose-700 mb-2">
+                                @beasiswamncu
+                            </a>
+                            <p class="text-[11px] text-slate-600 leading-relaxed mb-4">
+                                Kanal resmi beasiswa MFLS. Jadwal seleksi, tips berkas, live FAQ, dan pengumuman awardee.
+                            </p>
                         </div>
-                        <h4 class="font-bold text-slate-900 text-lg">MNCU Nation</h4>
-                        <a href="https://www.instagram.com/mncunation?vrfl=N3F1bXZyNHR3ZDNt" target="_blank" rel="noopener noreferrer" class="inline-block text-sm font-bold text-primary-blue hover:text-blue-700 mb-3">
-                            @mncunation
+                        <a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 shadow-sm transition-all">
+                            <span>Follow @beasiswamncu</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-6">
-                            Ruang gerak dan kreativitas mahasiswa MNC University. Liputan agenda seru kampus, organisasi mahasiswa, inovasi, dan prestasi pemuda.
-                        </p>
                     </div>
-                    <a href="https://www.instagram.com/mncunation?vrfl=N3F1bXZyNHR3ZDNt" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-900/20 hover:-translate-y-0.5 transition-all">
-                        <span>Follow @mncunation</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    </a>
+
+                    <!-- IG 2: @mncuniversity (TAMBAHAN) -->
+                    <div class="rounded-2xl p-5 bg-slate-50 border border-slate-200/90 hover:border-amber-300 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-11 h-11 p-2.5 rounded-xl bg-gradient-to-tr from-blue-700 via-indigo-600 to-amber-500 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Kampus Resmi</span>
+                            </div>
+                            <h5 class="font-bold text-slate-900 text-base">MNC University</h5>
+                            <a href="https://www.instagram.com/mncuniversity?srtk=MWk4YndhM3VmcDhwaw==" target="_blank" rel="noopener noreferrer" class="inline-block text-xs font-bold text-amber-700 hover:text-amber-800 mb-2">
+                                @mncuniversity
+                            </a>
+                            <p class="text-[11px] text-slate-600 leading-relaxed mb-4">
+                                Akun resmi MNC University. Perkuliahan, fasilitas studio & lab, prestasi dosen-mahasiswa, dan kegiatan akademik.
+                            </p>
+                        </div>
+                        <a href="https://www.instagram.com/mncuniversity?srtk=MWk4YndhM3VmcDhwaw==" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 shadow-sm transition-all">
+                            <span>Follow @mncuniversity</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                    </div>
+
+                    <!-- IG 3: @mncunation -->
+                    <div class="rounded-2xl p-5 bg-slate-50 border border-slate-200/90 hover:border-blue-300 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-11 h-11 p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">Komunitas Kampus</span>
+                            </div>
+                            <h5 class="font-bold text-slate-900 text-base">MNCU Nation</h5>
+                            <a href="https://www.instagram.com/mncunation?vrfl=N3F1bXZyNHR3ZDNt" target="_blank" rel="noopener noreferrer" class="inline-block text-xs font-bold text-primary-blue hover:text-blue-700 mb-2">
+                                @mncunation
+                            </a>
+                            <p class="text-[11px] text-slate-600 leading-relaxed mb-4">
+                                Ruang gerak mahasiswa MNC University. Liputan agenda seru kampus, organisasi mahasiswa, dan inovasi pemuda.
+                            </p>
+                        </div>
+                        <a href="https://www.instagram.com/mncunation?vrfl=N3F1bXZyNHR3ZDNt" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-sm transition-all">
+                            <span>Follow @mncunation</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                    </div>
+
+                    <!-- IG 4: @thearetegen.id -->
+                    <div class="rounded-2xl p-5 bg-slate-50 border border-slate-200/90 hover:border-purple-300 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-11 h-11 p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">Leadership & Arete</span>
+                            </div>
+                            <h5 class="font-bold text-slate-900 text-base">The Arete Generation</h5>
+                            <a href="https://www.instagram.com/thearetegen.id?vrfl=MW9iaHBybzNhcWt2OA==" target="_blank" rel="noopener noreferrer" class="inline-block text-xs font-bold text-purple-600 hover:text-purple-700 mb-2">
+                                @thearetegen.id
+                            </a>
+                            <p class="text-[11px] text-slate-600 leading-relaxed mb-4">
+                                Gerakan kepemimpinan dan karakter unggul berlandaskan integritas, virtue (arete), dan dampak sosial nyata.
+                            </p>
+                        </div>
+                        <a href="https://www.instagram.com/thearetegen.id?vrfl=MW9iaHBybzNhcWt2OA==" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-sm transition-all">
+                            <span>Follow @thearetegen.id</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TikTok Grid (2 Akun) -->
+            <div>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="w-8 h-8 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-xs">
+                        <span class="iconify text-base" data-icon="solar:video-library-bold"></span>
+                    </span>
+                    <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider">TikTok Resmi (2 Akun)</h4>
                 </div>
 
-                <!-- IG 3: @thearetegen.id -->
-                <div class="rounded-2xl p-6 bg-slate-50 border border-slate-200/90 hover:border-purple-300 hover:bg-white hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
-                    <div>
-                        <div class="flex items-center justify-between mb-5">
-                            <div class="w-13 h-13 p-3 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
-                                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- TikTok 1: @beasiswamncu -->
+                    <div class="rounded-2xl p-5 bg-slate-50 border border-slate-200/90 hover:border-slate-400 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-11 h-11 p-2.5 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+                                    <span class="iconify text-2xl text-cyan-400" data-icon="solar:play-bold"></span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-800">TikTok Beasiswa</span>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-purple-100 text-purple-700">Leadership & Character</span>
+                            <h5 class="font-bold text-slate-900 text-base">TikTok Beasiswa MNCU</h5>
+                            <a href="https://www.tiktok.com/@beasiswamncu?_r=1&_t=ZS-9B6yaQHGujU" target="_blank" rel="noopener noreferrer" class="inline-block text-xs font-bold text-slate-800 hover:text-blue-600 mb-2">
+                                @beasiswamncu
+                            </a>
+                            <p class="text-[11px] text-slate-600 leading-relaxed mb-4">
+                                Konten video tips beasiswa, Q&A seleksi, cerita awardee, tutorial pendaftaran, dan informasi live.
+                            </p>
                         </div>
-                        <h4 class="font-bold text-slate-900 text-lg">The Arete Generation</h4>
-                        <a href="https://www.instagram.com/thearetegen.id?vrfl=MW9iaHBybzNhcWt2OA==" target="_blank" rel="noopener noreferrer" class="inline-block text-sm font-bold text-purple-600 hover:text-purple-700 mb-3">
-                            @thearetegen.id
+                        <a href="https://www.tiktok.com/@beasiswamncu?_r=1&_t=ZS-9B6yaQHGujU" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-black shadow-sm transition-all">
+                            <span>Follow TikTok @beasiswamncu</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-6">
-                            Gerakan kepemimpinan dan pembentukan karakter generasi unggul berlandaskan integritas, virtue (arete), dan dampak sosial nyata.
-                        </p>
                     </div>
-                    <a href="https://www.instagram.com/thearetegen.id?vrfl=MW9iaHBybzNhcWt2OA==" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-md shadow-purple-900/20 hover:-translate-y-0.5 transition-all">
-                        <span>Follow @thearetegen.id</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    </a>
+
+                    <!-- TikTok 2: @mncuniversity -->
+                    <div class="rounded-2xl p-5 bg-slate-50 border border-slate-200/90 hover:border-slate-400 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-11 h-11 p-2.5 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+                                    <span class="iconify text-2xl text-rose-400" data-icon="solar:video-frame-bold"></span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-200 text-slate-800">TikTok Kampus</span>
+                            </div>
+                            <h5 class="font-bold text-slate-900 text-base">TikTok MNC University</h5>
+                            <a href="https://www.tiktok.com/@mncuniversity?_r=1&_t=ZS-9B6yaYb2CaU" target="_blank" rel="noopener noreferrer" class="inline-block text-xs font-bold text-slate-800 hover:text-blue-600 mb-2">
+                                @mncuniversity
+                            </a>
+                            <p class="text-[11px] text-slate-600 leading-relaxed mb-4">
+                                Tren seru kehidupan mahasiswa MNCU, eksplorasi studio TV, praktikum lab, event kampus, dan keseruan perkuliahan.
+                            </p>
+                        </div>
+                        <a href="https://www.tiktok.com/@mncuniversity?_r=1&_t=ZS-9B6yaYb2CaU" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center justify-center gap-1.5 w-full py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-black shadow-sm transition-all">
+                            <span>Follow TikTok @mncuniversity</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1365,23 +1459,41 @@
                 </a>
             </div>
 
-            <!-- Instagram Resmi (3 Akun) -->
+            <!-- Media Sosial Resmi (Instagram & TikTok) -->
             <div class="p-8 rounded-2xl bg-white border border-slate-200 text-center hover:border-primary-blue hover:shadow-xl transition-all duration-300">
                 <div class="w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-4">
                     <span class="iconify text-3xl" data-icon="solar:camera-bold"></span>
                 </div>
-                <h3 class="font-bold text-slate-900 text-lg mb-1">Instagram Resmi</h3>
-                <p class="text-xs text-slate-500 mb-3">Update live & pengumuman awardee</p>
+                <h3 class="font-bold text-slate-900 text-lg mb-1">Media Sosial Resmi</h3>
+                <p class="text-xs text-slate-500 mb-3">Instagram & TikTok MFLS / MNC University</p>
                 <div class="flex flex-col gap-1.5 items-center">
-                    <a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-rose-600 hover:text-rose-700">
-                        <span>@beasiswamncu</span>
-                    </a>
-                    <a href="https://www.instagram.com/mncunation?vrfl=N3F1bXZyNHR3ZDNt" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-primary-blue hover:text-blue-700">
-                        <span>@mncunation</span>
-                    </a>
-                    <a href="https://www.instagram.com/thearetegen.id?vrfl=MW9iaHBybzNhcWt2OA==" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-purple-600 hover:text-purple-700">
-                        <span>@thearetegen.id</span>
-                    </a>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-rose-600 hover:text-rose-700">
+                            <span>IG @beasiswamncu</span>
+                        </a>
+                        <span>&bull;</span>
+                        <a href="https://www.instagram.com/mncuniversity?srtk=MWk4YndhM3VmcDhwaw==" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-amber-700 hover:text-amber-800">
+                            <span>IG @mncuniversity</span>
+                        </a>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <a href="https://www.instagram.com/mncunation?vrfl=N3F1bXZyNHR3ZDNt" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-primary-blue hover:text-blue-700">
+                            <span>IG @mncunation</span>
+                        </a>
+                        <span>&bull;</span>
+                        <a href="https://www.instagram.com/thearetegen.id?vrfl=MW9iaHBybzNhcWt2OA==" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-purple-600 hover:text-purple-700">
+                            <span>IG @thearetegen.id</span>
+                        </a>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-2 pt-1 border-t border-slate-100 w-full mt-1">
+                        <a href="https://www.tiktok.com/@beasiswamncu?_r=1&_t=ZS-9B6yaQHGujU" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-slate-800 hover:text-blue-600">
+                            <span>TikTok @beasiswamncu</span>
+                        </a>
+                        <span>&bull;</span>
+                        <a href="https://www.tiktok.com/@mncuniversity?_r=1&_t=ZS-9B6yaYb2CaU" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-bold text-xs text-slate-800 hover:text-blue-600">
+                            <span>TikTok @mncuniversity</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -1707,8 +1819,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             <span class="iconify text-lg" data-icon="solar:camera-bold"></span>
                         </div>
                         <div class="text-left">
-                            <span class="block text-xs font-bold text-slate-800 group-hover:text-rose-700">Instagram & Komunitas MFLS</span>
-                            <span class="block text-[10px] text-slate-500 font-medium">@beasiswamncu, @mncunation, @thearetegen.id</span>
+                            <span class="block text-xs font-bold text-slate-800 group-hover:text-rose-700">Instagram & TikTok Resmi</span>
+                            <span class="block text-[10px] text-slate-500 font-medium">@beasiswamncu, @mncuniversity, @mncunation</span>
                         </div>
                     </div>
                     <span class="iconify text-slate-400 group-hover:text-rose-600 group-hover:translate-x-0.5 transition-all text-sm" data-icon="solar:arrow-right-bold"></span>

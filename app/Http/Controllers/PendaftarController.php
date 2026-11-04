@@ -178,6 +178,8 @@ class PendaftarController extends Controller
             'portfolio' => 'nullable|max:10240', // Can be file or string
             'bukti_follow_ig_beasiswamncu' => 'nullable|image|max:10240',
             'bukti_follow_ig_mncu' => 'nullable|image|max:10240',
+            'bukti_follow_ig_mncunation' => 'nullable|image|max:10240',
+            'bukti_follow_ig_thearetegen' => 'nullable|image|max:10240',
             'bukti_follow_tiktok_beasiswamncu' => 'nullable|image|max:10240',
             'bukti_follow_tiktok_mncu' => 'nullable|image|max:10240',
         ]);
@@ -188,7 +190,8 @@ class PendaftarController extends Controller
         $raporFields = ['rapor1', 'rapor2', 'rapor3', 'rapor4', 'rapor5', 'rapor6'];
         $singleFields = [
             'foto', 'ijazah', 'personal_statement', 'study_plan', 'surat_rekomendasi_sekolah',
-            'bukti_follow_ig_beasiswamncu', 'bukti_follow_ig_mncu', 'bukti_follow_tiktok_beasiswamncu', 'bukti_follow_tiktok_mncu',
+            'bukti_follow_ig_beasiswamncu', 'bukti_follow_ig_mncu', 'bukti_follow_ig_mncunation', 'bukti_follow_ig_thearetegen',
+            'bukti_follow_tiktok_beasiswamncu', 'bukti_follow_tiktok_mncu',
             'surat_buta_warna'
         ];
 

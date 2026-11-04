@@ -226,13 +226,13 @@
                 'val' => $berkas->kartu_keluarga ?? null,
             ],
             [
-                'field' => 'surat_rekomendasi',
-                'label' => 'Surat Rekomendasi',
+                'field' => 'surat_rekomendasi_sekolah',
+                'label' => 'Surat Rekomendasi Sekolah',
                 'desc' => 'Surat rekomendasi dari Kepala Sekolah / Guru BK / Tokoh Masyarakat.',
                 'accept' => '.pdf,.jpg,.jpeg,.png,.webp',
                 'maxSize' => 'Max 2MB (PDF / JPG / PNG)',
                 'icon' => 'solar:diploma-verified-bold-duotone',
-                'val' => $berkas->surat_rekomendasi ?? null,
+                'val' => $berkas->surat_rekomendasi_sekolah ?? $berkas->surat_rekom ?? null,
             ],
             [
                 'field' => 'study_plan',
@@ -419,6 +419,169 @@
                     </div>
                 </div>
             @endif
+        </div>
+    </div>
+
+    <!-- 4. BUKTI FOLLOW MEDIA SOSIAL RESMI SECTION -->
+    <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div class="px-4 sm:px-6 py-3.5 sm:py-4 bg-slate-50/70 border-b border-slate-200/70 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <span class="iconify text-base sm:text-lg" data-icon="solar:camera-minimalistic-bold"></span>
+                </div>
+                <div>
+                    <h2 class="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">Bukti Follow Media Sosial Resmi (Instagram & TikTok)</h2>
+                    <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Unggah tangkapan layar (screenshot) bukti bahwa Anda telah mem-follow akun resmi di bawah ini.</p>
+                </div>
+            </div>
+            <span class="text-[10px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-full hidden sm:inline-block">
+                Wajib Disertakan
+            </span>
+        </div>
+
+        <div class="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
+            <!-- Instruction Note -->
+            <div class="p-3.5 sm:p-4 rounded-xl bg-amber-50/80 border border-amber-200/80 text-amber-950 text-xs flex items-start gap-3">
+                <span class="iconify text-lg text-amber-600 shrink-0 mt-0.5" data-icon="solar:info-circle-bold"></span>
+                <p class="leading-relaxed">
+                    <strong>Petunjuk Screenshot:</strong> Silakan klik nama akun untuk membuka profil dan mem-follow, lalu ambil tangkapan layar (screenshot) yang memperlihatkan status <em>"Following"</em> atau <em>"Mengikuti"</em> akun Anda. Format: JPG, PNG, atau WebP (maks. 10MB per file).
+                </p>
+            </div>
+
+            @php
+                $socialCards = [
+                    [
+                        'field' => 'bukti_follow_ig_beasiswamncu',
+                        'platform' => 'Instagram',
+                        'handle' => '@beasiswamncu',
+                        'name' => 'Beasiswa MNC University',
+                        'url' => 'https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0',
+                        'val' => $berkas->bukti_follow_ig_beasiswamncu ?? null,
+                    ],
+                    [
+                        'field' => 'bukti_follow_ig_mncu',
+                        'platform' => 'Instagram',
+                        'handle' => '@mncuniversity',
+                        'name' => 'MNC University Official',
+                        'url' => 'https://www.instagram.com/mncuniversity?srtk=MWk4YndhM3VmcDhwaw==',
+                        'val' => $berkas->bukti_follow_ig_mncu ?? null,
+                    ],
+                    [
+                        'field' => 'bukti_follow_ig_mncunation',
+                        'platform' => 'Instagram',
+                        'handle' => '@mncunation',
+                        'name' => 'MNCU Nation (Komunitas)',
+                        'url' => 'https://www.instagram.com/mncunation?vrfl=N3F1bXZyNHR3ZDNt',
+                        'val' => $berkas->bukti_follow_ig_mncunation ?? null,
+                    ],
+                    [
+                        'field' => 'bukti_follow_ig_thearetegen',
+                        'platform' => 'Instagram',
+                        'handle' => '@thearetegen.id',
+                        'name' => 'The Arete Generation',
+                        'url' => 'https://www.instagram.com/thearetegen.id?vrfl=MW9iaHBybzNhcWt2OA==',
+                        'val' => $berkas->bukti_follow_ig_thearetegen ?? null,
+                    ],
+                    [
+                        'field' => 'bukti_follow_tiktok_beasiswamncu',
+                        'platform' => 'TikTok',
+                        'handle' => '@beasiswamncu',
+                        'name' => 'TikTok Beasiswa MNCU',
+                        'url' => 'https://www.tiktok.com/@beasiswamncu?_r=1&_t=ZS-9B6yaQHGujU',
+                        'val' => $berkas->bukti_follow_tiktok_beasiswamncu ?? null,
+                    ],
+                    [
+                        'field' => 'bukti_follow_tiktok_mncu',
+                        'platform' => 'TikTok',
+                        'handle' => '@mncuniversity',
+                        'name' => 'TikTok MNC University',
+                        'url' => 'https://www.tiktok.com/@mncuniversity?_r=1&_t=ZS-9B6yaYb2CaU',
+                        'val' => $berkas->bukti_follow_tiktok_mncu ?? null,
+                    ],
+                ];
+            @endphp
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach($socialCards as $sc)
+                <div class="p-4 rounded-2xl border {{ $sc['val'] ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 bg-slate-50/60' }} flex flex-col justify-between space-y-3">
+                    <div>
+                        <!-- Header Card -->
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold {{ $sc['platform'] === 'TikTok' ? 'bg-slate-900 text-white' : 'bg-gradient-to-r from-amber-500 to-rose-500 text-white' }}">
+                                {{ $sc['platform'] }}
+                            </span>
+
+                            @if($sc['val'])
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span>Tersimpan</span>
+                                </span>
+                            @else
+                                <span class="text-[10px] font-semibold text-slate-400">
+                                    Belum Diunggah
+                                </span>
+                            @endif
+                        </div>
+
+                        <h4 class="text-xs font-extrabold text-slate-900">{{ $sc['name'] }}</h4>
+                        <a href="{{ $sc['url'] }}" target="_blank" rel="noopener noreferrer" 
+                           class="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline mt-0.5 mb-2">
+                            <span>{{ $sc['handle'] }}</span>
+                            <span class="iconify text-xs" data-icon="solar:arrow-right-up-bold"></span>
+                        </a>
+                    </div>
+
+                    <!-- Upload Form / Preview Area -->
+                    <div>
+                        @if($sc['val'])
+                            <div class="p-2.5 rounded-xl bg-white border border-slate-200 flex items-center justify-between gap-2">
+                                <a href="{{ asset('storage/' . $sc['val']) }}" target="_blank" class="flex items-center gap-2 min-w-0 group">
+                                    <img src="{{ asset('storage/' . $sc['val']) }}" alt="Screenshot" class="w-9 h-9 rounded-lg object-cover border border-slate-200 shrink-0">
+                                    <div class="min-w-0">
+                                        <span class="text-xs font-bold text-slate-800 group-hover:text-blue-600 group-hover:underline truncate block">Lihat Screenshot</span>
+                                        <span class="text-[10px] text-emerald-600 font-semibold">Terkonfirmasi</span>
+                                    </div>
+                                </a>
+                                <button type="button" 
+                                        onclick="confirmDeleteFile('{{ $sc['field'] }}')"
+                                        title="Hapus Screenshot"
+                                        class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </div>
+                        @else
+                            <form action="{{ route('pendaftar.berkas.store') }}" method="POST" enctype="multipart/form-data" onsubmit="return validateSingleForm(this)">
+                                @csrf
+                                <input type="hidden" name="upload_field" value="{{ $sc['field'] }}">
+
+                                <div class="relative">
+                                    <input type="file" 
+                                           id="file-{{ $sc['field'] }}" 
+                                           name="{{ $sc['field'] }}" 
+                                           accept=".jpg,.jpeg,.png,.webp" 
+                                           class="hidden" 
+                                           onchange="onFileSelected(this, '{{ $sc['field'] }}')">
+                                    
+                                    <label for="file-{{ $sc['field'] }}" 
+                                           class="flex items-center justify-center gap-2 p-2.5 border border-dashed border-slate-300 hover:border-blue-500 rounded-xl bg-white hover:bg-blue-50/30 transition-all cursor-pointer text-center group">
+                                        <span class="iconify text-base text-slate-400 group-hover:text-blue-600" data-icon="solar:camera-add-bold"></span>
+                                        <span class="text-xs font-bold text-slate-700 group-hover:text-blue-600">Pilih Screenshot</span>
+                                    </label>
+
+                                    <p id="preview-{{ $sc['field'] }}" class="hidden text-[11px] font-bold text-blue-600 mt-1.5 truncate"></p>
+                                </div>
+
+                                <button type="submit" 
+                                        id="btn-save-{{ $sc['field'] }}" 
+                                        class="hidden mt-2 w-full py-1.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
+                                    Unggah Bukti Follow
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
         </div>
     </div>
     @endif

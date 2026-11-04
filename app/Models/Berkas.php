@@ -30,6 +30,8 @@ class Berkas extends Model
         'surat_buta_warna',
         'bukti_follow_ig_beasiswamncu',
         'bukti_follow_ig_mncu',
+        'bukti_follow_ig_mncunation',
+        'bukti_follow_ig_thearetegen',
         'bukti_follow_tiktok_beasiswamncu',
         'bukti_follow_tiktok_mncu',
         'portfolio',
