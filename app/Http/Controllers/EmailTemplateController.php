@@ -22,11 +22,16 @@ class EmailTemplateController extends Controller
     {
         abort_unless(in_array($key, EmailTemplate::KEYS, true), 404);
 
+        $savedBody = EmailTemplate::body($key);
+        if ($savedBody) {
+            $savedBody = EmailTemplate::normalizePlaceholders($key, $savedBody);
+        }
+
         return view('admin.email-templates.edit', [
             'key' => $key,
             'label' => EmailTemplate::LABELS[$key],
             'template' => EmailTemplate::get($key),
-            'prefill' => EmailTemplate::body($key) ?? $this->defaultFullHtml($key),
+            'prefill' => $savedBody ?? $this->defaultFullHtml($key),
             'placeholders' => array_keys(EmailTemplate::SAMPLES[$key]),
             'missing' => EmailTemplate::get($key)?->missingRequired() ?? [],
         ]);
@@ -46,11 +51,17 @@ class EmailTemplateController extends Controller
             }
         };
 
-        // Setiap nilai = placeholder literal-nya sendiri, jadi hasil render memuat
-        // {nama}/{otp}/dst yang nanti disubstitusi saat email benar-benar dikirim.
+        // Setiap nilai = placeholder literal-nya sendiri ({nama}, {otp}, dst)
+        // yang nanti disubstitusi saat email benar-benar dikirim.
+        $keys = array_keys(EmailTemplate::SAMPLES[$key] ?? []);
+        $literalPlaceholders = array_combine(
+            $keys,
+            array_map(fn ($k) => '{'.$k.'}', $keys)
+        );
+
         $data = EmailTemplate::viewData(
             $key,
-            array_map(fn ($ph) => '{'.$ph.'}', EmailTemplate::SAMPLES[$key]),
+            $literalPlaceholders,
             ['token' => '{linkReset}', 'email' => '{email}']
         );
 
@@ -60,9 +71,10 @@ class EmailTemplateController extends Controller
         ]))->render();
 
         if ($key === 'reset_password') {
-            // url() menghasilkan URL konkret dari token contoh → kembalikan ke {linkReset}
-            $link = url('reset-password/{linkReset}?email='.urlencode('{email}'));
-            $html = str_replace($link, '{linkReset}', $html);
+            // Bersihkan format tautan ke placeholder {linkReset}
+            $link1 = url('reset-password/{linkReset}?email='.urlencode('{email}'));
+            $link2 = url('reset-password/%7BlinkReset%7D?email=%7Bemail%7D');
+            $html = str_replace([$link1, $link2], '{linkReset}', $html);
         }
 
         return $html;
@@ -125,7 +137,13 @@ class EmailTemplateController extends Controller
         ]);
 
         $validated['subject'] = $validated['subject'] ?: null;
-        $validated['body'] = $validated['body'] ?: null;
+        $body = $validated['body'] ?: null;
+
+        if ($body) {
+            $body = EmailTemplate::normalizePlaceholders($key, $body);
+        }
+
+        $validated['body'] = $body;
 
         EmailTemplate::updateOrCreate(['key' => $key], $validated);
 

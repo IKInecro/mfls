@@ -104,6 +104,36 @@ class EmailTemplate extends Model
     }
 
     /**
+     * Normalisasi placeholder: memperbaiki placeholder sampel ({Budi Santoso}, {123456}, dll)
+     * menjadi placeholder resmi ({nama}, {otp}, dll) serta menangani kasus teks sampel tanpa kurung.
+     */
+    public static function normalizePlaceholders(string $key, string $body): string
+    {
+        $heals = [
+            '{Budi Santoso}' => '{nama}',
+            '{123456}' => '{otp}',
+            '{SMAN 1 Surabaya}' => '{asalSekolah}',
+            '{lama@example.com}' => '{emailLama}',
+            '{baru@example.com}' => '{emailBaru}',
+            '{http://localhost/ujian/abc123}' => '{linkUjian}',
+            '{http://localhost/reset-password/abc123?email=budi%40example.com}' => '{linkReset}',
+        ];
+        $body = str_replace(array_keys($heals), array_values($heals), $body);
+
+        // Jika {otp} tidak ada sama sekali tapi teks mengandung '123456' pada template OTP
+        if (in_array($key, ['otp', 'email_change_otp'], true) && !str_contains($body, '{otp}') && str_contains($body, '123456')) {
+            $body = str_replace('123456', '{otp}', $body);
+        }
+
+        // Jika {nama} tidak ada sama sekali tapi teks mengandung 'Budi Santoso'
+        if (!str_contains($body, '{nama}') && str_contains($body, 'Budi Santoso')) {
+            $body = str_replace('Budi Santoso', '{nama}', $body);
+        }
+
+        return $body;
+    }
+
+    /**
      * Substitusi placeholder {nama} dst dari whitelist per key.
      * HANYA string replace — body dari DB TIDAK PERNAH dikompile jadi Blade
      * (mencegah eksekusi kode dari konten yang ditulis lewat web).
@@ -111,6 +141,7 @@ class EmailTemplate extends Model
      */
     public static function render(string $key, string $body, array $data): string
     {
+        $body = static::normalizePlaceholders($key, $body);
         $allowed = array_keys(self::SAMPLES[$key] ?? []);
 
         return preg_replace_callback('/{(\w+)}/', function ($m) use ($allowed, $data) {
@@ -171,9 +202,10 @@ class EmailTemplate extends Model
     public function missingRequired(): array
     {
         $missing = [];
+        $body = static::normalizePlaceholders($this->key, (string) $this->body);
 
         foreach (self::REQUIRED[$this->key] ?? [] as $ph) {
-            if (!str_contains((string) $this->body, $ph)) {
+            if (!str_contains($body, $ph)) {
                 $missing[] = $ph;
             }
         }

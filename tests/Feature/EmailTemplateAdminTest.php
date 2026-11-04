@@ -144,6 +144,8 @@ class EmailTemplateAdminTest extends TestCase
         $resp->assertSee('&lt;!DOCTYPE html&gt;', false); // DOCTYPE sebagai kode di textarea
         $resp->assertSee('{nama}', false);
         $resp->assertSee('{otp}', false);
+        $resp->assertDontSee('{Budi Santoso}', false);
+        $resp->assertDontSee('{123456}', false);
         // shell/logo nampak sebagai KODE di textarea (ter-escape), bukan render
         $resp->assertSee('&lt;div class=&quot;content&quot;&gt;', false);
     }

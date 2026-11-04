@@ -40,6 +40,43 @@ class EmailTemplateSendTest extends TestCase
         $this->assertStringNotContainsString('Verifikasi Akun MNCU Future Leader Scholarship', $html);
     }
 
+    public function test_otp_mail_auto_heals_corrupted_sample_placeholders(): void
+    {
+        // Simulasi jika di DB tersimpan template yang bocor teks {Budi Santoso} dan {123456}
+        EmailTemplate::create([
+            'key' => 'otp',
+            'subject' => 'Kode OTP untuk {Budi Santoso}',
+            'body' => '<!DOCTYPE html><html><body><h1>Halo {Budi Santoso}</h1><p>Kode kamu adalah {123456}</p></body></html>',
+        ]);
+
+        $mail = new OtpMail('Siti Rahmawati', '842019');
+
+        $this->assertSame('Kode OTP untuk Siti Rahmawati', $mail->envelope()->subject);
+        $html = $mail->render();
+        $this->assertStringContainsString('Halo Siti Rahmawati', $html);
+        $this->assertStringContainsString('Kode kamu adalah 842019', $html);
+        $this->assertStringNotContainsString('Budi Santoso', $html);
+        $this->assertStringNotContainsString('123456', $html);
+    }
+
+    public function test_otp_mail_auto_heals_unbraced_sample_text(): void
+    {
+        // Simulasi jika di DB tersimpan tanpa kurung kurawal
+        EmailTemplate::create([
+            'key' => 'otp',
+            'subject' => 'Kode OTP Anda',
+            'body' => '<!DOCTYPE html><html><body><h1>Halo Budi Santoso</h1><p>Kode OTP: 123456</p></body></html>',
+        ]);
+
+        $mail = new OtpMail('Ahmad Fauzi', '519283');
+
+        $html = $mail->render();
+        $this->assertStringContainsString('Halo Ahmad Fauzi', $html);
+        $this->assertStringContainsString('Kode OTP: 519283', $html);
+        $this->assertStringNotContainsString('Budi Santoso', $html);
+        $this->assertStringNotContainsString('123456', $html);
+    }
+
     public function test_certificate_mail_override(): void
     {
         EmailTemplate::create(['key' => 'certificate', 'body' => '<p>Sertifikat atas nama {nama} siap diunduh.</p>']);

@@ -26,7 +26,7 @@
                 {!! $templateBody !!}
             @else
                 <h2 style="color: #001f3f; margin-top: 0;">Verifikasi Ganti Email</h2>
-                <h3>Halo, {{ $user->nama }}!</h3>
+                <h3>Halo, {{ $nama ?? $user->nama ?? 'Peserta' }}!</h3>
                 <p>Kami menerima permintaan untuk mengubah alamat email akun MNCU Future Leader Scholarship Anda. Silakan masukkan kode verifikasi berikut untuk melanjutkan:</p>
                 <div class="otp-box">
                     {{ $otp }}

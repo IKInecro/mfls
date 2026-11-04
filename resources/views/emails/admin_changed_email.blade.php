@@ -31,8 +31,8 @@
                 <p>Kami ingin menginformasikan bahwa administrator **MNCU Future Leader Scholarship** telah memperbarui alamat email akun Anda sesuai permintaan atau keperluan verifikasi.</p>
 
                 <div class="info-box">
-                    <p style="margin: 5px 0;"><strong>Email Lama:</strong> {{ $oldEmail }}</p>
-                    <p style="margin: 5px 0; color: #f97316;"><strong>Email Baru:</strong> {{ $newEmail }}</p>
+                    <p style="margin: 5px 0;"><strong>Email Lama:</strong> {{ $oldEmail ?? $emailLama ?? '-' }}</p>
+                    <p style="margin: 5px 0; color: #f97316;"><strong>Email Baru:</strong> {{ $newEmail ?? $emailBaru ?? '-' }}</p>
                 </div>
 
                 <p>Mulai saat ini, silakan gunakan <strong>Email Baru</strong> Anda untuk masuk (Login) ke portal pendaftar.</p>

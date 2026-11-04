@@ -673,6 +673,7 @@ class PendaftarController extends Controller
             Mail::send('emails.email_change_otp', [
                 'otp' => $otpCode,
                 'user' => $user,
+                'nama' => $user->nama,
                 'templateBody' => \App\Models\EmailTemplate::renderBody('email_change_otp', [
                     'nama' => $user->nama,
                     'otp' => $otpCode,

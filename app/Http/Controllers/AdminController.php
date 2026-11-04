@@ -1483,7 +1483,7 @@ class AdminController extends Controller
             
             // Kirim ke email BARU
             \Illuminate\Support\Facades\Mail::send('emails.admin_changed_email', 
-                array_merge(['nama' => $nama, 'oldEmail' => $oldEmail, 'newEmail' => $newEmail], [
+                array_merge(['nama' => $nama, 'oldEmail' => $oldEmail, 'newEmail' => $newEmail, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail], [
                     'templateBody' => \App\Models\EmailTemplate::renderBody('admin_changed_email', [
                         'nama' => $nama, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail,
                     ]),
@@ -1498,7 +1498,7 @@ class AdminController extends Controller
 
             // Kirim ke email LAMA (sebagai notifikasi keamanan)
             \Illuminate\Support\Facades\Mail::send('emails.admin_changed_email', 
-                array_merge(['nama' => $nama, 'oldEmail' => $oldEmail, 'newEmail' => $newEmail], [
+                array_merge(['nama' => $nama, 'oldEmail' => $oldEmail, 'newEmail' => $newEmail, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail], [
                     'templateBody' => \App\Models\EmailTemplate::renderBody('admin_changed_email', [
                         'nama' => $nama, 'emailLama' => $oldEmail, 'emailBaru' => $newEmail,
                     ]),

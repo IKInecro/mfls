@@ -342,6 +342,8 @@ class AuthController extends Controller
             Mail::send('emails.reset_password', [
                 'token' => $token,
                 'user' => $user,
+                'nama' => $user->nama,
+                'linkReset' => url('reset-password/'.$token.'?email='.urlencode($user->email)),
                 'templateBody' => \App\Models\EmailTemplate::renderBody('reset_password', [
                     'nama' => $user->nama,
                     'linkReset' => url('reset-password/'.$token.'?email='.urlencode($user->email)),

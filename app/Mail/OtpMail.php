@@ -45,6 +45,8 @@ class OtpMail extends Mailable
         return new Content(
             view: 'emails.otp',
             with: [
+                'nama' => $this->nama,
+                'otp' => $this->otp,
                 'templateBody' => \App\Models\EmailTemplate::renderBody('otp', [
                     'nama' => $this->nama,
                     'otp' => $this->otp,
