@@ -7,53 +7,6 @@ use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\SurveyController;
 use Illuminate\Support\Facades\Route;
 
-// === TEMPORARY DEBUG ROUTE - HAPUS SETELAH SELESAI ===
-Route::get('/debug-beasiswa-100', function () {
-    if (!auth()->check() || auth()->user()->role !== 'admin') abort(403);
-
-    $totalPA = \App\Models\PenilaianAkademik::count();
-    $pa100 = \App\Models\PenilaianAkademik::where('rekomendasi_beasiswa', 'like', '%100%')->count();
-    $distinctRek = \App\Models\PenilaianAkademik::whereNotNull('rekomendasi_beasiswa')
-        ->select('rekomendasi_beasiswa')->distinct()->pluck('rekomendasi_beasiswa');
-    $totalDaftar100 = \App\Models\Daftar::where('nominal_beasiswa', 'like', '%100%')->count();
-    $distinctNominal = \App\Models\Daftar::whereNotNull('nominal_beasiswa')
-        ->select('nominal_beasiswa')->distinct()->pluck('nominal_beasiswa');
-
-    // Semua kandidat yang punya rekomendasi 100% dari penilaian akademik
-    $kandidatRek100 = \App\Models\PenilaianAkademik::where('rekomendasi_beasiswa', 'like', '%100%')
-        ->with('peserta.akun', 'peserta.daftar')
-        ->get()
-        ->map(fn($pa) => [
-            'nama'              => $pa->peserta->akun->nama ?? '?',
-            'rekomendasi_beasiswa' => $pa->rekomendasi_beasiswa,
-            'nominal_beasiswa'  => $pa->peserta->daftar->nominal_beasiswa ?? null,
-            'status_wawancara_bod' => $pa->peserta->daftar->status_wawancara_bod ?? null,
-            'status_daftar'     => $pa->peserta->daftar->status ?? null,
-        ]);
-
-    // Semua kandidat yang punya nominal_beasiswa 100% di tabel daftar
-    $kandidatNominal100 = \App\Models\Daftar::where('nominal_beasiswa', 'like', '%100%')
-        ->with('peserta.akun')
-        ->get()
-        ->map(fn($d) => [
-            'nama'              => $d->peserta->akun->nama ?? '?',
-            'nominal_beasiswa'  => $d->nominal_beasiswa,
-            'status_wawancara_bod' => $d->status_wawancara_bod ?? null,
-            'status'            => $d->status,
-        ]);
-
-    return response()->json([
-        'total_penilaian_akademiks'            => $totalPA,
-        'penilaian_rekomendasi_100_percent'    => $pa100,
-        'distinct_rekomendasi_beasiswa'        => $distinctRek,
-        'total_daftar_nominal_beasiswa_100'    => $totalDaftar100,
-        'distinct_nominal_beasiswa'            => $distinctNominal,
-        'kandidat_dari_penilaian_akademik_100' => $kandidatRek100,
-        'kandidat_dari_nominal_100'            => $kandidatNominal100,
-    ], 200, [], JSON_PRETTY_PRINT);
-});
-// === END DEBUG ROUTE ===
-
 
 
 // // Route::get('/', function () {
@@ -123,7 +76,7 @@ Route::get('/berita/{slug}', function ($slug) {
 })->name('berita.show');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::get('/maintance', [AuthController::class, 'maintance'])->name('maintance');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
@@ -142,7 +95,7 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('
 
 // Internal / Staff Routes    
 Route::get('/internal/login', [AuthController::class, 'showInternalLogin'])->name('internal.login');
-Route::post('/internal/login', [AuthController::class, 'internalLogin']);
+Route::post('/internal/login', [AuthController::class, 'internalLogin'])->middleware('throttle:10,1');
 
 // Authenticated Routes
 Route::middleware(['auth'])->group(function () {
@@ -332,42 +285,4 @@ Route::middleware(['auth'])->group(function () {
             );
         }
     );
-});
-// Temporary Route to run migrations on Server
-Route::get('/debug-migrate', function () {
-    try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ["--force" => true]);
-        return "<pre>" . \Illuminate\Support\Facades\Artisan::output() . "</pre>";
-    } catch (\Exception $e) {
-        return "Error: " . $e->getMessage();
-    }
-});
-
-Route::get('/debug-candidates', function () {
-    $alfans = \App\Models\Akun::where('nama', 'like', '%alfan%')->with(['peserta.daftar', 'peserta.penilaianAkademiks'])->get();
-    $raihans = \App\Models\Akun::where('nama', 'like', '%raihan%')->with(['peserta.daftar', 'peserta.penilaianAkademiks'])->get();
-    return response()->json([
-        'alfans' => $alfans->map(fn($a) => [
-            'id' => $a->id,
-            'nama' => $a->nama,
-            'role' => $a->role,
-            'has_peserta' => !!$a->peserta,
-            'has_daftar' => $a->peserta ? !!$a->peserta->daftar : false,
-            'nominal_beasiswa' => $a->peserta?->daftar?->nominal_beasiswa,
-            'status_wawancara_bod' => $a->peserta?->daftar?->status_wawancara_bod,
-            'rekomendasi_beasiswa' => $a->peserta?->penilaianAkademiks->first()?->rekomendasi_beasiswa,
-            'status_daftar' => $a->peserta?->daftar?->status,
-        ]),
-        'raihans' => $raihans->map(fn($a) => [
-            'id' => $a->id,
-            'nama' => $a->nama,
-            'role' => $a->role,
-            'has_peserta' => !!$a->peserta,
-            'has_daftar' => $a->peserta ? !!$a->peserta->daftar : false,
-            'nominal_beasiswa' => $a->peserta?->daftar?->nominal_beasiswa,
-            'status_wawancara_bod' => $a->peserta?->daftar?->status_wawancara_bod,
-            'rekomendasi_beasiswa' => $a->peserta?->penilaianAkademiks->first()?->rekomendasi_beasiswa,
-            'status_daftar' => $a->peserta?->daftar?->status,
-        ])
-    ]);
 });

@@ -57,6 +57,7 @@ class AuthController extends Controller
             return redirect()->intended('/pendaftar/dashboard');
         }
 
+        \Illuminate\Support\Facades\Log::warning('Login pendaftar gagal untuk email: ' . $request->email . ' dari IP: ' . $request->ip());
         return back()->with('loginError', 'Email atau password salah!');
     }
 
@@ -90,6 +91,7 @@ class AuthController extends Controller
             return redirect()->intended('/admin/dashboard');
         }
 
+        \Illuminate\Support\Facades\Log::warning('Login internal/staff gagal untuk email: ' . $request->email . ' dari IP: ' . $request->ip());
         return back()->with('loginError', 'Kredensial salah atau tidak memiliki akses.');
     }
 
@@ -103,7 +105,7 @@ class AuthController extends Controller
             'nama' => 'required|string|max:255',
             'nisn' => 'required|string|max:20|unique:peserta,nisn',
             'email' => 'required|string|email|max:255|unique:akun,email',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'min:8', 'confirmed', 'regex:/[A-Za-z]/', 'regex:/[0-9]/'],
             'no_whatsapp' => 'required|string|unique:peserta,no_whatsapp',
             'tgl_lahir' => 'required|date',
             'jenis_kelamin' => 'required|string',
@@ -122,10 +124,11 @@ class AuthController extends Controller
             'no_guru_bk.required' => 'Nomor WhatsApp Guru BK atau Wali Kelas wajib diisi.',
             'sumber_informasi.required' => 'Wajib memilih sumber informasi.',
             'cf-turnstile-response.required' => 'Wajib menyelesaikan verifikasi keamanan.',
+            'password.regex' => 'Password harus mengandung kombinasi huruf dan angka.',
         ]);
 
-        // --- Device-based Rate Limiting (Anti-Spam) ---
-        $throttleKey = 'otp-limit-' . sha1($request->ip() . $request->userAgent());
+        // --- Rate Limiting IP & Email (Anti-Spam) ---
+        $throttleKey = 'register-otp-limit-' . sha1($request->ip() . '|' . strtolower($request->email));
         if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             return back()->with('error', 'Terlalu banyak permintaan dari perangkat Anda. Silakan coba lagi dalam ' . ceil($seconds / 60) . ' menit.')->withInput();
@@ -149,12 +152,12 @@ class AuthController extends Controller
         // 4. Store Registration Data in Session (Expires with session)
         session(['registration_payload' => $request->all()]);
 
-        // 5. Generate & Send OTP
-        $otpCode = rand(100000, 999999);
+        // 5. Generate & Send OTP menggunakan CSPRNG aman
+        $otpCode = random_int(100000, 999999);
         \App\Models\Otp::updateOrCreate(
             ['email' => $email],
             [
-                'otp' => $otpCode,
+                'otp' => hash('sha256', (string) $otpCode),
                 'expires_at' => now()->addMinutes(15) // Matching session typical window
             ]
         );
@@ -186,7 +189,10 @@ class AuthController extends Controller
         $inputOtp = trim($request->otp);
 
         $otpRecord = \App\Models\Otp::where('email', $inputEmail)
-            ->where('otp', $inputOtp)
+            ->where(function ($query) use ($inputOtp) {
+                $query->where('otp', hash('sha256', $inputOtp))
+                      ->orWhere('otp', $inputOtp);
+            })
             ->where('expires_at', '>', now())
             ->first();
 
@@ -265,19 +271,19 @@ class AuthController extends Controller
     {
         $email = $request->email;
         
-        // --- Device-based Rate Limiting (Anti-Spam) ---
-        $throttleKey = 'otp-limit-' . sha1($request->ip() . $request->userAgent());
+        // --- Rate Limiting IP & Email (Anti-Spam) ---
+        $throttleKey = 'resend-otp-limit-' . sha1($request->ip() . '|' . strtolower($email));
         if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             return back()->with('error', 'Terlalu banyak permintaan dari perangkat Anda. Silakan coba lagi dalam ' . ceil($seconds / 60) . ' menit.');
         }
         RateLimiter::hit($throttleKey, 3600); // Ban for 1 hour
 
-        $otpCode = rand(100000, 999999);
+        $otpCode = random_int(100000, 999999);
         \App\Models\Otp::updateOrCreate(
             ['email' => $email],
             [
-                'otp' => $otpCode,
+                'otp' => hash('sha256', (string) $otpCode),
                 'expires_at' => now()->addMinutes(10)
             ]
         );
@@ -307,10 +313,10 @@ class AuthController extends Controller
     public function sendResetLink(Request $request)
     {
         $request->validate(['email' => 'required|email']);
-        $email = $request->email;
+        $email = strtolower(trim($request->email));
 
-        // --- Device-based Rate Limiting (Anti-Spam) ---
-        $throttleKey = 'otp-limit-' . sha1($request->ip() . $request->userAgent());
+        // --- Rate Limiting IP & Email (Anti-Spam) ---
+        $throttleKey = 'reset-limit-' . sha1($request->ip() . '|' . $email);
         if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             return back()->with('error', 'Terlalu banyak permintaan dari perangkat Anda. Silakan coba lagi dalam ' . ceil($seconds / 60) . ' menit.');
@@ -325,11 +331,11 @@ class AuthController extends Controller
         // Generate Token
         $token = Str::random(64);
 
-        // Save to password_reset_tokens
+        // Save hashed token to password_reset_tokens
         DB::table('password_reset_tokens')->updateOrInsert(
             ['email' => $email],
             [
-                'token' => $token,
+                'token' => hash('sha256', $token),
                 'created_at' => Carbon::now()
             ]
         );
@@ -369,16 +375,24 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email|exists:akun,email',
             'token' => 'required',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'min:8', 'confirmed', 'regex:/[A-Za-z]/', 'regex:/[0-9]/'],
+        ], [
+            'password.regex' => 'Password baru harus mengandung kombinasi huruf dan angka.',
         ]);
 
         $resetData = DB::table('password_reset_tokens')
             ->where('email', $request->email)
-            ->where('token', $request->token)
+            ->where(function ($query) use ($request) {
+                $query->where('token', hash('sha256', $request->token))
+                      ->orWhere('token', $request->token);
+            })
             ->first();
 
-        if (!$resetData) {
-            return back()->with('error', 'Token tidak valid atau sudah kedaluwarsa.');
+        if (!$resetData || Carbon::parse($resetData->created_at)->addMinutes(60)->isPast()) {
+            if ($resetData) {
+                DB::table('password_reset_tokens')->where(['email' => $request->email])->delete();
+            }
+            return back()->with('error', 'Token reset tidak valid atau sudah kedaluwarsa.');
         }
 
         // Update Password

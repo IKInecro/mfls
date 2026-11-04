@@ -639,20 +639,28 @@ class PendaftarController extends Controller
 
         $user = Auth::user();
 
+        // Rate limiting ubah email per user
+        $throttleKey = 'change-email-' . $user->id;
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
+            return back()->with('error', 'Terlalu banyak permintaan ubah email. Silakan coba lagi dalam ' . ceil($seconds / 60) . ' menit.');
+        }
+        \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, 1800);
+
         // 1. Verifikasi Password Saat Ini
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->with('error', 'Password saat ini tidak cocok.');
         }
 
-        // 2. Generate OTP
-        $otpCode = rand(100000, 999999);
+        // 2. Generate OTP menggunakan CSPRNG aman
+        $otpCode = random_int(100000, 999999);
         $email = $request->new_email;
 
-        // 3. Simpan OTP & New Email ke Session/DB
+        // 3. Simpan Hash OTP & New Email ke Session/DB
         DB::table('otps')->updateOrInsert(
             ['email' => $email],
             [
-                'otp' => $otpCode,
+                'otp' => hash('sha256', (string) $otpCode),
                 'expires_at' => Carbon::now()->addMinutes(15)
             ]
         );
@@ -712,7 +720,10 @@ class PendaftarController extends Controller
 
         $otpRecord = DB::table('otps')
             ->where('email', $newEmail)
-            ->where('otp', $request->otp)
+            ->where(function ($query) use ($request) {
+                $query->where('otp', hash('sha256', $request->otp))
+                      ->orWhere('otp', $request->otp);
+            })
             ->where('expires_at', '>', Carbon::now())
             ->first();
 

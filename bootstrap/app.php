@@ -14,9 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         
-        // Track page views for public pages
+        // Track page views for public pages and apply security headers
         $middleware->web(append: [
             \App\Http\Middleware\TrackPageView::class,
+            \App\Http\Middleware\SecurityHeaders::class,
         ]);
         
         // TAMBAHKAN INI - Handle CORS di API

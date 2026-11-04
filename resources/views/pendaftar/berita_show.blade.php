@@ -73,7 +73,7 @@
                 <div class="absolute -top-12 -left-12 w-24 h-24 bg-primary-yellow rounded-full -z-10 opacity-20"></div>
                 
                 <article class="prose prose-lg prose-slate max-w-none prose-headings:text-dark-navy prose-headings:font-black prose-headings:tracking-tighter prose-p:text-gray-600 prose-p:leading-[1.85] prose-strong:text-dark-navy prose-strong:font-black prose-a:text-primary-blue prose-a:font-bold prose-img:rounded-[2rem] prose-img:shadow-xl relative z-10 custom-article">
-                    {!! $berita->konten !!}
+                    {!! preg_replace('/on[a-z]+\s*=\s*(["\']).*?\1/i', '', preg_replace('#<script(.*?)>(.*?)</script>#is', '', strip_tags($berita->konten, '<p><br><strong><b><em><i><u><a><h1><h2><h3><h4><h5><h6><ul><ol><li><img><blockquote><table><thead><tbody><tr><th><td><span><div><figure>'))) !!}
                 </article>
 
                 {{-- Footer Article --}}
