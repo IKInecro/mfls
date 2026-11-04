@@ -362,9 +362,15 @@
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FBK</span>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Manajemen</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Program Studi Manajemen di MNC University dirancang untuk membekali mahasiswa dengan keterampilan manajerial dan kepemimpinan yang relevan dengan kebutuhan dunia bisnis modern. Program ini menekankan penguasaan konsep manajemen secara komprehensif yang meliputi manajemen sumber daya manusia, pemasaran, keuangan, operasional, hingga manajemen strategis.
-                    </p>
+                    <div class="prodi-desc-wrapper">
+                        <p class="prodi-desc line-clamp-3 text-sm text-slate-600 leading-relaxed transition-all duration-300">
+                            Program Studi Manajemen di MNC University dirancang untuk membekali mahasiswa dengan keterampilan manajerial dan kepemimpinan yang relevan dengan kebutuhan dunia bisnis modern. Program ini menekankan penguasaan konsep manajemen secara komprehensif yang meliputi manajemen sumber daya manusia, pemasaran, keuangan, operasional, hingga manajemen strategis.
+                        </p>
+                        <button type="button" onclick="toggleProdiDesc(this)" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:text-blue-800 transition-colors mt-2 mb-4 group/btn" data-expanded="false">
+                            <span class="btn-text">Baca Selengkapnya</span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span>Fakultas Bisnis & Keuangan</span>
@@ -382,9 +388,15 @@
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FBK</span>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Akuntansi</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Dibekali kurikulum berbasis OBE, Program Studi Akuntansi dirancang untuk menghasilkan lulusan yang kompeten di bidang akuntansi dengan selaras dengan kebutuhan industri serta koneksi dengan MNC Group. Program Studi Akuntansi MNCU berfokus pada environmental dan sustainability yang mencerminkan kompetensi utama dalam bidang akuntansi media dan akuntansi keberlanjutan yang sedang ramai menjadi topik yang diperbincangkan sampai saat ini. Dengan dukungan ekosistem industri MNC Group, mahasiswa memperoleh peluang pembelajaran kontekstual yang memperkuat kesiapan mereka memasuki dunia kerja secara kompetitif.
-                    </p>
+                    <div class="prodi-desc-wrapper">
+                        <p class="prodi-desc line-clamp-3 text-sm text-slate-600 leading-relaxed transition-all duration-300">
+                            Dibekali kurikulum berbasis OBE, Program Studi Akuntansi dirancang untuk menghasilkan lulusan yang kompeten di bidang akuntansi dengan selaras dengan kebutuhan industri serta koneksi dengan MNC Group. Program Studi Akuntansi MNCU berfokus pada environmental dan sustainability yang mencerminkan kompetensi utama dalam bidang akuntansi media dan akuntansi keberlanjutan yang sedang ramai menjadi topik yang diperbincangkan sampai saat ini. Dengan dukungan ekosistem industri MNC Group, mahasiswa memperoleh peluang pembelajaran kontekstual yang memperkuat kesiapan mereka memasuki dunia kerja secara kompetitif.
+                        </p>
+                        <button type="button" onclick="toggleProdiDesc(this)" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:text-blue-800 transition-colors mt-2 mb-4 group/btn" data-expanded="false">
+                            <span class="btn-text">Baca Selengkapnya</span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span>Fakultas Bisnis & Keuangan</span>
@@ -402,9 +414,15 @@
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FBK</span>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Pendidikan Matematika</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Program Studi Pendidikan Matematika dirancang untuk menghasilkan pendidik matematika yang kompeten dan memenuhi kebutuhan pendidikan di Indonesia, sekaligus memiliki kemampuan menjadi Pengembang Pembelajaran & Pelatihan, Data Analis, dan juga Aktuaris. Didukung penuh oleh MNC Group yang menawarkan akses full ke seluruh rantai usahanya, terutama dalam bidang pengembangan media, securitas, dan perbankan, membuat lulusan Pendidikan Matematika MNC University memiliki prospek yang sangat besar dalam dunia kerja. Program ini menekankan penguasaan konsep matematika secara mendalam yang dipadukan dengan pendekatan pedagogi modern berbasis teknologi digital. Mahasiswa dibekali keterampilan analitis, pemecahan masalah, serta kemampuan berpikir logis dan kritis yang relevan dengan kebutuhan industri saat ini.
-                    </p>
+                    <div class="prodi-desc-wrapper">
+                        <p class="prodi-desc line-clamp-3 text-sm text-slate-600 leading-relaxed transition-all duration-300">
+                            Program Studi Pendidikan Matematika dirancang untuk menghasilkan pendidik matematika yang kompeten dan memenuhi kebutuhan pendidikan di Indonesia, sekaligus memiliki kemampuan menjadi Pengembang Pembelajaran & Pelatihan, Data Analis, dan juga Aktuaris. Didukung penuh oleh MNC Group yang menawarkan akses full ke seluruh rantai usahanya, terutama dalam bidang pengembangan media, securitas, dan perbankan, membuat lulusan Pendidikan Matematika MNC University memiliki prospek yang sangat besar dalam dunia kerja. Program ini menekankan penguasaan konsep matematika secara mendalam yang dipadukan dengan pendekatan pedagogi modern berbasis teknologi digital. Mahasiswa dibekali keterampilan analitis, pemecahan masalah, serta kemampuan berpikir logis dan kritis yang relevan dengan kebutuhan industri saat ini.
+                        </p>
+                        <button type="button" onclick="toggleProdiDesc(this)" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:text-blue-800 transition-colors mt-2 mb-4 group/btn" data-expanded="false">
+                            <span class="btn-text">Baca Selengkapnya</span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span>Fakultas Bisnis & Keuangan</span>
@@ -422,9 +440,15 @@
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FIK</span>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Sains Komunikasi</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Hadir untuk menjawab tantangan era digital di tengah perkembangan pesat teknologi dan kebutuhan industri kreatif pada tahun 2025. Dengan visi menjadi Program Studi Sains Komunikasi yang mengembangkan ilmu komunikasi dengan penguasaan media digital dan industri kreatif berkelas dunia pada tahun 2037, program studi ini mempersiapkan lulusan yang mampu bersaing di tengah transformasi digital global.
-                    </p>
+                    <div class="prodi-desc-wrapper">
+                        <p class="prodi-desc line-clamp-3 text-sm text-slate-600 leading-relaxed transition-all duration-300">
+                            Hadir untuk menjawab tantangan era digital di tengah perkembangan pesat teknologi dan kebutuhan industri kreatif pada tahun 2025. Dengan visi menjadi Program Studi Sains Komunikasi yang mengembangkan ilmu komunikasi dengan penguasaan media digital dan industri kreatif berkelas dunia pada tahun 2037, program studi ini mempersiapkan lulusan yang mampu bersaing di tengah transformasi digital global.
+                        </p>
+                        <button type="button" onclick="toggleProdiDesc(this)" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:text-blue-800 transition-colors mt-2 mb-4 group/btn" data-expanded="false">
+                            <span class="btn-text">Baca Selengkapnya</span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span>Fakultas Industri & Kreatif</span>
@@ -442,9 +466,15 @@
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FIK</span>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Desain Komunikasi Visual</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Dibekali kurikulum berbasis OBE, Program Studi Desain Komunikasi Visual dirancang untuk menghasilkan lulusan yang kompeten dan kreatif di bidang desain visual, sesuai dengan kebutuhan industri kreatif dan didukung oleh koneksi strategis dengan MNC Group. Program Studi DKV MNCU menekankan pada aspek desain yang berkelanjutan dan komunikasi visual yang berdampak, mencerminkan kompetensi utama dalam desain media, branding, serta isu-isu keberlanjutan yang relevan dan menjadi sorotan global saat ini. Selain kemampuan teknis, mahasiswa dilatih untuk memiliki kepekaan estetika, kemampuan berpikir kritis, serta keterampilan komunikasi yang efektif dalam menyampaikan pesan visual secara strategis.
-                    </p>
+                    <div class="prodi-desc-wrapper">
+                        <p class="prodi-desc line-clamp-3 text-sm text-slate-600 leading-relaxed transition-all duration-300">
+                            Dibekali kurikulum berbasis OBE, Program Studi Desain Komunikasi Visual dirancang untuk menghasilkan lulusan yang kompeten dan kreatif di bidang desain visual, sesuai dengan kebutuhan industri kreatif dan didukung oleh koneksi strategis dengan MNC Group. Program Studi DKV MNCU menekankan pada aspek desain yang berkelanjutan dan komunikasi visual yang berdampak, mencerminkan kompetensi utama dalam desain media, branding, serta isu-isu keberlanjutan yang relevan dan menjadi sorotan global saat ini. Selain kemampuan teknis, mahasiswa dilatih untuk memiliki kepekaan estetika, kemampuan berpikir kritis, serta keterampilan komunikasi yang efektif dalam menyampaikan pesan visual secara strategis.
+                        </p>
+                        <button type="button" onclick="toggleProdiDesc(this)" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:text-blue-800 transition-colors mt-2 mb-4 group/btn" data-expanded="false">
+                            <span class="btn-text">Baca Selengkapnya</span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span>Fakultas Industri & Kreatif</span>
@@ -462,9 +492,15 @@
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FIK</span>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Ilmu Komputer</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Ilmu Komputer adalah sebuah ilmu yang mempelajari baik tentang komputasi, perangkat keras (hardware) maupun perangkat lunak (software). Ilmu komputer mencakup beragam topik yang berkaitan dengan komputer, mulai dari analisis abstrak algoritma sampai subyek yang lebih konkret seperti bahasa pemrograman, perangkat lunak, termasuk perangkat keras. Berbeda dengan Teknik Informatika yang lebih menekankan pada sisi penerapannya, program studi Ilmu Komputer lebih fokus pada 'sains' dari bidang komputer itu sendiri.
-                    </p>
+                    <div class="prodi-desc-wrapper">
+                        <p class="prodi-desc line-clamp-3 text-sm text-slate-600 leading-relaxed transition-all duration-300">
+                            Ilmu Komputer adalah sebuah ilmu yang mempelajari baik tentang komputasi, perangkat keras (hardware) maupun perangkat lunak (software). Ilmu komputer mencakup beragam topik yang berkaitan dengan komputer, mulai dari analisis abstrak algoritma sampai subyek yang lebih konkret seperti bahasa pemrograman, perangkat lunak, termasuk perangkat keras. Berbeda dengan Teknik Informatika yang lebih menekankan pada sisi penerapannya, program studi Ilmu Komputer lebih fokus pada 'sains' dari bidang komputer itu sendiri.
+                        </p>
+                        <button type="button" onclick="toggleProdiDesc(this)" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:text-blue-800 transition-colors mt-2 mb-4 group/btn" data-expanded="false">
+                            <span class="btn-text">Baca Selengkapnya</span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span>Fakultas Industri & Kreatif</span>
@@ -482,9 +518,15 @@
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FIK</span>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Sistem Informasi</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Program Studi S1 Sistem Informasi dirancang untuk menghasilkan lulusan yang mampu menganalisis, merancang, membangun, serta mengevaluasi sistem informasi yang mendukung pencapaian tujuan organisasi. Mahasiswa dibekali pemahaman mendalam mengenai integrasi model sistem, penerapan metode peningkatan proses bisnis, serta pengelolaan siklus hidup proyek berbasis pendekatan Manajemen Proyek. Program ini juga menekankan kemampuan dalam merancang dan memodifikasi sistem informasi yang mencakup arsitektur teknologi, proses bisnis, dan aspek keamanan informasi. Selain itu, lulusan diharapkan mampu menggabungkan ide-ide kreatif dan keahlian teknis untuk merancang, mengimplementasikan, serta menjamin keamanan produk digital dalam berbagai konteks bisnis dan teknologi.
-                    </p>
+                    <div class="prodi-desc-wrapper">
+                        <p class="prodi-desc line-clamp-3 text-sm text-slate-600 leading-relaxed transition-all duration-300">
+                            Program Studi S1 Sistem Informasi dirancang untuk menghasilkan lulusan yang mampu menganalisis, merancang, membangun, serta mengevaluasi sistem informasi yang mendukung pencapaian tujuan organisasi. Mahasiswa dibekali pemahaman mendalam mengenai integrasi model sistem, penerapan metode peningkatan proses bisnis, serta pengelolaan siklus hidup proyek berbasis pendekatan Manajemen Proyek. Program ini juga menekankan kemampuan dalam merancang dan memodifikasi sistem informasi yang mencakup arsitektur teknologi, proses bisnis, dan aspek keamanan informasi. Selain itu, lulusan diharapkan mampu menggabungkan ide-ide kreatif dan keahlian teknis untuk merancang, mengimplementasikan, serta menjamin keamanan produk digital dalam berbagai konteks bisnis dan teknologi.
+                        </p>
+                        <button type="button" onclick="toggleProdiDesc(this)" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:text-blue-800 transition-colors mt-2 mb-4 group/btn" data-expanded="false">
+                            <span class="btn-text">Baca Selengkapnya</span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span>Fakultas Industri & Kreatif</span>
@@ -502,9 +544,15 @@
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2.5 py-1 rounded-md">FIK</span>
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-blue transition-colors">S1 Pendidikan Bahasa Inggris</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                        Dibekali kurikulum berbasis Outcome Based Education (OBE), Program Studi Pendidikan Bahasa Inggris dirancang untuk menghasilkan lulusan yang kompeten di bidang Pendidikan Bahasa Inggris dengan selaras dengan kebutuhan industri serta koneksi dengan MNC Group. Program Studi Pendidikan Bahasa Inggris MNCU berfokus pada edutechnopreneurship dan news and entertainment yang mencerminkan kompetensi utama dalam bidang wirausaha pendidikan dan Bahasa Inggris pada media pemberitaan dan hiburan yang sedang ramai menjadi topik yang diperbincangkan sampai saat ini.
-                    </p>
+                    <div class="prodi-desc-wrapper">
+                        <p class="prodi-desc line-clamp-3 text-sm text-slate-600 leading-relaxed transition-all duration-300">
+                            Dibekali kurikulum berbasis Outcome Based Education (OBE), Program Studi Pendidikan Bahasa Inggris dirancang untuk menghasilkan lulusan yang kompeten di bidang Pendidikan Bahasa Inggris dengan selaras dengan kebutuhan industri serta koneksi dengan MNC Group. Program Studi Pendidikan Bahasa Inggris MNCU berfokus pada edutechnopreneurship dan news and entertainment yang mencerminkan kompetensi utama dalam bidang wirausaha pendidikan dan Bahasa Inggris pada media pemberitaan dan hiburan yang sedang ramai menjadi topik yang diperbincangkan sampai saat ini.
+                        </p>
+                        <button type="button" onclick="toggleProdiDesc(this)" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary-blue hover:text-blue-800 transition-colors mt-2 mb-4 group/btn" data-expanded="false">
+                            <span class="btn-text">Baca Selengkapnya</span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                     <span>Fakultas Industri & Kreatif</span>
@@ -1597,6 +1645,29 @@ function filterProdi(category, e) {
             card.style.display = 'none';
         }
     });
+}
+
+// 2b. Expand / Collapse Program Studi Description
+function toggleProdiDesc(btn) {
+    const wrapper = btn.closest('.prodi-desc-wrapper');
+    if (!wrapper) return;
+    const p = wrapper.querySelector('.prodi-desc');
+    if (!p) return;
+    const isExpanded = btn.getAttribute('data-expanded') === 'true';
+    const textSpan = btn.querySelector('.btn-text');
+    const icon = btn.querySelector('svg');
+
+    if (isExpanded) {
+        p.classList.add('line-clamp-3');
+        btn.setAttribute('data-expanded', 'false');
+        if (textSpan) textSpan.textContent = 'Baca Selengkapnya';
+        if (icon) icon.style.transform = 'rotate(0deg)';
+    } else {
+        p.classList.remove('line-clamp-3');
+        btn.setAttribute('data-expanded', 'true');
+        if (textSpan) textSpan.textContent = 'Sembunyikan';
+        if (icon) icon.style.transform = 'rotate(180deg)';
+    }
 }
 
 // 3. Real-time Countdown Timer
