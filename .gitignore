@@ -21,3 +21,4 @@ yarn-error.log
 # kerjaan internal agent — jangan masuk repo
 docs/superpowers/
 .impeccable/
+.env.staging
