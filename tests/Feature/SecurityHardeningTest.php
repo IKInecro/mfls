@@ -36,17 +36,17 @@ class SecurityHardeningTest extends TestCase
      */
     public function test_login_route_has_throttle_middleware(): void
     {
-        // 10 request pertama diizinkan
-        for ($i = 0; $i < 10; $i++) {
+        // 60 request pertama diizinkan (throttle:60,1)
+        for ($i = 0; $i < 60; $i++) {
             $this->post('/login', [
                 'email' => 'fake' . $i . '@example.com',
                 'password' => 'wrongpass',
             ]);
         }
 
-        // Request ke-11 harus terkena HTTP 429 Too Many Requests
+        // Request ke-61 harus terkena HTTP 429 Too Many Requests
         $response = $this->post('/login', [
-            'email' => 'fake11@example.com',
+            'email' => 'fake61@example.com',
             'password' => 'wrongpass',
         ]);
 

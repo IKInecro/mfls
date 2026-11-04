@@ -152,12 +152,12 @@ class AuthController extends Controller
         // 4. Store Registration Data in Session (Expires with session)
         session(['registration_payload' => $request->all()]);
 
-        // 5. Generate & Send OTP menggunakan CSPRNG aman
+        // 5. Generate & Send OTP menggunakan CSPRNG aman (6 digit)
         $otpCode = random_int(100000, 999999);
         \App\Models\Otp::updateOrCreate(
             ['email' => $email],
             [
-                'otp' => hash('sha256', (string) $otpCode),
+                'otp' => (string) $otpCode,
                 'expires_at' => now()->addMinutes(15) // Matching session typical window
             ]
         );
@@ -189,10 +189,7 @@ class AuthController extends Controller
         $inputOtp = trim($request->otp);
 
         $otpRecord = \App\Models\Otp::where('email', $inputEmail)
-            ->where(function ($query) use ($inputOtp) {
-                $query->where('otp', hash('sha256', $inputOtp))
-                      ->orWhere('otp', $inputOtp);
-            })
+            ->where('otp', $inputOtp)
             ->where('expires_at', '>', now())
             ->first();
 
@@ -283,7 +280,7 @@ class AuthController extends Controller
         \App\Models\Otp::updateOrCreate(
             ['email' => $email],
             [
-                'otp' => hash('sha256', (string) $otpCode),
+                'otp' => (string) $otpCode,
                 'expires_at' => now()->addMinutes(10)
             ]
         );

@@ -656,11 +656,11 @@ class PendaftarController extends Controller
         $otpCode = random_int(100000, 999999);
         $email = $request->new_email;
 
-        // 3. Simpan Hash OTP & New Email ke Session/DB
+        // 3. Simpan OTP & New Email ke Session/DB
         DB::table('otps')->updateOrInsert(
             ['email' => $email],
             [
-                'otp' => hash('sha256', (string) $otpCode),
+                'otp' => (string) $otpCode,
                 'expires_at' => Carbon::now()->addMinutes(15)
             ]
         );
@@ -720,10 +720,7 @@ class PendaftarController extends Controller
 
         $otpRecord = DB::table('otps')
             ->where('email', $newEmail)
-            ->where(function ($query) use ($request) {
-                $query->where('otp', hash('sha256', $request->otp))
-                      ->orWhere('otp', $request->otp);
-            })
+            ->where('otp', $request->otp)
             ->where('expires_at', '>', Carbon::now())
             ->first();
 
