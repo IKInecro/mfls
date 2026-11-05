@@ -22,3 +22,7 @@ yarn-error.log
 docs/superpowers/
 .impeccable/
 .env.staging
+
+# Dokumen dan data peserta
+*.xlsx
+*.xls
