@@ -36,12 +36,12 @@
             <div class="lg:col-span-7 order-1 lg:order-2 flex flex-col items-center space-y-3">
                 <div class="flex items-center justify-between w-full max-w-sm sm:max-w-md">
                     <span class="text-xs font-bold text-slate-700">Pratinjau Twibbon</span>
-                    <span class="text-[9px] sm:text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">HD 1080x1080</span>
+                    <span class="text-[9px] sm:text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">HD 1080x1350</span>
                 </div>
 
                 <!-- Canvas Wrapper -->
                 <div class="relative w-full max-w-sm sm:max-w-md bg-slate-100 rounded-2xl sm:rounded-3xl p-2 sm:p-3 border border-slate-200/80 shadow-sm overflow-hidden">
-                    <canvas id="twibonCanvas" width="1080" height="1080" class="w-full h-auto rounded-xl sm:rounded-2xl cursor-grab active:cursor-grabbing block bg-white touch-none"></canvas>
+                    <canvas id="twibonCanvas" width="1080" height="1350" class="w-full h-auto rounded-xl sm:rounded-2xl cursor-grab active:cursor-grabbing block bg-white touch-none"></canvas>
                     <div id="dragHint" class="absolute inset-2 sm:inset-3 bg-slate-900/75 backdrop-blur-xs rounded-xl sm:rounded-2xl flex flex-col items-center justify-center text-white p-4 text-center transition-opacity pointer-events-none z-20">
                         <svg class="w-8 h-8 text-blue-400 mb-1.5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -70,7 +70,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <span class="text-xs font-bold text-slate-700 group-hover:text-blue-600">Pilih Foto Diri</span>
-                        <span class="text-[10px] text-slate-400 mt-0.5">Disarankan rasio 1:1 (Square)</span>
+                        <span class="text-[10px] text-slate-400 mt-0.5">Disarankan rasio 1:1 atau 4:5</span>
                     </label>
                 </div>
 
@@ -111,9 +111,9 @@
                         <div class="space-y-1">
                             <div class="flex items-center justify-between text-xs">
                                 <label class="font-bold text-slate-700 text-[11px]">Posisi Y</label>
-                                <span id="yValue" class="font-mono font-bold text-slate-700 text-[10px]">540</span>
+                                <span id="yValue" class="font-mono font-bold text-slate-700 text-[10px]">675</span>
                             </div>
-                            <input type="range" id="ySlider" min="0" max="1080" value="540" 
+                            <input type="range" id="ySlider" min="0" max="1350" value="675" 
                                    class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-800">
                         </div>
                     </div>
@@ -225,7 +225,7 @@ function initTwibbonStudio() {
 
     let userPhoto = null;
     let photoX = 540;
-    let photoY = 540;
+    let photoY = 675;
     let photoScale = 1.0;
     let photoRotation = 0;
     let isDragging = false;
@@ -234,7 +234,7 @@ function initTwibbonStudio() {
 
     const twibonFrame = new Image();
     twibonFrame.crossOrigin = 'anonymous';
-    twibonFrame.src = '{{ asset('icon/twiibon.webp') }}';
+    twibonFrame.src = '{{ asset('Twibbon_terbaru.png') }}';
     twibonFrame.onload = () => drawCanvas();
 
     if (photoUpload) {
@@ -246,14 +246,14 @@ function initTwibbonStudio() {
                     userPhoto = new Image();
                     userPhoto.onload = function() {
                         photoX = 540;
-                        photoY = 540;
+                        photoY = 675;
                         if (xSlider) xSlider.value = 540;
-                        if (ySlider) ySlider.value = 540;
+                        if (ySlider) ySlider.value = 675;
                         if (xValue) xValue.textContent = '540';
-                        if (yValue) yValue.textContent = '540';
+                        if (yValue) yValue.textContent = '675';
 
                         const maxSide = Math.max(userPhoto.width, userPhoto.height);
-                        photoScale = 1080 / maxSide;
+                        photoScale = 1350 / maxSide;
                         if (scaleSlider) scaleSlider.value = Math.round(photoScale * 100);
                         if (scaleValue) scaleValue.textContent = Math.round(photoScale * 100) + '%';
 
@@ -308,10 +308,11 @@ function initTwibbonStudio() {
         const rect = canvas.getBoundingClientRect();
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        const scale = 1080 / rect.width;
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
         return {
-            x: (clientX - rect.left) * scale,
-            y: (clientY - rect.top) * scale
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
         };
     }
 
