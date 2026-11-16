@@ -1128,6 +1128,68 @@
 </section>
 @endif
 
+<!-- Ekosistem & Unit Bisnis Terhubung MNC Group -->
+<section class="py-16 lg:py-20 bg-gradient-to-b from-white to-slate-50/60 border-t border-slate-200/80 reveal-init">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        
+        <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-200 px-3.5 py-1.5 rounded-full mb-3 shadow-2xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+            Ekosistem & Jaringan Strategis
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+            Didukung oleh Jaringan & Unit Bisnis MNC Group
+        </h2>
+        <p class="text-sm text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Penerima beasiswa MNC University terhubung langsung dengan ekosistem media, finansial, hiburan, teknologi, dan industri terkemuka di bawah naungan MNC Group.
+        </p>
+
+        <!-- MNC Group Logos Grid (24 Logos) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-5 items-center">
+            @php
+                $mncLogos = [
+                    ['name' => 'MNC Media', 'logo' => 'mnc-media.webp'],
+                    ['name' => 'RCTI', 'logo' => 'rcti.webp'],
+                    ['name' => 'MNCTV', 'logo' => 'mnctv.webp'],
+                    ['name' => 'GTV', 'logo' => 'gtv.webp'],
+                    ['name' => 'RCTI+', 'logo' => 'rcti-plus.webp'],
+                    ['name' => 'Vision+', 'logo' => 'vision-plus.webp'],
+                    ['name' => 'Okezone', 'logo' => 'okezone.webp'],
+                    ['name' => 'SINDOnews', 'logo' => 'sindonews.webp'],
+                    ['name' => 'MNC Trijaya FM', 'logo' => 'mnc-trijaya-fm.webp'],
+                    ['name' => 'MNC Pictures', 'logo' => 'mnc-pictures.webp'],
+                    ['name' => 'MNC Animation', 'logo' => 'mnc-animation.webp'],
+                    ['name' => 'Star Media Nusantara', 'logo' => 'star-media-nusantara.webp'],
+                    ['name' => 'MNC Digital', 'logo' => 'mnc-digital.webp'],
+                    ['name' => 'MNC Financial Services', 'logo' => 'mnc-financial-services.webp'],
+                    ['name' => 'MNC Bank', 'logo' => 'mnc-bank.webp'],
+                    ['name' => 'MotionBank', 'logo' => 'motion-bank.webp'],
+                    ['name' => 'MotionPay', 'logo' => 'motion-pay.webp'],
+                    ['name' => 'MNC Sekuritas', 'logo' => 'mnc-sekuritas.webp'],
+                    ['name' => 'MNC University', 'logo' => 'mnc-university.webp'],
+                    ['name' => 'MNC Land', 'logo' => 'mnc-land.webp'],
+                    ['name' => 'MNC Lido City', 'logo' => 'mnc-lido-city.webp'],
+                    ['name' => 'Park Tower Jakarta', 'logo' => 'park-tower-jakarta.webp'],
+                    ['name' => 'MNC Play', 'logo' => 'mnc-play.webp'],
+                    ['name' => 'MNC Energy Investments', 'logo' => 'mnc-energy-investments.webp'],
+                ];
+            @endphp
+
+            @foreach($mncLogos as $item)
+            <div class="bg-white rounded-xl p-3 sm:p-4 border border-slate-200/90 shadow-2xs flex flex-col items-center justify-center h-28 hover:shadow-md hover:border-blue-400 hover:bg-blue-50/20 transition-all duration-200 group">
+                <img src="{{ asset('icon/mnc-group/' . $item['logo']) }}" 
+                     alt="{{ $item['name'] }}" 
+                     loading="lazy" 
+                     class="max-h-12 max-w-[85%] object-contain grayscale group-hover:grayscale-0 transition-all duration-300">
+                <span class="text-[10px] font-bold text-slate-500 group-hover:text-blue-700 transition-colors mt-2 text-center line-clamp-1">
+                    {{ $item['name'] }}
+                </span>
+            </div>
+            @endforeach
+        </div>
+
+    </div>
+</section>
+
 <!-- Strategic Partners & Youth Alliances -->
 <section class="py-16 bg-white border-t border-slate-100 reveal-init">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
