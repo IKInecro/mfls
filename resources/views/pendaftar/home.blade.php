@@ -1252,11 +1252,49 @@
             </p>
         </div>
 
-        <!-- Featured Top Cards: Saluran WhatsApp & Kontak Admin -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+        <!-- Featured Top Cards: Grup WA Batch 3, Saluran WhatsApp & Kontak Admin -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             
+            <!-- Grup WhatsApp Resmi Peserta MFLS Batch 3 -->
+            <div class="relative overflow-hidden rounded-3xl p-7 sm:p-8 bg-gradient-to-br from-[#063e2e] via-[#055841] to-[#047857] text-white shadow-xl border border-emerald-400/40 group hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
+                <div class="absolute -right-12 -top-12 w-48 h-48 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-400/30 transition-all"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-5">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 border border-white/30 text-white">
+                            <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
+                            Wajib Bagi Peserta
+                        </span>
+                        <span class="text-emerald-200 text-xs font-bold">Batch 3</span>
+                    </div>
+
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-white shrink-0 group-hover:scale-105 transition-transform shadow-lg">
+                            <span class="iconify text-3xl" data-icon="logos:whatsapp-icon"></span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-bold tracking-tight">Grup WA MFLS Batch 3</h3>
+                            <p class="text-xs sm:text-sm text-emerald-200 mt-0.5">Komunitas Calon Penerima Beasiswa</p>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-slate-100 leading-relaxed mb-6">
+                        Bergabung ke grup koordinasi resmi peserta Batch 3 untuk berdiskusi, mendapatkan jadwal seleksi, panduan berkas, dan informasi langsung dari panitia.
+                    </p>
+                </div>
+
+                <div class="relative z-10 pt-2">
+                    <a href="https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center justify-center gap-2.5 w-full px-5 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-white hover:bg-emerald-50 shadow-lg shadow-emerald-950/40 hover:-translate-y-0.5 transition-all duration-200">
+                        <span class="iconify text-lg text-emerald-600" data-icon="solar:chat-round-dots-bold"></span>
+                        <span>Gabung Grup WA Batch 3</span>
+                        <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+            </div>
+
             <!-- Saluran WhatsApp Resmi -->
-            <div class="relative overflow-hidden rounded-3xl p-7 sm:p-9 bg-gradient-to-br from-[#0B1E36] via-[#0D2D52] to-[#044E45] text-white shadow-xl border border-teal-500/30 group hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
+            <div class="relative overflow-hidden rounded-3xl p-7 sm:p-8 bg-gradient-to-br from-[#0B1E36] via-[#0D2D52] to-[#044E45] text-white shadow-xl border border-teal-500/30 group hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
                 <div class="absolute -right-12 -top-12 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-500/30 transition-all"></div>
                 
                 <div class="relative z-10">
@@ -1287,7 +1325,7 @@
 
                 <div class="relative z-10 pt-2">
                     <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex items-center justify-center gap-2.5 w-full sm:w-auto px-6 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 shadow-lg shadow-emerald-950/40 hover:-translate-y-0.5 transition-all duration-200">
+                       class="inline-flex items-center justify-center gap-2.5 w-full px-5 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 shadow-lg shadow-emerald-950/40 hover:-translate-y-0.5 transition-all duration-200">
                         <span class="iconify text-lg" data-icon="solar:chat-round-dots-bold"></span>
                         <span>Gabung Saluran WhatsApp Resmi</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -1296,16 +1334,16 @@
             </div>
 
             <!-- WhatsApp Admin & Helpdesk -->
-            <div class="relative overflow-hidden rounded-3xl p-7 sm:p-9 bg-gradient-to-br from-[#0B172C] via-[#0E274D] to-[#123E78] text-white shadow-xl border border-blue-500/30 group hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
+            <div class="relative overflow-hidden rounded-3xl p-7 sm:p-8 bg-gradient-to-br from-[#0B172C] via-[#0E274D] to-[#123E78] text-white shadow-xl border border-blue-500/30 group hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
                 <div class="absolute -right-12 -top-12 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/30 transition-all"></div>
 
                 <div class="relative z-10">
                     <div class="flex items-center justify-between mb-5">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 border border-blue-400/40 text-blue-300">
                             <span class="w-2 h-2 rounded-full bg-blue-400"></span>
-                            Konsultasi & Helpdesk Pendaftar
+                            Helpdesk Pendaftar
                         </span>
-                        <span class="text-blue-300/80 text-xs font-semibold">Senin - Jumat: 08.30 - 17.00 WIB</span>
+                        <span class="text-blue-300/80 text-xs font-semibold">Senin - Jumat</span>
                     </div>
 
                     <div class="flex items-start gap-4 mb-4">
@@ -1313,24 +1351,23 @@
                             <span class="iconify text-3xl" data-icon="solar:user-speak-bold"></span>
                         </div>
                         <div>
-                            <h3 class="text-xl sm:text-2xl font-bold tracking-tight">Nomor WhatsApp Admin</h3>
+                            <h3 class="text-xl sm:text-2xl font-bold tracking-tight">WhatsApp Admin</h3>
                             <div class="flex items-center gap-2 mt-1">
-                                <span class="text-xl sm:text-2xl font-black text-amber-400 tracking-wide font-mono">087867813183</span>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-white/10 text-slate-200">Helpdesk</span>
+                                <span class="text-lg sm:text-xl font-black text-amber-400 tracking-wide font-mono">087867813183</span>
                             </div>
                         </div>
                     </div>
 
                     <p class="text-sm text-slate-200 leading-relaxed mb-6">
-                        Mengalami kendala saat registrasi akun, verifikasi dokumen, lupa kata sandi, atau butuh konfirmasi akses CBT? Hubungi nomor admin resmi panitia MFLS untuk pendampingan cepat.
+                        Mengalami kendala saat registrasi akun, verifikasi dokumen, lupa kata sandi, atau butuh konfirmasi CBT? Hubungi admin resmi panitia MFLS untuk pendampingan.
                     </p>
                 </div>
 
                 <div class="relative z-10 pt-2">
                     <a href="https://wa.me/6287867813183?text=Halo%20Admin%20MFLS,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20dan%20seleksi%20beasiswa" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex items-center justify-center gap-2.5 w-full sm:w-auto px-6 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 shadow-lg shadow-blue-950/40 hover:-translate-y-0.5 transition-all duration-200">
+                       class="inline-flex items-center justify-center gap-2.5 w-full px-5 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 shadow-lg shadow-blue-950/40 hover:-translate-y-0.5 transition-all duration-200">
                         <span class="iconify text-lg" data-icon="solar:chat-round-dots-bold"></span>
-                        <span>Chat WhatsApp Admin (087867813183)</span>
+                        <span>Chat WhatsApp Admin</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
                 </div>

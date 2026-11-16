@@ -36,47 +36,36 @@
         }
         .name-container {
             position: absolute;
-            top: 48%; /* Position under "Diberikan kepada" */
+            top: 39%;
             left: 5%;
             width: 90%;
-            height: 15%; 
+            height: 12%; 
             display: table;
             text-align: center;
         }
         .name {
             display: table-cell;
             vertical-align: middle;
-            font-size: {{ strlen($nama) > 30 ? '38pt' : (strlen($nama) > 20 ? '48pt' : '58pt') }};
-            font-family: 'Times-BoldItalic', 'Times New Roman', serif; /* Stable, looks professional */
-            color: #1a237e;
+            font-size: {{ strlen($nama) > 30 ? '30pt' : (strlen($nama) > 20 ? '38pt' : '46pt') }};
+            font-family: 'Helvetica-Bold', 'Helvetica', 'Arial', sans-serif;
+            font-weight: bold;
+            color: #021d7b;
             line-height: 1.1;
-        }
-        .info {
-            position: absolute;
-            top: 85%;
-            left: 0;
-            width: 100%;
-            font-size: 14px;
-            color: #4a5568;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
 <body>
     <div class="background-container">
         @php
-            // Jalur 1: Standar Laravel
-            $bgPath = public_path('images/sertifikat_batch2.jpg');
-
-            // Jalur 2: Jalur Absolut Hostinger
-            if (!file_exists($bgPath)) {
-                $bgPath = '/home/u595896399/domains/beasiswamncu.com/public_html/images/sertifikat_batch2.jpg';
-            }
-            // Robust path helper for Hostinger (public vs public_html)
-            $imagePath = 'images/sertifikat_batch2.jpg';
+            $imagePath = 'images/sertifikat_batch3.jpg';
             $possiblePaths = [
                 public_path($imagePath),
                 base_path('public_html/' . $imagePath),
                 base_path('public/' . $imagePath),
+                '/home/u595896399/domains/beasiswamncu.com/public_html/' . $imagePath,
+                public_path('images/sertifikat_batch2.jpg'),
+                base_path('public_html/images/sertifikat_batch2.jpg'),
             ];
             
             $finalPath = null;
@@ -92,7 +81,7 @@
                 $data = file_get_contents($finalPath);
                 $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
             } else {
-                $base64 = ''; // Fallback to empty if not found
+                $base64 = '';
             }
         @endphp
         
@@ -101,7 +90,7 @@
         @endif
     </div>
     <div class="content">
-        <div class="name-container" style="top: 41.5%; height: 12%;">
+        <div class="name-container">
             <div class="name">{{ $nama }}</div>
         </div>
     </div>
