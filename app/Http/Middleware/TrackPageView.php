@@ -21,15 +21,19 @@ class TrackPageView
             return $next($request);
         }
 
-        // Track the page view
-        PageView::create([
-            'url' => $request->fullUrl(),
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-            'referer' => $request->header('referer'),
-            'user_id' => auth()->id(),
-            'viewed_at' => now(),
-        ]);
+        // Track the page view safely so telemetry issues don't crash the application
+        try {
+            PageView::create([
+                'url' => substr($request->fullUrl(), 0, 750),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'referer' => $request->header('referer'),
+                'user_id' => auth()->id(),
+                'viewed_at' => now(),
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to track page view: ' . $e->getMessage());
+        }
 
         return $next($request);
     }
