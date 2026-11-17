@@ -161,6 +161,8 @@ class PendaftarController extends Controller
     {
         $request->validate([
             'foto' => 'nullable|image|max:10240',
+            'kartu_identitas' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:10240',
+            'kartu_keluarga' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:10240',
             'rapor1.*' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:10240',
             'rapor2.*' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:10240',
             'rapor3.*' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:10240',
@@ -189,7 +191,7 @@ class PendaftarController extends Controller
         $uploadField = $request->input('upload_field');
         $raporFields = ['rapor1', 'rapor2', 'rapor3', 'rapor4', 'rapor5', 'rapor6'];
         $singleFields = [
-            'foto', 'ijazah', 'personal_statement', 'study_plan', 'surat_rekomendasi_sekolah',
+            'foto', 'kartu_identitas', 'kartu_keluarga', 'ijazah', 'personal_statement', 'study_plan', 'surat_rekomendasi_sekolah',
             'bukti_follow_ig_beasiswamncu', 'bukti_follow_ig_mncu', 'bukti_follow_ig_mncunation', 'bukti_follow_ig_thearetegen',
             'bukti_follow_tiktok_beasiswamncu', 'bukti_follow_tiktok_mncu',
             'surat_buta_warna'

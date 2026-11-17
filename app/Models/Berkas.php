@@ -14,6 +14,8 @@ class Berkas extends Model
     protected $fillable = [
         'peserta_id',
         'foto',
+        'kartu_identitas',
+        'kartu_keluarga',
         'rapor1',
         'rapor2',
         'rapor3',

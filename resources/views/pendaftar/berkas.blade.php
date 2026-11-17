@@ -244,6 +244,15 @@
                 'val' => $berkas->study_plan ?? null,
             ],
             [
+                'field' => 'ijazah',
+                'label' => 'Ijazah / SKL (Surat Keterangan Lulus)',
+                'desc' => 'Scan Ijazah (alumni) atau SKL (opsional bagi yang belum terbit).',
+                'accept' => '.pdf,.jpg,.jpeg,.png,.webp',
+                'maxSize' => 'Max 5MB (PDF / JPG / PNG)',
+                'icon' => 'solar:diploma-bold-duotone',
+                'val' => $berkas->ijazah ?? null,
+            ],
+            [
                 'field' => 'personal_statement',
                 'label' => 'Personal Statement (Esai)',
                 'desc' => 'Esai motivasi, kepemimpinan, dan komitmen kontribusi Anda.',
@@ -254,6 +263,17 @@
             ],
         ];
     @endphp
+
+    <!-- Tips Upload Berkas -->
+    <div class="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-amber-50/80 border border-amber-200 text-amber-900 flex items-start gap-3 shadow-xs">
+        <span class="iconify text-xl text-amber-600 shrink-0 mt-0.5" data-icon="solar:info-circle-bold"></span>
+        <div class="text-xs space-y-1">
+            <p class="font-bold text-amber-950">Panduan Mengunggah Berkas:</p>
+            <p class="text-amber-800 leading-relaxed">
+                Pastikan dokumen terbaca jelas dengan format <strong>PDF, JPG, PNG, atau WEBP</strong> (maks. 5MB–10MB). Bagi pengguna <strong>iPhone (iOS)</strong>, pastikan foto tidak berformat <em>.HEIC</em> (silakan simpan sebagai JPG atau screenshot terlebih dahulu sebelum diunggah).
+            </p>
+        </div>
+    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-5">
         @foreach($fileCards as $card)

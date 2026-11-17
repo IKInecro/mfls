@@ -353,7 +353,10 @@ class AdminController extends Controller
                     // atau cukup pastikan punya foto dan ijazah dll
                     $q->whereHas('berkas', function ($q2) {
                         $q2->whereNotNull('foto')
-                           ->whereNotNull('ijazah')
+                           ->where(function ($sub) {
+                               $sub->whereNotNull('ijazah')
+                                   ->orWhereNotNull('kartu_identitas');
+                           })
                            ->whereNotNull('motivasi_video');
                     });
                 });
@@ -362,7 +365,10 @@ class AdminController extends Controller
                     $q->whereDoesntHave('berkas')
                       ->orWhereHas('berkas', function ($q2) {
                           $q2->whereNull('foto')
-                             ->orWhereNull('ijazah')
+                             ->orWhere(function ($sub) {
+                                 $sub->whereNull('ijazah')
+                                     ->whereNull('kartu_identitas');
+                             })
                              ->orWhereNull('motivasi_video');
                       });
                 });
@@ -1297,6 +1303,8 @@ class AdminController extends Controller
             $berkas = $akun->peserta->berkas;
             $filesToDelete = [
                 $berkas->foto,
+                $berkas->kartu_identitas,
+                $berkas->kartu_keluarga,
                 $berkas->ijazah,
                 $berkas->surat_buta_warna,
                 $berkas->surat_rekomendasi_sekolah,
@@ -1530,6 +1538,8 @@ class AdminController extends Controller
                     $berkas = $peserta->berkas;
                     $singleFiles = [
                         $berkas->foto,
+                        $berkas->kartu_identitas,
+                        $berkas->kartu_keluarga,
                         $berkas->ijazah,
                         $berkas->kartu_pelajar,
                         $berkas->surat_rekom,
