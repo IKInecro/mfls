@@ -408,35 +408,53 @@
 
             <!-- Daftar Sertifikat yang Telah Diunggah -->
             @php
-                $sertifikats = $peserta->sertifikat ?? collect();
+                $sertifikatList = (isset($sertifikats) && $sertifikats->count() > 0) ? $sertifikats : ($peserta->sertifikats ?? collect());
             @endphp
 
-            @if($sertifikats->count() > 0)
-                <div class="space-y-2">
-                    <h3 class="text-xs font-bold text-slate-700">Sertifikat Terdaftar ({{ $sertifikats->count() }} Berkas)</h3>
+            @if($sertifikatList->count() > 0)
+                <div class="space-y-2 pt-2 border-t border-slate-100">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                            <span class="iconify text-base text-blue-600" data-icon="solar:medal-ribbons-star-bold"></span>
+                            <span>Sertifikat Terdaftar ({{ $sertifikatList->count() }} Berkas)</span>
+                        </h3>
+                        <span class="text-[10px] text-slate-400 font-semibold">Klik nama atau tombol lihat untuk preview file</span>
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        @foreach($sertifikats as $s)
-                            <div class="p-2.5 sm:p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between gap-2.5">
+                        @foreach($sertifikatList as $s)
+                            <div class="p-2.5 sm:p-3 rounded-xl bg-white border border-slate-200/90 hover:border-blue-300 flex items-center justify-between gap-2.5 shadow-xs transition-all">
                                 <div class="flex items-center gap-2.5 min-w-0">
-                                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                                        <span class="iconify text-base" data-icon="solar:file-check-bold"></span>
+                                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                        <span class="iconify text-lg" data-icon="solar:file-check-bold"></span>
                                     </div>
                                     <div class="min-w-0">
-                                        <a href="{{ asset('storage/' . $s->file) }}" target="_blank" class="text-xs font-bold text-slate-800 hover:text-blue-600 hover:underline truncate block">
-                                            {{ $s->nama_sertifikat ?? 'Sertifikat' }}
+                                        <a href="{{ asset('storage/' . $s->file) }}" target="_blank" class="text-xs font-bold text-slate-800 hover:text-blue-600 hover:underline truncate block" title="{{ $s->nama }}">
+                                            {{ $s->nama ?? $s->nama_sertifikat ?? 'Sertifikat Prestasi' }}
                                         </a>
-                                        <span class="text-[10px] text-slate-400 font-medium">Terverifikasi di sistem</span>
+                                        <span class="text-[10px] text-slate-400 font-medium">Tersimpan di sistem ({{ $s->tahun ?? date('Y') }})</span>
                                     </div>
                                 </div>
-                                <button type="button" 
-                                        onclick="confirmDeleteSertifikat('{{ $s->id }}', '{{ addslashes($s->nama_sertifikat ?? '') }}')"
-                                        title="Hapus Sertifikat"
-                                        class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                </button>
+                                <div class="flex items-center gap-1 shrink-0">
+                                    <a href="{{ asset('storage/' . $s->file) }}" target="_blank" 
+                                       title="Lihat Dokumen"
+                                       class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-blue-600 text-xs font-bold border border-slate-200 hover:border-blue-200 transition-all">
+                                        <span class="iconify text-sm" data-icon="solar:eye-bold"></span>
+                                        <span>Lihat</span>
+                                    </a>
+                                    <button type="button" 
+                                            onclick="confirmDeleteSertifikat('{{ $s->id }}', '{{ addslashes($s->nama ?? $s->nama_sertifikat ?? 'Sertifikat') }}')"
+                                            title="Hapus Sertifikat"
+                                            class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
+                                </div>
                             </div>
                         @endforeach
                     </div>
+                </div>
+            @else
+                <div class="p-3.5 text-center bg-slate-50/80 rounded-xl border border-dashed border-slate-200">
+                    <p class="text-xs text-slate-400 font-medium">Belum ada sertifikat prestasi yang diunggah.</p>
                 </div>
             @endif
         </div>

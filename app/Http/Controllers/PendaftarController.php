@@ -176,6 +176,8 @@ class PendaftarController extends Controller
             'motivasi_video' => 'nullable|url|max:500',
             'motivasi_video_tiktok' => 'nullable|url|max:500',
             'sertifikat.*' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:10240',
+            'prestasi' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:10240',
+            'nama_sertifikat' => 'nullable|string|max:255',
             'surat_buta_warna' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:10240',
             'portfolio' => 'nullable|max:10240', // Can be file or string
             'bukti_follow_ig_beasiswamncu' => 'nullable|image|max:10240',
@@ -283,21 +285,40 @@ class PendaftarController extends Controller
 
         $berkas->save();
 
-        // --- Handle Sertifikat ---
+        // --- Handle Sertifikat / Prestasi ---
         $sertifikatCount = 0;
-        if ((!$uploadField || $uploadField === 'sertifikat') && $request->hasFile('sertifikat')) {
-            $files = $request->file('sertifikat');
-            $sertifikatFiles = is_array($files) ? $files : [$files];
-            foreach ($sertifikatFiles as $file) {
+        if ((!$uploadField || $uploadField === 'sertifikat' || $uploadField === 'prestasi') && ($request->hasFile('sertifikat') || $request->hasFile('prestasi'))) {
+            $inputNama = trim((string) $request->input('nama_sertifikat')) ?: trim((string) $request->input('nama'));
+
+            if ($request->hasFile('prestasi')) {
+                $file = $request->file('prestasi');
                 $path = $file->store('sertifikat/' . $peserta->id, 'public');
                 $this->compressImage($path);
+                $certName = $inputNama ?: ('Sertifikat ' . date('Y-m-d H:i'));
                 \App\Models\Sertifikat::create([
                     'peserta_id' => $peserta->id,
-                    'nama' => 'Sertifikat ' . date('Y-m-d H:i:s'),
+                    'nama' => $certName,
                     'file' => $path,
-                    'tahun' => date('Y'),
+                    'tahun' => (int) date('Y'),
                 ]);
                 $sertifikatCount++;
+            }
+
+            if ($request->hasFile('sertifikat')) {
+                $files = $request->file('sertifikat');
+                $sertifikatFiles = is_array($files) ? $files : [$files];
+                foreach ($sertifikatFiles as $index => $file) {
+                    $path = $file->store('sertifikat/' . $peserta->id, 'public');
+                    $this->compressImage($path);
+                    $certName = $inputNama ? ($inputNama . (count($sertifikatFiles) > 1 ? ' (' . ($index + 1) . ')' : '')) : ('Sertifikat ' . date('Y-m-d H:i'));
+                    \App\Models\Sertifikat::create([
+                        'peserta_id' => $peserta->id,
+                        'nama' => $certName,
+                        'file' => $path,
+                        'tahun' => (int) date('Y'),
+                    ]);
+                    $sertifikatCount++;
+                }
             }
         }
 
