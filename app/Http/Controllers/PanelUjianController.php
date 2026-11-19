@@ -13,8 +13,8 @@ class PanelUjianController extends Controller
 {
     public function __construct()
     {
-        // Ngikutin aturan Bank Soal: hanya admin & akademik
-        abort_unless(in_array(auth()->user()?->role, ['admin', 'akademik'], true), 403);
+        // Ngikutin aturan Bank Soal: hanya admin & akademik (god selalu dapat akses)
+        abort_unless(in_array(auth()->user()?->role, ['admin', 'akademik', 'god'], true), 403);
     }
 
     private function logAktivitas($aksi, $targetTipe = null, $targetId = null, $deskripsi = null)

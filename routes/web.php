@@ -180,6 +180,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/admin/user', [App\Http\Controllers\AdminController::class, 'indexUser'])->name('admin.user.index');
             Route::post('/admin/user', [App\Http\Controllers\AdminController::class, 'storeUser'])->name('admin.user.store');
             Route::put('/admin/user/{id}', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('admin.user.update');
+            Route::put('/admin/user/{id}/toggle-status', [App\Http\Controllers\AdminController::class, 'toggleStatus'])->name('admin.user.toggle_status');
             Route::put('/admin/user/{id}/reset-password', [App\Http\Controllers\AdminController::class, 'resetPassword'])->name('admin.user.reset_password');
             Route::delete('/admin/user/{id}', [App\Http\Controllers\AdminController::class, 'destroyUser'])->name('admin.user.destroy');
 

@@ -25,6 +25,11 @@ class CheckRole
         $user = auth()->user();
         $userRole = strtolower(trim($user->role));
         
+        // GOD Admin memiliki master clearance penuh ke seluruh route internal/admin
+        if ($userRole === 'god') {
+            return $next($request);
+        }
+
         $allowedRoles = [];
         $allowedEmails = [];
 

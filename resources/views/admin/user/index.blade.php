@@ -97,6 +97,9 @@
                     <option value="mentor" {{ request('role') === 'mentor' ? 'selected' : '' }}>Mentor</option>
                     <option value="panitia" {{ request('role') === 'panitia' ? 'selected' : '' }}>Panitia / Administrasi</option>
                     <option value="dosen" {{ request('role') === 'dosen' ? 'selected' : '' }}>Dosen (Interviewer)</option>
+                    @if(auth()->user()->role === 'god')
+                        <option value="god" {{ request('role') === 'god' ? 'selected' : '' }}>⚡ GOD Admin (Developer)</option>
+                    @endif
                 </select>
             </div>
 
@@ -135,6 +138,7 @@
                     @forelse($users as $user)
                     @php
                         $roleConfig = [
+                            'god'       => ['bg-rose-950/20 text-rose-700 border-rose-300 font-extrabold', '⚡ GOD ADMIN'],
                             'admin'     => ['bg-rose-50 text-rose-700 border-rose-200', 'ADMIN'],
                             'palugada'  => ['bg-purple-50 text-purple-700 border-purple-200', 'PALUGADA'],
                             'akademik'  => ['bg-blue-50 text-blue-700 border-blue-200', 'AKADEMIK'],
@@ -146,6 +150,7 @@
                         
                         $isSelf = (auth()->id() === $user->id);
                         $hasPeserta = !empty($user->peserta);
+                        $canToggle = !$isSelf && (auth()->user()->role === 'god' || (!in_array($user->role, ['god', 'admin', 'palugada'])));
                     @endphp
                     <tr class="hover:bg-slate-50/60 transition-colors">
                         <!-- User Column -->
@@ -186,17 +191,31 @@
 
                         <!-- Status Column -->
                         <td class="py-4 px-6 text-center">
-                            @if($user->email_verified_at)
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-[10px] font-bold">
-                                    <span class="iconify text-xs" data-icon="solar:check-circle-bold"></span>
-                                    Terverifikasi
-                                </span>
-                            @else
-                                <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 border border-slate-200 text-slate-500 rounded-lg text-[10px] font-bold">
-                                    <span class="iconify text-xs" data-icon="solar:clock-circle-bold"></span>
-                                    Belum Verifikasi
-                                </span>
-                            @endif
+                            <div class="flex flex-col items-center gap-1.5">
+                                @if($user->is_active ?? true)
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-full text-[9px] font-black uppercase tracking-wider">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        Aktif
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-full text-[9px] font-black uppercase tracking-wider">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                        Nonaktif
+                                    </span>
+                                @endif
+
+                                @if($user->email_verified_at)
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600" title="Email terverifikasi">
+                                        <span class="iconify text-xs" data-icon="solar:check-circle-bold"></span>
+                                        Verified
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-400" title="Email belum diverifikasi">
+                                        <span class="iconify text-xs text-amber-500" data-icon="solar:clock-circle-bold"></span>
+                                        Unverified
+                                    </span>
+                                @endif
+                            </div>
                         </td>
 
                         <!-- Created At -->
@@ -230,6 +249,19 @@
                                         title="Reset Password">
                                     <span class="iconify text-base" data-icon="solar:key-minimalistic-bold-duotone"></span>
                                 </button>
+
+                                <!-- Toggle Active / Nonaktif Button -->
+                                @if($canToggle)
+                                    <form action="{{ route('admin.user.toggle_status', $user->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" 
+                                                class="p-2 {{ ($user->is_active ?? true) ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200' : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200' }} rounded-xl transition-colors cursor-pointer" 
+                                                title="{{ ($user->is_active ?? true) ? 'Nonaktifkan Akun User Ini' : 'Aktifkan Kembali Akun User Ini' }}">
+                                            <span class="iconify text-base" data-icon="{{ ($user->is_active ?? true) ? 'solar:user-block-bold-duotone' : 'solar:user-check-bold-duotone' }}"></span>
+                                        </button>
+                                    </form>
+                                @endif
 
                                 <!-- Deep Delete (Akar-akarnya) -->
                                 @if(!$isSelf)
@@ -327,6 +359,9 @@
                         <option value="mentor">Mentor</option>
                         <option value="panitia">Panitia / Administrasi</option>
                         <option value="dosen">Dosen (Interviewer)</option>
+                        @if(auth()->user()->role === 'god')
+                            <option value="god">⚡ GOD Admin (Super Privilege)</option>
+                        @endif
                     </select>
                 </div>
 

@@ -42,6 +42,12 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
+            // Blokir jika akun dinonaktifkan
+            if (isset($user->is_active) && $user->is_active === false) {
+                Auth::logout();
+                return back()->with('loginError', 'Akun Anda telah dinonaktifkan oleh Administrator.');
+            }
+
             // Periksa apakah email sudah diverifikasi
             if (!$user->email_verified_at && $user->role === 'pendaftar') {
                 Auth::logout();
@@ -78,13 +84,21 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
+            $user = Auth::user();
+
+            // Blokir jika akun dinonaktifkan
+            if (isset($user->is_active) && $user->is_active === false) {
+                Auth::logout();
+                return back()->with('loginError', 'Akun Anda telah dinonaktifkan oleh Administrator.');
+            }
+
             // Blokir jika pendaftar mencoba login admin
-            if (Auth::user()->role === 'pendaftar') {
+            if ($user->role === 'pendaftar') {
                 Auth::logout();
                 return back()->with('loginError', 'Pendaftar tidak memiliki akses ke sini.');
             }
 
-            if (Auth::user()->role === 'dosen') {
+            if ($user->role === 'dosen') {
                 return redirect()->intended('/admin/penilaian-akademik');
             }
 

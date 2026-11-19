@@ -203,7 +203,7 @@
                             @endif
                         </a>
 
-                        @if(auth()->user()->role === 'admin')
+                        @if(in_array(auth()->user()->role, ['admin', 'god']))
                             <a href="{{ route('admin.email-templates.index') }}" onclick="closeSidebar()"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
                                     {{ request()->routeIs('admin.email-templates.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -218,7 +218,7 @@
                             </a>
                         @endif
 
-                        @if((auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || auth()->user()->role === 'akademik' || auth()->user()->role === 'palugada') && (in_array(auth()->user()->role, ['akademik', 'palugada']) || in_array(auth()->user()->email, ['dion@gmail.com', 'info@beasiswamncu.com'])))
+                        @if(in_array(auth()->user()->role, ['admin', 'god', 'akademik', 'palugada']) || in_array(auth()->user()->email, ['dion@gmail.com', 'info@beasiswamncu.com']))
                             <a href="{{ route('admin.beasiswa.index') }}" onclick="closeSidebar()"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
                                     {{ request()->routeIs('admin.beasiswa.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -244,7 +244,7 @@
                     </div>
                     <div class="space-y-1">
                         <!-- PALUGADA SPECIAL TAB -->
-                        @if(auth()->user()->role === 'palugada' || (auth()->user()->role === 'admin' && Route::has('admin.palugada.index')))
+                        @if(in_array(auth()->user()->role, ['god', 'palugada', 'admin']) && Route::has('admin.palugada.index'))
                             @php
                                 $pendingPalugadaCount = \App\Models\Daftar::where('status', 'diajukan_palugada')->count();
                             @endphp
@@ -266,7 +266,7 @@
                             </a>
                         @endif
 
-                        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || auth()->user()->role === 'akademik' || auth()->user()->role === 'palugada')
+                        @if(in_array(auth()->user()->role, ['god', 'admin', 'panitia', 'akademik', 'palugada']))
                             <a href="{{ route('admin.pendaftar.index') }}" onclick="closeSidebar()"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
                                     {{ request()->routeIs('admin.pendaftar.index') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -281,7 +281,7 @@
                             </a>
                         @endif
 
-                        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'akademik' || auth()->user()->role === 'palugada')
+                        @if(in_array(auth()->user()->role, ['god', 'admin', 'akademik', 'palugada']))
                             <a href="{{ route('admin.hasil_ujian.index') }}" onclick="closeSidebar()"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
                                     {{ request()->routeIs('admin.hasil_ujian.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -309,7 +309,7 @@
                             </a>
                         @endif
 
-                        @if (auth()->user()->role === 'admin' || auth()->user()->role === 'mentor' || auth()->user()->role === 'akademik' || auth()->user()->role === 'palugada')
+                        @if (in_array(auth()->user()->role, ['god', 'admin', 'mentor', 'akademik', 'palugada']))
                             <a href="{{ route('admin.penilaian.index') }}" onclick="closeSidebar()"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
                                     {{ request()->routeIs('admin.penilaian.index') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -324,7 +324,7 @@
                             </a>
                         @endif
 
-                        @if (auth()->user()->role === 'admin' || auth()->user()->role === 'mentor' || auth()->user()->role === 'akademik' || auth()->user()->role === 'palugada' || auth()->user()->role === 'dosen')
+                        @if (in_array(auth()->user()->role, ['god', 'admin', 'mentor', 'akademik', 'palugada', 'dosen']))
                             <a href="{{ route('admin.penilaian.akademik.index') }}" onclick="closeSidebar()"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
                                     {{ request()->routeIs('admin.penilaian.akademik.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -339,7 +339,7 @@
                             </a>
                         @endif
 
-                        @if(auth()->check() && (auth()->user()->role === 'admin' || in_array(auth()->user()->email, ['dendi.pratama@mncu.ac.id', 'muhammad.rezki@mncu.ac.id', 'noval.adi@mncu.ac.id'])))
+                        @if(auth()->check() && (in_array(auth()->user()->role, ['god', 'admin']) || in_array(auth()->user()->email, ['dendi.pratama@mncu.ac.id', 'muhammad.rezki@mncu.ac.id', 'noval.adi@mncu.ac.id'])))
                             <a href="{{ route('admin.wawancara_bod.index') }}" onclick="closeSidebar()"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
                                     {{ request()->routeIs('admin.wawancara_bod.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -354,7 +354,7 @@
                             </a>
                         @endif
 
-                        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'akademik')
+                        @if(in_array(auth()->user()->role, ['god', 'admin', 'akademik']))
                             <a href="{{ route('admin.panel_ujian.index') }}" onclick="closeSidebar()"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
                                     {{ request()->routeIs('admin.panel_ujian.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -369,7 +369,7 @@
                             </a>
                         @endif
 
-                        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'akademik' || auth()->user()->role === 'palugada')
+                        @if(in_array(auth()->user()->role, ['god', 'admin', 'akademik', 'palugada']))
                             <a href="{{ route('admin.soal.index') }}" onclick="closeSidebar()"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
                                     {{ request()->routeIs('admin.soal.index') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -387,14 +387,14 @@
                 </div>
 
                 <!-- GROUP 3: KONTROL SISTEM -->
-                @if(auth()->check() && (auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || auth()->user()->role === 'palugada' || in_array(auth()->user()->email, ['dion@gmail.com', 'adminis@mfls.com', 'info@beasiswamncu.com'])))
+                @if(auth()->check() && (in_array(auth()->user()->role, ['god', 'admin', 'panitia', 'palugada']) || in_array(auth()->user()->email, ['dion@gmail.com', 'adminis@mfls.com', 'info@beasiswamncu.com'])))
                 <div>
                     <div class="px-3 pb-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center justify-between">
                         <span>Kontrol Sistem</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
                     </div>
                     <div class="space-y-1">
-                        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'palugada' || auth()->user()->email === 'info@beasiswamncu.com')
+                        @if(in_array(auth()->user()->role, ['god', 'admin', 'palugada']) || auth()->user()->email === 'info@beasiswamncu.com')
                             <a href="{{ route('admin.user.index') }}" onclick="closeSidebar()"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
                                     {{ request()->routeIs('admin.user.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -422,7 +422,7 @@
                             </a>
                         @endif
 
-                        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || auth()->user()->role === 'palugada' || in_array(auth()->user()->email, ['dion@gmail.com', 'dept.adminis@mfls.com', 'info@beasiswamncu.com']))
+                        @if(in_array(auth()->user()->role, ['god', 'admin', 'panitia', 'palugada']) || in_array(auth()->user()->email, ['dion@gmail.com', 'dept.adminis@mfls.com', 'info@beasiswamncu.com']))
                             <a href="{{ route('admin.berita.index') }}" onclick="closeSidebar()"
                                 class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
                                     {{ request()->routeIs('admin.berita.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
