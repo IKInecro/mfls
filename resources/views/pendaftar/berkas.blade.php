@@ -165,11 +165,17 @@
             </div>
 
             <!-- DKV Blindness Alert -->
-            <div id="butaWarnaAlert" class="hidden p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5">
+            @php
+                $isDkv = str_contains($peserta->pilihan_prodi ?? '', 'DKV');
+            @endphp
+            <div id="butaWarnaAlert" class="{{ $isDkv ? '' : 'hidden' }} p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5">
                 <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <p class="text-xs text-amber-800 font-medium leading-relaxed">
-                    <strong>Catatan Program Studi DKV:</strong> Mensyaratkan calon mahasiswa tidak buta warna (parsial maupun total).
-                </p>
+                <div class="text-xs text-amber-900 font-medium leading-relaxed space-y-0.5">
+                    <p class="font-bold text-amber-950">Persyaratan Khusus Program Studi DKV:</p>
+                    <p class="text-amber-800">
+                        Karena Anda memilih DKV, Anda diwajibkan mengunggah <strong>Surat Keterangan Bebas Buta Warna</strong> dan <strong>Portofolio Karya (format PDF / Link G-Drive)</strong> pada bagian dokumen persyaratan di bawah.
+                    </p>
+                </div>
             </div>
 
             <div class="flex justify-end pt-1">
@@ -262,6 +268,31 @@
                 'val' => $berkas->personal_statement ?? null,
             ],
         ];
+
+        // Submission tambahan khusus program studi DKV
+        if ($isDkv) {
+            $fileCards[] = [
+                'field' => 'surat_buta_warna',
+                'label' => 'Surat Bebas Buta Warna (DKV)',
+                'desc' => 'Surat keterangan medis bebas buta warna dari dokter/puskesmas/klinik (PDF / JPG / PNG).',
+                'accept' => '.pdf,.jpg,.jpeg,.png,.webp',
+                'maxSize' => 'Max 5MB (PDF / JPG / PNG)',
+                'icon' => 'solar:eye-scan-bold-duotone',
+                'val' => $berkas->surat_buta_warna ?? null,
+                'badge' => 'Wajib DKV',
+            ];
+            $fileCards[] = [
+                'field' => 'portfolio',
+                'label' => 'Portofolio Karya (DKV)',
+                'desc' => 'Portofolio karya desain / gambar / karya visual (Wajib format PDF, maks 10MB) atau link G-Drive.',
+                'accept' => '.pdf',
+                'maxSize' => 'Max 10MB (PDF)',
+                'icon' => 'solar:gallery-wide-bold-duotone',
+                'val' => $berkas->portfolio ?? null,
+                'badge' => 'Wajib DKV',
+                'isPortfolio' => true,
+            ];
+        }
     @endphp
 
     <!-- Tips Upload Berkas -->
@@ -286,7 +317,14 @@
                         <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                             <span class="iconify text-base" data-icon="{{ $card['icon'] }}"></span>
                         </div>
-                        <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight truncate">{{ $card['label'] }}</h3>
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight truncate">{{ $card['label'] }}</h3>
+                            @if(!empty($card['badge']))
+                                <span class="shrink-0 px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                    {{ $card['badge'] }}
+                                </span>
+                            @endif
+                        </div>
                     </div>
 
                     @if($card['val'])
@@ -313,9 +351,9 @@
                             <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <a href="{{ asset('storage/' . $card['val']) }}" target="_blank" 
+                            <a href="{{ str_starts_with($card['val'], 'http') ? $card['val'] : asset('storage/' . $card['val']) }}" target="_blank" 
                                class="text-xs font-bold text-slate-800 hover:text-blue-600 hover:underline truncate">
-                                Lihat Berkas Tersimpan
+                                {{ str_starts_with($card['val'], 'http') ? 'Buka Link Portofolio' : 'Lihat Berkas Tersimpan' }}
                             </a>
                         </div>
                         <button type="button" 
@@ -331,25 +369,60 @@
                         @csrf
                         <input type="hidden" name="upload_field" value="{{ $card['field'] }}">
 
-                        <div class="relative">
-                            <input type="file" 
-                                   id="file-{{ $card['field'] }}" 
-                                   name="{{ $card['field'] }}" 
-                                   accept="{{ $card['accept'] }}" 
-                                   class="hidden" 
-                                   onchange="onFileSelected(this, '{{ $card['field'] }}')">
-                            
-                            <label for="file-{{ $card['field'] }}" 
-                                   class="flex flex-col items-center justify-center p-3.5 border border-dashed border-slate-200 hover:border-blue-400 rounded-xl bg-slate-50/60 hover:bg-blue-50/20 transition-all cursor-pointer text-center group">
-                                <svg class="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                </svg>
-                                <span class="text-xs font-bold text-slate-700 group-hover:text-blue-600 transition-colors">Pilih File Berkas</span>
-                                <span class="text-[10px] text-slate-400 mt-0.5">{{ $card['maxSize'] }}</span>
-                            </label>
+                        @if(!empty($card['isPortfolio']))
+                            <div class="space-y-2">
+                                <div class="relative">
+                                    <input type="file" 
+                                           id="file-{{ $card['field'] }}" 
+                                           name="{{ $card['field'] }}" 
+                                           accept="{{ $card['accept'] }}" 
+                                           class="hidden" 
+                                           onchange="onFileSelected(this, '{{ $card['field'] }}')">
+                                    
+                                    <label for="file-{{ $card['field'] }}" 
+                                           class="flex items-center justify-center gap-2 p-2.5 border border-dashed border-slate-200 hover:border-blue-400 rounded-xl bg-slate-50/60 hover:bg-blue-50/20 transition-all cursor-pointer text-center group">
+                                        <svg class="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                        </svg>
+                                        <span class="text-xs font-bold text-slate-700 group-hover:text-blue-600">Pilih File PDF Portofolio</span>
+                                        <span class="text-[10px] text-slate-400">({{ $card['maxSize'] }})</span>
+                                    </label>
 
-                            <p id="preview-{{ $card['field'] }}" class="hidden text-xs font-bold text-blue-600 mt-2 truncate"></p>
-                        </div>
+                                    <p id="preview-{{ $card['field'] }}" class="hidden text-xs font-bold text-blue-600 mt-1 truncate"></p>
+                                </div>
+
+                                <div class="relative flex items-center justify-center">
+                                    <div class="border-t border-slate-200 w-full"></div>
+                                    <span class="bg-white px-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider absolute">Atau Link G-Drive</span>
+                                </div>
+
+                                <div>
+                                    <input type="url" name="portfolio" placeholder="https://drive.google.com/..." 
+                                           oninput="if(this.value){ document.getElementById('btn-save-{{ $card['field'] }}').classList.remove('hidden'); } else if(!document.getElementById('file-{{ $card['field'] }}').files.length) { document.getElementById('btn-save-{{ $card['field'] }}').classList.add('hidden'); }"
+                                           class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 placeholder:text-slate-400 focus:border-blue-600 focus:bg-white outline-none transition-all">
+                                </div>
+                            </div>
+                        @else
+                            <div class="relative">
+                                <input type="file" 
+                                       id="file-{{ $card['field'] }}" 
+                                       name="{{ $card['field'] }}" 
+                                       accept="{{ $card['accept'] }}" 
+                                       class="hidden" 
+                                       onchange="onFileSelected(this, '{{ $card['field'] }}')">
+                                
+                                <label for="file-{{ $card['field'] }}" 
+                                       class="flex flex-col items-center justify-center p-3.5 border border-dashed border-slate-200 hover:border-blue-400 rounded-xl bg-slate-50/60 hover:bg-blue-50/20 transition-all cursor-pointer text-center group">
+                                    <svg class="w-5 h-5 text-slate-400 group-hover:text-blue-600 transition-colors mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                    </svg>
+                                    <span class="text-xs font-bold text-slate-700 group-hover:text-blue-600 transition-colors">Pilih File Berkas</span>
+                                    <span class="text-[10px] text-slate-400 mt-0.5">{{ $card['maxSize'] }}</span>
+                                </label>
+
+                                <p id="preview-{{ $card['field'] }}" class="hidden text-xs font-bold text-blue-600 mt-2 truncate"></p>
+                            </div>
+                        @endif
 
                         <button type="submit" 
                                 id="btn-save-{{ $card['field'] }}" 

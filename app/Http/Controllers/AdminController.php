@@ -1307,6 +1307,7 @@ class AdminController extends Controller
                 $berkas->kartu_keluarga,
                 $berkas->ijazah,
                 $berkas->surat_buta_warna,
+                $berkas->portfolio,
                 $berkas->surat_rekomendasi_sekolah,
                 $berkas->motivasi_video, // asumsikan video ada yang diupload juga walau db bilang text URL
                 $berkas->personal_statement,
@@ -2630,7 +2631,7 @@ class AdminController extends Controller
         // Data Berkas & Links
         $berkasColumns = [
             'FOTO', 'RAPOR S1', 'RAPOR S2', 'RAPOR S3', 'RAPOR S4', 'RAPOR S5',
-            'IJAZAH', 'PERSONAL STATEMENT', 'SURAT BUTA WARNA (DKV)',
+            'IJAZAH', 'PERSONAL STATEMENT', 'SURAT BUTA WARNA (DKV)', 'PORTOFOLIO (DKV)',
         ];
 
         $columns = array_merge($columns, $berkasColumns, $sertifikatColumns);
@@ -2712,11 +2713,14 @@ class AdminController extends Controller
                 $row[] = ($berkas && $berkas->ijazah) ? url('storage/' . $berkas->ijazah) : '-';
                 $row[] = ($berkas && $berkas->personal_statement) ? url('storage/' . $berkas->personal_statement) : '-';
 
-                // Khusus DKV: Surat Buta Warna
-                if (($peserta->pilihan_prodi ?? '') == 'Desain Komunikasi Visual') {
+                // Khusus DKV: Surat Buta Warna & Portofolio
+                $isPesertaDkv = str_contains($peserta->pilihan_prodi ?? '', 'DKV');
+                if ($isPesertaDkv) {
                     $row[] = ($berkas && $berkas->surat_buta_warna) ? url('storage/' . $berkas->surat_buta_warna) : 'BELUM UNGGAH';
+                    $row[] = ($berkas && $berkas->portfolio) ? (str_starts_with($berkas->portfolio, 'http') ? $berkas->portfolio : url('storage/' . $berkas->portfolio)) : 'BELUM UNGGAH';
                 }
                 else {
+                    $row[] = 'N/A';
                     $row[] = 'N/A';
                 }
 
