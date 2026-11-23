@@ -151,6 +151,9 @@ Route::middleware(['auth'])->group(function () {
             // Dedicated Palugada Verification (Double Check)
             Route::get('/admin/palugada/verifikasi', [App\Http\Controllers\AdminController::class, 'indexPalugada'])->name('admin.palugada.index');
 
+            // Video Motivasi Submissions Monitoring
+            Route::get('/admin/video-motivasi', [App\Http\Controllers\AdminController::class, 'indexVideoMotivasi'])->name('admin.video_motivasi.index');
+
             // Seleksi Beasiswa (Email Restricted)
             Route::middleware(['role:admin,akademik,palugada,email:dion@gmail.com|info@beasiswamncu.com'])->group(
                 function () {

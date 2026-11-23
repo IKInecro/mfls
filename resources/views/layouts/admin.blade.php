@@ -279,6 +279,19 @@
                                     <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
                                 @endif
                             </a>
+
+                            <a href="{{ route('admin.video_motivasi.index') }}" onclick="closeSidebar()"
+                                class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 group
+                                    {{ request()->routeIs('admin.video_motivasi.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30 shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                                <div class="flex items-center gap-3">
+                                    <span class="iconify text-lg transition-transform group-hover:scale-110 {{ request()->routeIs('admin.video_motivasi.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-slate-300' }}"
+                                        data-icon="solar:videocamera-record-bold-duotone"></span>
+                                    <span>Video Motivasi</span>
+                                </div>
+                                @if(request()->routeIs('admin.video_motivasi.*'))
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                                @endif
+                            </a>
                         @endif
 
                         @if(in_array(auth()->user()->role, ['god', 'admin', 'akademik', 'palugada']))

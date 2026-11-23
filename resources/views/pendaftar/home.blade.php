@@ -1283,13 +1283,21 @@
                     </p>
                 </div>
 
-                <div class="relative z-10 pt-2">
-                    <a href="https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F" target="_blank" rel="noopener noreferrer"
-                       class="inline-flex items-center justify-center gap-2.5 w-full px-5 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-white hover:bg-emerald-50 shadow-lg shadow-emerald-950/40 hover:-translate-y-0.5 transition-all duration-200">
+                <div class="relative z-10 pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    <a href="https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F" 
+                       onclick="return openWhatsAppGroup(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')"
+                       class="inline-flex items-center justify-center gap-2.5 flex-1 px-5 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-white hover:bg-emerald-50 shadow-lg shadow-emerald-950/40 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
                         <span class="iconify text-lg text-emerald-600" data-icon="solar:chat-round-dots-bold"></span>
                         <span>Gabung Grup WA Batch 3</span>
                         <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
+                    <button type="button"
+                            onclick="return copyWhatsAppGroupLink(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')"
+                            title="Salin Link Grup WA"
+                            class="inline-flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-xl text-sm font-bold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all duration-200 cursor-pointer">
+                        <span class="iconify text-base" data-icon="solar:copy-bold"></span>
+                        <span>Salin Link</span>
+                    </button>
                 </div>
             </div>
 
@@ -2065,5 +2073,69 @@ document.addEventListener('click', function(e) {
         }
     }
 });
+
+function openWhatsAppGroup(event, customUrl) {
+    if (event) {
+        try { event.preventDefault(); event.stopPropagation(); } catch (err) {}
+    }
+    const url = customUrl || 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F';
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+        window.location.href = url;
+    } else {
+        window.open(url, '_blank', 'noopener,noreferrer');
+    }
+    return false;
+}
+
+function copyWhatsAppGroupLink(event, customUrl) {
+    if (event) {
+        try { event.preventDefault(); event.stopPropagation(); } catch (err) {}
+    }
+    const url = customUrl || 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F';
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url).then(function() {
+            showWhatsAppCopyToast();
+        }).catch(function() {
+            fallbackCopyWhatsApp(url);
+        });
+    } else {
+        fallbackCopyWhatsApp(url);
+    }
+    return false;
+}
+
+function fallbackCopyWhatsApp(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        showWhatsAppCopyToast();
+    } catch (err) {
+        prompt("Salin link grup WhatsApp berikut:", text);
+    }
+    document.body.removeChild(textArea);
+}
+
+function showWhatsAppCopyToast() {
+    if (window.Swal) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Tersalin!',
+            text: 'Link grup WhatsApp berhasil disalin ke clipboard.',
+            timer: 2000,
+            showConfirmButton: false,
+            toast: true,
+            position: 'top-end'
+        });
+    } else {
+        alert('Link grup WhatsApp berhasil disalin!');
+    }
+}
 </script>
 @endsection

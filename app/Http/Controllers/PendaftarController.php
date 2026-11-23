@@ -173,8 +173,8 @@ class PendaftarController extends Controller
             'personal_statement' => 'nullable|mimes:pdf,doc,docx,jpg,jpeg,png,webp|max:10240',
             'study_plan' => 'nullable|mimes:pdf,doc,docx,jpg,jpeg,png,webp|max:10240',
             'surat_rekomendasi_sekolah' => 'nullable|mimes:pdf,doc,docx,jpg,jpeg,png,webp|max:10240',
-            'motivasi_video' => 'nullable|url|max:500',
-            'motivasi_video_tiktok' => 'nullable|url|max:500',
+            'motivasi_video' => 'nullable|string|max:1000',
+            'motivasi_video_tiktok' => 'nullable|string|max:1000',
             'sertifikat.*' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:10240',
             'prestasi' => 'nullable|mimes:pdf,jpg,jpeg,png,webp|max:10240',
             'nama_sertifikat' => 'nullable|string|max:255',
@@ -230,11 +230,19 @@ class PendaftarController extends Controller
 
         // --- Handle Link Video Motivasi ---
         if (!$uploadField || $uploadField === 'motivasi_video') {
-            if ($request->filled('motivasi_video')) {
-                $berkas->motivasi_video = $request->motivasi_video;
+            if ($request->has('motivasi_video')) {
+                $val = trim((string) $request->input('motivasi_video'));
+                if ($val !== '' && !preg_match('~^https?://~i', $val)) {
+                    $val = 'https://' . $val;
+                }
+                $berkas->motivasi_video = $val ?: null;
             }
-            if ($request->filled('motivasi_video_tiktok')) {
-                $berkas->motivasi_video_tiktok = $request->motivasi_video_tiktok;
+            if ($request->has('motivasi_video_tiktok')) {
+                $val = trim((string) $request->input('motivasi_video_tiktok'));
+                if ($val !== '' && !preg_match('~^https?://~i', $val)) {
+                    $val = 'https://' . $val;
+                }
+                $berkas->motivasi_video_tiktok = $val ?: null;
             }
         }
 

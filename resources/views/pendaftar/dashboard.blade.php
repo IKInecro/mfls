@@ -168,16 +168,24 @@
                 </div>
             </div>
 
-            <a href="https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F" 
-               target="_blank" 
-               rel="noopener noreferrer" 
-               class="shrink-0 w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md hover:shadow-emerald-500/25 transition-all duration-200 active:scale-[0.98] group">
-                <span class="iconify text-lg group-hover:scale-110 transition-transform" data-icon="solar:chat-round-dots-bold"></span>
-                <span>Masuk Grup WA Batch 3</span>
-                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-            </a>
+            <div class="shrink-0 w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <a href="https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F" 
+                   onclick="return openWhatsAppGroup(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')"
+                   class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md hover:shadow-emerald-500/25 transition-all duration-200 active:scale-[0.98] group cursor-pointer">
+                    <span class="iconify text-lg group-hover:scale-110 transition-transform" data-icon="solar:chat-round-dots-bold"></span>
+                    <span>Masuk Grup WA Batch 3</span>
+                    <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </a>
+                <button type="button" 
+                        onclick="return copyWhatsAppGroupLink(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')"
+                        title="Salin Tautan Grup WhatsApp"
+                        class="inline-flex items-center justify-center gap-1.5 px-3.5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 transition-all duration-200 active:scale-[0.98] cursor-pointer">
+                    <span class="iconify text-base" data-icon="solar:copy-bold"></span>
+                    <span>Salin Link</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -337,24 +345,31 @@
 
                 <div class="space-y-2 pt-1">
                     <!-- WhatsApp Group MFLS Batch 3 Link -->
-                    <a href="https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F" 
-                       target="_blank" 
-                       rel="noopener noreferrer" 
-                       class="flex items-center gap-2.5 p-2.5 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 transition-all group">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0">
-                            <span class="iconify text-lg" data-icon="logos:whatsapp-icon"></span>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-1.5">
-                                <p class="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors truncate">Grup WA MFLS Batch 3</p>
-                                <span class="px-1.5 py-0.5 rounded text-[8px] font-black bg-emerald-600 text-white leading-none">Grup</span>
+                    <div class="flex items-center gap-1.5">
+                        <a href="https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F" 
+                           onclick="return openWhatsAppGroup(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')"
+                           class="flex-1 flex items-center gap-2.5 p-2.5 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 transition-all group cursor-pointer">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0">
+                                <span class="iconify text-lg" data-icon="logos:whatsapp-icon"></span>
                             </div>
-                            <p class="text-[9px] text-emerald-700 font-medium truncate">Koordinasi calon penerima beasiswa</p>
-                        </div>
-                        <svg class="w-3.5 h-3.5 text-emerald-600 group-hover:translate-x-0.5 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                    </a>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5">
+                                    <p class="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors truncate">Grup WA MFLS Batch 3</p>
+                                    <span class="px-1.5 py-0.5 rounded text-[8px] font-black bg-emerald-600 text-white leading-none">Grup</span>
+                                </div>
+                                <p class="text-[9px] text-emerald-700 font-medium truncate">Koordinasi calon penerima beasiswa</p>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-emerald-600 group-hover:translate-x-0.5 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                        </a>
+                        <button type="button" 
+                                onclick="return copyWhatsAppGroupLink(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')" 
+                                title="Salin Link Grup WA"
+                                class="p-2.5 rounded-xl bg-emerald-50/70 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 transition-all cursor-pointer">
+                            <span class="iconify text-base" data-icon="solar:copy-bold"></span>
+                        </button>
+                    </div>
 
                     <!-- WhatsApp Channel Link -->
                     <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" 

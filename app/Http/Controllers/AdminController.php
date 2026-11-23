@@ -262,6 +262,159 @@ class AdminController extends Controller
         return view('admin.palugada.index', compact('pendaftars'));
     }
 
+    /**
+     * Tampilkan List Video Motivasi Pendaftar
+     */
+    public function indexVideoMotivasi(Request $request)
+    {
+        if (in_array(auth()->user()->role, ['mentor', 'dosen'])) {
+            return abort(403);
+        }
+
+        $query = Akun::where('role', 'pendaftar')
+            ->with(['peserta.daftar', 'peserta.berkas']);
+
+        // Search Keyword
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhereHas('peserta', function ($qp) use ($search) {
+                        $qp->where('no_hp', 'like', "%{$search}%")
+                            ->orWhere('no_whatsapp', 'like', "%{$search}%")
+                            ->orWhere('nisn', 'like', "%{$search}%")
+                            ->orWhere('pilihan_prodi', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('peserta.daftar', function ($qd) use ($search) {
+                        $qd->where('asal_sekolah', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Filter Program Studi
+        if ($request->filled('prodi')) {
+            $prodi = $request->prodi;
+            $query->whereHas('peserta', function ($q) use ($prodi) {
+                $q->where('pilihan_prodi', 'like', "%{$prodi}%");
+            });
+        }
+
+        // Filter Status Submission Video
+        $status = $request->get('status', 'all');
+        if ($status === 'sudah') {
+            $query->whereHas('peserta.berkas', function ($q) {
+                $q->where(function ($sub) {
+                    $sub->whereNotNull('motivasi_video')
+                        ->where('motivasi_video', '!=', '')
+                        ->orWhere(function ($sub2) {
+                            $sub2->whereNotNull('motivasi_video_tiktok')
+                                ->where('motivasi_video_tiktok', '!=', '');
+                        });
+                });
+            });
+        } elseif ($status === 'lengkap') {
+            $query->whereHas('peserta.berkas', function ($q) {
+                $q->whereNotNull('motivasi_video')
+                    ->where('motivasi_video', '!=', '')
+                    ->whereNotNull('motivasi_video_tiktok')
+                    ->where('motivasi_video_tiktok', '!=', '');
+            });
+        } elseif ($status === 'video_utama') {
+            $query->whereHas('peserta.berkas', function ($q) {
+                $q->whereNotNull('motivasi_video')
+                    ->where('motivasi_video', '!=', '');
+            });
+        } elseif ($status === 'video_tiktok') {
+            $query->whereHas('peserta.berkas', function ($q) {
+                $q->whereNotNull('motivasi_video_tiktok')
+                    ->where('motivasi_video_tiktok', '!=', '');
+            });
+        } elseif ($status === 'belum') {
+            $query->where(function ($q) {
+                $q->whereDoesntHave('peserta.berkas')
+                    ->orWhereHas('peserta.berkas', function ($qb) {
+                        $qb->where(function ($sub) {
+                            $sub->whereNull('motivasi_video')->orWhere('motivasi_video', '');
+                        })->where(function ($sub) {
+                            $sub->whereNull('motivasi_video_tiktok')->orWhere('motivasi_video_tiktok', '');
+                        });
+                    });
+            });
+        }
+
+        // Filter Platform Video Utama
+        if ($request->filled('platform')) {
+            $platform = $request->platform;
+            $query->whereHas('peserta.berkas', function ($q) use ($platform) {
+                if ($platform === 'youtube') {
+                    $q->where(function ($sub) {
+                        $sub->where('motivasi_video', 'like', '%youtube.com%')
+                            ->orWhere('motivasi_video', 'like', '%youtu.be%');
+                    });
+                } elseif ($platform === 'tiktok') {
+                    $q->where(function ($sub) {
+                        $sub->where('motivasi_video', 'like', '%tiktok.com%')
+                            ->orWhere('motivasi_video_tiktok', 'like', '%tiktok.com%');
+                    });
+                } elseif ($platform === 'drive') {
+                    $q->where('motivasi_video', 'like', '%drive.google.com%');
+                } elseif ($platform === 'instagram') {
+                    $q->where('motivasi_video', 'like', '%instagram.com%');
+                }
+            });
+        }
+
+        // Stats calculation
+        $totalPendaftar = Akun::where('role', 'pendaftar')->count();
+        $totalSubmitVideo = Akun::where('role', 'pendaftar')
+            ->whereHas('peserta.berkas', function ($q) {
+                $q->where(function ($sub) {
+                    $sub->whereNotNull('motivasi_video')
+                        ->where('motivasi_video', '!=', '')
+                        ->orWhere(function ($sub2) {
+                            $sub2->whereNotNull('motivasi_video_tiktok')
+                                ->where('motivasi_video_tiktok', '!=', '');
+                        });
+                });
+            })->count();
+
+        $totalSubmitUtama = Akun::where('role', 'pendaftar')
+            ->whereHas('peserta.berkas', function ($q) {
+                $q->whereNotNull('motivasi_video')->where('motivasi_video', '!=', '');
+            })->count();
+
+        $totalSubmitTiktok = Akun::where('role', 'pendaftar')
+            ->whereHas('peserta.berkas', function ($q) {
+                $q->whereNotNull('motivasi_video_tiktok')->where('motivasi_video_tiktok', '!=', '');
+            })->count();
+
+        $totalBelumSubmit = $totalPendaftar - $totalSubmitVideo;
+
+        $pendaftars = $query->latest()->paginate(20)->withQueryString();
+
+        $prodiList = [
+            'Sains Komunikasi',
+            'Desain Komunikasi Visual (DKV)',
+            'Manajemen',
+            'Akuntansi',
+            'Sistem Informasi',
+            'Pendidikan Bahasa Inggris',
+            'Pendidikan Matematika',
+            'Ilmu Komputer'
+        ];
+
+        return view('admin.video_motivasi.index', compact(
+            'pendaftars',
+            'totalPendaftar',
+            'totalSubmitVideo',
+            'totalSubmitUtama',
+            'totalSubmitTiktok',
+            'totalBelumSubmit',
+            'prodiList'
+        ));
+    }
+
     // --- SISTEM DATABASE TERPUSAT: BEASISWA ---
     public function indexBeasiswa(Request $request)
     {

@@ -437,7 +437,177 @@
         @endforeach
     </div>
 
-    <!-- 3. MULTIPLE SERTIFIKAT PRESTASI SECTION -->
+    <!-- 3. SUBMISSION VIDEO MOTIVASI SECTION -->
+    <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div class="px-4 sm:px-6 py-3.5 sm:py-4 bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-400/30 flex items-center justify-center shrink-0">
+                    <span class="iconify text-lg sm:text-xl" data-icon="solar:videocamera-record-bold-duotone"></span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-xs sm:text-sm font-extrabold text-white tracking-tight">Submission Video Motivasi</h2>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">Tahap Seleksi</span>
+                    </div>
+                    <p class="text-[10px] sm:text-[11px] text-slate-300 font-medium">Cantumkan tautan (link) video motivasi perkenalan diri dan konten kreatif Anda.</p>
+                </div>
+            </div>
+            @php
+                $hasUtama = !empty($berkas->motivasi_video);
+                $hasTiktok = !empty($berkas->motivasi_video_tiktok);
+            @endphp
+            <div class="shrink-0 flex items-center gap-2">
+                @if($hasUtama && $hasTiktok)
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                        <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                        <span>Video Lengkap</span>
+                    </span>
+                @elseif($hasUtama || $hasTiktok)
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                        <span>Tersimpan Sebagian</span>
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-slate-300 border border-white/15">
+                        <span>Belum Mengisi</span>
+                    </span>
+                @endif
+            </div>
+        </div>
+
+        <form action="{{ route('pendaftar.berkas.store') }}" method="POST" class="p-4 sm:p-6 md:p-8 space-y-5">
+            @csrf
+            <input type="hidden" name="upload_field" value="motivasi_video">
+
+            <!-- Information Tip -->
+            <div class="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-indigo-50/70 border border-indigo-100 text-indigo-950 flex items-start gap-3">
+                <span class="iconify text-xl text-indigo-600 shrink-0 mt-0.5" data-icon="solar:info-circle-bold"></span>
+                <div class="text-xs space-y-1">
+                    <p class="font-bold text-indigo-950">Petunjuk Pengisian Link Video:</p>
+                    <ul class="list-disc list-inside space-y-0.5 text-indigo-900 leading-relaxed font-medium">
+                        <li><strong>Video Motivasi Utama:</strong> Unggah ke <strong>YouTube (Public / Unlisted)</strong>, <strong>Google Drive (Akses dibuka "Siapa saja yang memiliki link")</strong>, atau <strong>Instagram Reels</strong>.</li>
+                        <li><strong>Video TikTok (Opsional):</strong> Jika Anda mengunggah konten video ke TikTok, cantumkan tautan postingan TikTok Anda.</li>
+                        <li>Pastikan link dapat diakses dan tidak di-private agar tim panitia beasiswa dapat meninjau video Anda.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <!-- Field 1: Video Motivasi Utama -->
+                <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-3 flex flex-col justify-between">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between gap-2">
+                            <label for="motivasi_video" class="block text-xs font-black text-slate-800 tracking-wide">
+                                Link Video Motivasi Utama <span class="text-indigo-600">*</span>
+                            </label>
+                            @if(!empty($berkas->motivasi_video))
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                    Tersimpan
+                                </span>
+                            @else
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-200 text-slate-600">
+                                    Belum Diisi
+                                </span>
+                            @endif
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-relaxed font-normal">
+                            Link video YouTube / Google Drive / Reels berisi perkenalan diri, alasan memilih MNC University, cita-cita dan komitmen beasiswa.
+                        </p>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <span class="iconify text-base" data-icon="solar:link-bold"></span>
+                            </div>
+                            <input type="text" 
+                                   id="motivasi_video" 
+                                   name="motivasi_video" 
+                                   value="{{ old('motivasi_video', $berkas->motivasi_video ?? '') }}" 
+                                   placeholder="https://www.youtube.com/watch?v=... atau https://drive.google.com/..." 
+                                   class="w-full bg-white text-slate-800 font-medium text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/15 pl-10 pr-3.5 py-2.5 sm:py-3 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    @if(!empty($berkas->motivasi_video))
+                    <div class="pt-2 flex items-center justify-between gap-2 border-t border-slate-200/60">
+                        <a href="{{ $berkas->motivasi_video }}" target="_blank" rel="noopener noreferrer" 
+                           class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:underline truncate">
+                            <span class="iconify text-sm shrink-0" data-icon="solar:play-bold"></span>
+                            <span>Buka / Tonton Video Utama</span>
+                            <span class="iconify text-xs shrink-0" data-icon="solar:arrow-right-up-linear"></span>
+                        </a>
+                        <button type="button" 
+                                onclick="confirmDeleteFile('motivasi_video')"
+                                title="Hapus Link Ini"
+                                class="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors shrink-0">
+                            <span class="iconify text-base" data-icon="solar:trash-bin-trash-bold"></span>
+                        </button>
+                    </div>
+                    @endif
+                </div>
+
+                <!-- Field 2: Video Motivasi TikTok -->
+                <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-3 flex flex-col justify-between">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between gap-2">
+                            <label for="motivasi_video_tiktok" class="block text-xs font-black text-slate-800 tracking-wide flex items-center gap-1.5">
+                                <span>Link Konten Video TikTok</span>
+                                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-200 text-slate-600">Opsional</span>
+                            </label>
+                            @if(!empty($berkas->motivasi_video_tiktok))
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                    Tersimpan
+                                </span>
+                            @else
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-200 text-slate-600">
+                                    Belum Diisi
+                                </span>
+                            @endif
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-relaxed font-normal">
+                            Link video TikTok perkenalan atau kampanye beasiswa yang Anda unggah ke akun TikTok pribadi Anda.
+                        </p>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <span class="iconify text-base" data-icon="logos:tiktok-icon"></span>
+                            </div>
+                            <input type="text" 
+                                   id="motivasi_video_tiktok" 
+                                   name="motivasi_video_tiktok" 
+                                   value="{{ old('motivasi_video_tiktok', $berkas->motivasi_video_tiktok ?? '') }}" 
+                                   placeholder="https://www.tiktok.com/@username/video/..." 
+                                   class="w-full bg-white text-slate-800 font-medium text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/15 pl-10 pr-3.5 py-2.5 sm:py-3 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    @if(!empty($berkas->motivasi_video_tiktok))
+                    <div class="pt-2 flex items-center justify-between gap-2 border-t border-slate-200/60">
+                        <a href="{{ $berkas->motivasi_video_tiktok }}" target="_blank" rel="noopener noreferrer" 
+                           class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:underline truncate">
+                            <span class="iconify text-sm shrink-0" data-icon="solar:play-bold"></span>
+                            <span>Buka / Tonton Video TikTok</span>
+                            <span class="iconify text-xs shrink-0" data-icon="solar:arrow-right-up-linear"></span>
+                        </a>
+                        <button type="button" 
+                                onclick="confirmDeleteFile('motivasi_video_tiktok')"
+                                title="Hapus Link Ini"
+                                class="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors shrink-0">
+                            <span class="iconify text-base" data-icon="solar:trash-bin-trash-bold"></span>
+                        </button>
+                    </div>
+                    @endif
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button type="submit" 
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shadow-xs active:scale-[0.99] cursor-pointer">
+                    <span class="iconify text-base" data-icon="solar:diskette-bold"></span>
+                    <span>Simpan Link Video Motivasi</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 4. MULTIPLE SERTIFIKAT PRESTASI SECTION -->
     <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div class="px-4 sm:px-6 py-3.5 sm:py-4 bg-slate-50/70 border-b border-slate-200/70 flex items-center justify-between">
             <div class="flex items-center gap-3">

@@ -389,6 +389,77 @@
         });
 
     })();
+
+    // Global WhatsApp Group Helpers (Supports Mobile Web, In-App Browsers, Desktop, and Copy Fallback)
+    window.openWhatsAppGroup = function(event, customUrl) {
+        if (event) {
+            try { event.preventDefault(); event.stopPropagation(); } catch (err) {}
+        }
+        const url = customUrl || 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F';
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) {
+            window.location.href = url;
+        } else {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+        return false;
+    };
+
+    window.copyWhatsAppGroupLink = function(event, customUrl) {
+        if (event) {
+            try { event.preventDefault(); event.stopPropagation(); } catch (err) {}
+        }
+        const url = customUrl || 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F';
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(url).then(function() {
+                showWhatsAppCopyToast();
+            }).catch(function() {
+                fallbackCopyWhatsApp(url);
+            });
+        } else {
+            fallbackCopyWhatsApp(url);
+        }
+        return false;
+    };
+
+    function fallbackCopyWhatsApp(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showWhatsAppCopyToast();
+        } catch (err) {
+            prompt("Salin link grup WhatsApp berikut:", text);
+        }
+        document.body.removeChild(textArea);
+    }
+
+    function showWhatsAppCopyToast() {
+        if (window.Swal) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Tersalin!',
+                text: 'Link grup WhatsApp berhasil disalin ke clipboard.',
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        } else if (window.modernAlert) {
+            window.modernAlert({
+                type: 'success',
+                title: 'Tersalin!',
+                message: 'Link grup WhatsApp berhasil disalin ke clipboard.'
+            });
+        } else {
+            alert('Link grup WhatsApp berhasil disalin!');
+        }
+    }
     </script>
 </body>
 </html>
