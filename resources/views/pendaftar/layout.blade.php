@@ -284,6 +284,15 @@
             if (window.Iconify && typeof window.Iconify.scan === 'function') {
                 window.Iconify.scan(container);
             }
+
+            // Re-initialize Alpine.js on the new DOM if present
+            if (window.Alpine && typeof window.Alpine.initTree === 'function') {
+                try {
+                    window.Alpine.initTree(container);
+                } catch (e) {
+                    console.warn('Alpine initTree warning:', e);
+                }
+            }
         }
 
         function navigateSpa(url, pushState = true) {

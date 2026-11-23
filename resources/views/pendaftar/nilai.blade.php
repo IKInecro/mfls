@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <form action="{{ route('pendaftar.nilai.store') }}" method="POST" enctype="multipart/form-data" id="mainNilaiForm" class="space-y-4 sm:space-y-6">
+    <form action="{{ route('pendaftar.nilai.store') }}" method="POST" enctype="multipart/form-data" id="mainNilaiForm" novalidate class="space-y-4 sm:space-y-6">
         @csrf
 
         <!-- Sticky Semester Navigation Bar (Fitted for Mobile without horizontal overflow) -->
@@ -144,14 +144,14 @@
                                     {{ $mp->nama }}
                                 </label>
                                 <div class="relative">
-                                    <input type="number" 
-                                           step="0.01" 
-                                           min="0" 
-                                           max="100" 
+                                    <input type="text" 
+                                           inputmode="decimal"
                                            name="nilai[{{ $mp->id }}][{{ $semKey }}]" 
-                                           value="{{ $score }}" 
+                                           data-sem="{{ $semKey }}"
+                                           data-label="{{ $mp->nama }}"
+                                           value="{{ $score !== '' ? (is_numeric($score) ? 0 + (string)$score : $score) : '' }}" 
                                            placeholder="0.00"
-                                           class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm sm:text-base font-bold text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 outline-none transition-all tabular-nums">
+                                           class="nilai-input w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm sm:text-base font-bold text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 outline-none transition-all tabular-nums">
                                     <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-bold text-slate-400">Poin</span>
                                 </div>
                             </div>
@@ -168,7 +168,7 @@
                             </div>
                             <div>
                                 <h2 class="text-xs sm:text-sm font-extrabold text-slate-900">Mata Pelajaran Pendukung (Semester {{ $semKey }})</h2>
-                                <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Wajib mengisi minimal 2 mata pelajaran pendukung.</p>
+                                <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Wajib mengisi minimal 2 mata pelajaran pendukung pada rapor Anda.</p>
                             </div>
                         </div>
                     </div>
@@ -177,33 +177,35 @@
                         @for($slotIdx = 1; $slotIdx <= 2; $slotIdx++)
                             @php
                                 $existing = isset($customNilaiBySemester[$semKey]) ? $customNilaiBySemester[$semKey]->values()->get($slotIdx - 1) : null;
-                                $subjName = $existing ? $existing->matpel->nama : '';
+                                $subjName = ($existing && $existing->matpel) ? $existing->matpel->nama : '';
                                 $subjNilai = $existing ? $existing->nilai : '';
                             @endphp
                             <div class="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2.5">
                                 <div class="flex items-center justify-between">
                                     <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Mapel Pendukung 0{{ $slotIdx }}</span>
-                                    <span class="text-[9px] font-bold text-blue-600">Slot Wajib</span>
+                                    <span class="text-[9px] font-bold text-blue-600">Slot Pendukung</span>
                                 </div>
                                 <div class="space-y-1">
                                     <label class="block text-[11px] font-semibold text-slate-600">Nama Mata Pelajaran</label>
                                     <input type="text" 
                                            name="custom_matpel[{{ $semKey }}][{{ $slotIdx }}][nama]" 
+                                           data-sem="{{ $semKey }}"
+                                           data-slot="{{ $slotIdx }}"
                                            value="{{ old("custom_matpel.$semKey.$slotIdx.nama", $subjName) }}"
-                                           placeholder="Contoh: Fisika / Ekonomi" 
-                                           class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 outline-none transition-all">
+                                           placeholder="Contoh: Fisika / Ekonomi / Sosiologi" 
+                                           class="custom-mapel-nama w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 outline-none transition-all">
                                 </div>
                                 <div class="space-y-1">
                                     <label class="block text-[11px] font-semibold text-slate-600">Nilai Pengetahuan</label>
                                     <div class="relative">
-                                        <input type="number" 
-                                               step="0.01" 
-                                               min="0" 
-                                               max="100" 
+                                        <input type="text" 
+                                               inputmode="decimal"
                                                name="custom_matpel[{{ $semKey }}][{{ $slotIdx }}][nilai]" 
-                                               value="{{ old("custom_matpel.$semKey.$slotIdx.nilai", $subjNilai) }}"
+                                               data-sem="{{ $semKey }}"
+                                               data-slot="{{ $slotIdx }}"
+                                               value="{{ old("custom_matpel.$semKey.$slotIdx.nilai", $subjNilai !== '' ? (is_numeric($subjNilai) ? 0 + (string)$subjNilai : $subjNilai) : '') }}"
                                                placeholder="0.00"
-                                               class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm sm:text-base font-bold text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 outline-none transition-all tabular-nums">
+                                               class="custom-mapel-nilai w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm sm:text-base font-bold text-slate-900 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15 outline-none transition-all tabular-nums">
                                         <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-bold text-slate-400">Poin</span>
                                     </div>
                                 </div>
@@ -229,8 +231,9 @@
                     </div>
                 </div>
                 <button type="submit" 
-                        class="px-4 sm:px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-xs active:scale-[0.98] cursor-pointer shrink-0">
-                    Simpan Nilai
+                        id="btnSubmitNilai"
+                        class="px-4 sm:px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-xs active:scale-[0.98] cursor-pointer shrink-0 flex items-center gap-1.5">
+                    <span id="btnSubmitNilaiText">Simpan Nilai</span>
                 </button>
             </div>
         </div>
@@ -248,7 +251,38 @@
 <!-- Interactive Scripts for Nilai Page -->
 <script>
 window.__activeSem = 1;
-function setActiveSem(i) { window.__activeSem = i; }
+
+function setActiveSem(i) {
+    window.__activeSem = i;
+}
+
+function showValidationAlert(title, message) {
+    if (window.modernAlert) {
+        window.modernAlert({
+            type: 'warning',
+            title: title,
+            message: message,
+            confirmText: 'Mengerti'
+        });
+    } else if (window.Swal) {
+        Swal.fire({
+            icon: 'warning',
+            title: title,
+            text: message
+        });
+    } else {
+        alert(`${title}: ${message}`);
+    }
+}
+
+function switchTabTo(sem) {
+    const btn = document.querySelector(`button[onclick="setActiveSem(${sem})"]`);
+    if (btn) {
+        btn.click();
+    } else {
+        setActiveSem(sem);
+    }
+}
 
 function confirmDeleteFile(field, filePath = null) {
     if (window.modernAlert) {
@@ -295,24 +329,102 @@ function previewFiles(input, previewId, sem = null) {
     const mainForm = document.getElementById('mainNilaiForm');
     if (mainForm) {
         mainForm.addEventListener('submit', function(e) {
-            let filledCount = 0;
-            document.querySelectorAll('input[name^="custom_matpel"][name$="[nama]"]').forEach(input => {
-                const scoreInput = document.querySelector(`input[name="${input.name.replace('[nama]', '[nilai]')}"]`);
-                if (input.value.trim() !== '' && scoreInput && scoreInput.value.trim() !== '') {
-                    filledCount++;
-                }
+            // Remove previous error highlights
+            document.querySelectorAll('.border-rose-500').forEach(el => {
+                el.classList.remove('border-rose-500', 'ring-2', 'ring-rose-200');
             });
 
-            if (filledCount < 2) {
-                e.preventDefault();
-                if (window.modernAlert) {
-                    window.modernAlert({
-                        type: 'warning',
-                        title: 'Lengkapi Mapel Pendukung',
-                        message: 'Wajib mengisi minimal 2 Mata Pelajaran Pendukung beserta nilainya.',
-                        confirmText: 'Mengerti'
-                    });
+            // 1. Validasi Nilai Mapel Wajib (Skala 0 - 100)
+            const coreInputs = document.querySelectorAll('.nilai-input');
+            for (let input of coreInputs) {
+                let val = input.value.trim().replace(',', '.');
+                if (val !== '') {
+                    let num = parseFloat(val);
+                    if (isNaN(num) || num < 0 || num > 100) {
+                        e.preventDefault();
+                        const sem = input.getAttribute('data-sem') || 1;
+                        const label = input.getAttribute('data-label') || 'Mata Pelajaran Wajib';
+                        switchTabTo(sem);
+                        setTimeout(() => {
+                            input.focus();
+                            input.classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
+                        }, 50);
+                        showValidationAlert('Nilai Tidak Valid', `Nilai ${label} pada Semester ${sem} harus berada dalam rentang 0 s.d. 100.`);
+                        return false;
+                    }
                 }
+            }
+
+            // 2. Validasi Mata Pelajaran Pendukung
+            let filledCustomCount = 0;
+            const customNamaInputs = document.querySelectorAll('.custom-mapel-nama');
+            for (let namaInput of customNamaInputs) {
+                const sem = namaInput.getAttribute('data-sem');
+                const slot = namaInput.getAttribute('data-slot');
+                const nilaiInput = document.querySelector(`.custom-mapel-nilai[data-sem="${sem}"][data-slot="${slot}"]`);
+
+                const namaVal = namaInput.value.trim();
+                const nilaiVal = nilaiInput ? nilaiInput.value.trim().replace(',', '.') : '';
+
+                // Nama diisi tapi nilai kosong
+                if (namaVal !== '' && nilaiVal === '') {
+                    e.preventDefault();
+                    switchTabTo(sem);
+                    if (nilaiInput) {
+                        setTimeout(() => {
+                            nilaiInput.focus();
+                            nilaiInput.classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
+                        }, 50);
+                    }
+                    showValidationAlert('Lengkapi Nilai', `Nilai untuk mata pelajaran pendukung "${namaVal}" pada Semester ${sem} belum diisi.`);
+                    return false;
+                }
+
+                // Nilai diisi tapi nama kosong
+                if (namaVal === '' && nilaiVal !== '') {
+                    e.preventDefault();
+                    switchTabTo(sem);
+                    setTimeout(() => {
+                        namaInput.focus();
+                        namaInput.classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
+                    }, 50);
+                    showValidationAlert('Lengkapi Nama Mapel', `Nama mata pelajaran pendukung pada Semester ${sem} belum diisi.`);
+                    return false;
+                }
+
+                // Keduanya diisi
+                if (namaVal !== '' && nilaiVal !== '') {
+                    let num = parseFloat(nilaiVal);
+                    if (isNaN(num) || num < 0 || num > 100) {
+                        e.preventDefault();
+                        switchTabTo(sem);
+                        if (nilaiInput) {
+                            setTimeout(() => {
+                                nilaiInput.focus();
+                                nilaiInput.classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
+                            }, 50);
+                        }
+                        showValidationAlert('Nilai Tidak Valid', `Nilai untuk mata pelajaran pendukung "${namaVal}" pada Semester ${sem} harus berada di antara 0 s.d. 100.`);
+                        return false;
+                    }
+                    filledCustomCount++;
+                }
+            }
+
+            // 3. Wajib minimal 2 mapel pendukung
+            if (filledCustomCount < 2) {
+                e.preventDefault();
+                showValidationAlert('Lengkapi Mapel Pendukung', 'Anda wajib mengisi minimal 2 Mata Pelajaran Pendukung (Nama & Nilai) pada rapor Anda.');
+                return false;
+            }
+
+            // 4. Loading state saat form valid & dikirim
+            const submitBtn = document.getElementById('btnSubmitNilai');
+            const submitText = document.getElementById('btnSubmitNilaiText');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+                if (submitText) submitText.textContent = 'Menyimpan...';
             }
         });
     }

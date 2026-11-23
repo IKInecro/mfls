@@ -450,44 +450,118 @@ class PendaftarController extends Controller
         ]);
 
         $peserta = Auth::user()->peserta;
+        if (!$peserta) {
+            return back()->with('error', 'Data profil peserta tidak ditemukan.');
+        }
 
-        // Server-side validation for mandatory supporting subjects
-        // Validasi: harus ada minimal 2 matpel pendukung yang diisi (nama & nilai) di seluruh semester
-        $customCount = 0;
-        if ($request->has('custom_matpel')) {
-            foreach ($request->custom_matpel as $sem => $slots) {
-                foreach ($slots as $slot) {
-                    if (!empty($slot['nama']) && ($slot['nilai'] || $slot['nilai'] === '0')) {
-                        $customCount++;
+        $tahunLulus = (int) ($peserta->tahun_lulus ?? 2027);
+        $maxSemester = ($tahunLulus < 2027) ? 6 : 5;
+
+        // 1. Parse & validate Core Subjects ($request->nilai)
+        $coreScoresToSave = [];
+        $coreScoresToDelete = [];
+
+        if ($request->has('nilai') && is_array($request->nilai)) {
+            foreach ($request->nilai as $matpelId => $semesters) {
+                if (!is_array($semesters)) continue;
+                foreach ($semesters as $sem => $rawVal) {
+                    $sem = (int) $sem;
+                    if ($sem < 1 || $sem > $maxSemester) continue;
+
+                    $strVal = trim((string) $rawVal);
+                    if ($strVal === '') {
+                        // Tandai untuk dihapus jika dikosongkan oleh user
+                        $coreScoresToDelete[] = [
+                            'matpel_id' => (int) $matpelId,
+                            'semester' => $sem
+                        ];
+                        continue;
                     }
+
+                    // Normalisasi koma menjadi titik desimal
+                    $cleanVal = str_replace(',', '.', $strVal);
+                    if (!is_numeric($cleanVal)) {
+                        return back()->withInput()->with('error', "Nilai mata pelajaran wajib pada Semester {$sem} harus berupa angka (skala 0 - 100).");
+                    }
+
+                    $numVal = (float) $cleanVal;
+                    if ($numVal < 0 || $numVal > 100) {
+                        return back()->withInput()->with('error', "Nilai mata pelajaran wajib pada Semester {$sem} harus berada di antara 0 sampai 100.");
+                    }
+
+                    $coreScoresToSave[] = [
+                        'matpel_id' => (int) $matpelId,
+                        'semester' => $sem,
+                        'nilai' => round($numVal, 2)
+                    ];
                 }
             }
         }
 
-        if ($customCount < 2) {
-            return back()->withInput()->with('error', 'Anda wajib menambahkan minimal 2 Mata Pelajaran Pendukung.');
+        // 2. Parse & validate Custom Subjects ($request->custom_matpel)
+        $customScoresToSave = [];
+        $customCount = 0;
+
+        if ($request->has('custom_matpel') && is_array($request->custom_matpel)) {
+            foreach ($request->custom_matpel as $sem => $slots) {
+                $sem = (int) $sem;
+                if ($sem < 1 || $sem > $maxSemester) continue;
+                if (!is_array($slots)) continue;
+
+                foreach ($slots as $slotIdx => $slot) {
+                    $nama = trim((string) ($slot['nama'] ?? ''));
+                    $rawNilai = trim((string) ($slot['nilai'] ?? ''));
+
+                    // Jika keduanya kosong, lewati
+                    if ($nama === '' && $rawNilai === '') {
+                        continue;
+                    }
+
+                    // Jika nama diisi tapi nilai kosong
+                    if ($nama !== '' && $rawNilai === '') {
+                        return back()->withInput()->with('error', "Nilai untuk mata pelajaran pendukung \"{$nama}\" pada Semester {$sem} belum diisi. Harap lengkapi nilai (skala 0 - 100).");
+                    }
+
+                    // Jika nilai diisi tapi nama kosong
+                    if ($nama === '' && $rawNilai !== '') {
+                        return back()->withInput()->with('error', "Nama mata pelajaran pendukung pada Semester {$sem} belum diisi.");
+                    }
+
+                    // Validasi angka
+                    $cleanNilai = str_replace(',', '.', $rawNilai);
+                    if (!is_numeric($cleanNilai)) {
+                        return back()->withInput()->with('error', "Nilai untuk mata pelajaran \"{$nama}\" pada Semester {$sem} harus berupa angka yang valid.");
+                    }
+
+                    $numNilai = (float) $cleanNilai;
+                    if ($numNilai < 0 || $numNilai > 100) {
+                        return back()->withInput()->with('error', "Nilai untuk mata pelajaran \"{$nama}\" pada Semester {$sem} harus berada di antara 0 sampai 100.");
+                    }
+
+                    $customScoresToSave[] = [
+                        'semester' => $sem,
+                        'nama' => $nama,
+                        'nilai' => round($numNilai, 2),
+                    ];
+                    $customCount++;
+                }
+            }
         }
 
+        // Wajib minimal 2 mapel pendukung terisi
+        if ($customCount < 2) {
+            return back()->withInput()->with('error', 'Anda wajib menambahkan minimal 2 Mata Pelajaran Pendukung (Nama dan Nilai) pada rapor Anda.');
+        }
+
+        // 3. Handle File Uploads (Surat Buta Warna & Rapor)
         $berkas = \App\Models\Berkas::firstOrNew(['peserta_id' => $peserta->id]);
 
-        // Handle deletions of custom subjects 
-        if ($request->has('deleted_custom_matpels')) {
-            \App\Models\Nilai::where('peserta_id', $peserta->id)
-                ->whereIn('matpel_id', $request->deleted_custom_matpels)
-                ->delete();
-        }
-
-        // Upload Buta Warna if DKV
         if ($request->hasFile('surat_buta_warna')) {
             $path = $request->file('surat_buta_warna')->store('berkas/' . $peserta->id, 'public');
             $berkas->surat_buta_warna = $path;
             $this->compressImage($path);
         }
 
-        $tahunLulus = (int) ($peserta->tahun_lulus ?? 2027);
-        $maxSemester = ($tahunLulus < 2027) ? 6 : 5;
-
-        // Handle Rapor Files Scans (Semester 1-6)
         for ($i = 1; $i <= $maxSemester; $i++) {
             $field = 'rapor' . $i;
             if ($request->hasFile($field)) {
@@ -499,68 +573,91 @@ class PendaftarController extends Controller
                         $existing[] = $p;
                         $this->compressImage($p);
                     }
-                }
-                else {
+                } else {
                     $p = $files->store('berkas/' . $peserta->id . '/' . $field, 'public');
                     $existing[] = $p;
                     $this->compressImage($p);
                 }
-                $berkas->$field = json_encode($existing);
+                $berkas->$field = json_encode(array_values(array_unique($existing)));
             }
         }
         $berkas->save();
 
-        // Save Core Subjects
-        if ($request->has('nilai')) {
-            foreach ($request->nilai as $matpelId => $semesters) {
-                foreach ($semesters as $sem => $val) {
-                    if ($val || $val === '0') { // Allow 0
-                        \App\Models\Nilai::updateOrCreate(
-                        ['peserta_id' => $peserta->id, 'matpel_id' => $matpelId, 'semester' => $sem],
-                        ['nilai' => $val]
-                        );
-                    }
-                }
-            }
-        }
+        // 4. Save Core & Custom Nilai (Bypass redundant Google Sheets 50x loops, sync once at end)
+        $coreSubjects = ['Bahasa Indonesia', 'Matematika Wajib', 'Bahasa Inggris'];
+        $coreIds = \App\Models\Matpel::whereIn('nama', $coreSubjects)->pluck('id')->toArray();
 
-        // Save Custom Subjects (2 per semester)
-        if ($request->has('custom_matpel')) {
-            $coreSubjects = ['Bahasa Indonesia', 'Matematika Wajib', 'Bahasa Inggris'];
-            $coreIds = \App\Models\Matpel::whereIn('nama', $coreSubjects)->pluck('id')->toArray();
-            
-            // First, delete current custom scores to handle "overwriting" or clearing slots
-            // Actually, better to only delete scores for custom matpels for THIS user
+        \App\Models\Nilai::withoutEvents(function () use ($peserta, $coreScoresToSave, $coreScoresToDelete, $customScoresToSave, $coreIds) {
+            // Hapus nilai wajib yang dikosongkan
+            foreach ($coreScoresToDelete as $del) {
+                \App\Models\Nilai::where([
+                    'peserta_id' => $peserta->id,
+                    'matpel_id' => $del['matpel_id'],
+                    'semester' => $del['semester'],
+                ])->delete();
+            }
+
+            // Simpan / update nilai wajib
+            foreach ($coreScoresToSave as $item) {
+                \App\Models\Nilai::updateOrCreate(
+                    ['peserta_id' => $peserta->id, 'matpel_id' => $item['matpel_id'], 'semester' => $item['semester']],
+                    ['nilai' => $item['nilai']]
+                );
+            }
+
+            // Hapus mapel pendukung lama untuk peserta ini
             \App\Models\Nilai::where('peserta_id', $peserta->id)
                 ->whereNotIn('matpel_id', $coreIds)
                 ->delete();
 
-            foreach ($request->custom_matpel as $sem => $slots) {
-                foreach ($slots as $slot) {
-                    if (!empty($slot['nama']) && ($slot['nilai'] || $slot['nilai'] === '0')) {
-                        // Create or Get Matpel
-                        $matpel = \App\Models\Matpel::firstOrCreate(['nama' => $slot['nama']]);
-                        \App\Models\Nilai::updateOrCreate(
-                            ['peserta_id' => $peserta->id, 'matpel_id' => $matpel->id, 'semester' => $sem],
-                            ['nilai' => $slot['nilai']]
-                        );
-                    }
-                }
+            // Simpan mapel pendukung baru
+            foreach ($customScoresToSave as $item) {
+                $matpel = \App\Models\Matpel::firstOrCreate(['nama' => $item['nama']]);
+                \App\Models\Nilai::updateOrCreate(
+                    ['peserta_id' => $peserta->id, 'matpel_id' => $matpel->id, 'semester' => $item['semester']],
+                    ['nilai' => $item['nilai']]
+                );
+            }
+        });
+
+        // 5. Rekalkulasi rata-rata nilai pada model Daftar sekali secara akurat
+        $this->recalculateNilaiPeserta($peserta);
+
+        // 6. Log aktivitas
+        $uploadedRapor = [];
+        for ($i = 1; $i <= $maxSemester; $i++) {
+            if ($request->hasFile('rapor' . $i)) {
+                $uploadedRapor[] = "Scan Rerata S{$i}";
             }
         }
 
-        $tahunLulus = (int) ($peserta->tahun_lulus ?? 2027);
-        $maxSemester = ($tahunLulus < 2027) ? 6 : 5;
-        $uploadedRapor = [];
-        for ($i = 1; $i <= $maxSemester; $i++)
-            if ($request->hasFile('rapor' . $i))
-                $uploadedRapor[] = "Scan Rerata S$i";
-
-        $msg = "Input nilai akademik semester 1-5" . (count($uploadedRapor) > 0 ? " dan unggah berkas " . implode(', ', $uploadedRapor) : "") . ".";
-
+        $msg = "Input nilai akademik semester 1-{$maxSemester}" . (count($uploadedRapor) > 0 ? " dan unggah berkas " . implode(', ', $uploadedRapor) : "") . ".";
         $this->logAktivitas('Pengisian Nilai Rapor', 'Nilai', $peserta->id, $msg);
 
-        return back()->with('success', 'Data akademik dan pilihan program studi berhasil disimpan!');
+        return back()->with('success', 'Data nilai rapor dan akademik berhasil disimpan dengan sukses!');
+    }
+
+    /**
+     * Rekalkulasi rata-rata nilai rapor per semester dan total rata-rata pada model Daftar
+     */
+    protected function recalculateNilaiPeserta($peserta): void
+    {
+        if (!$peserta || !$peserta->daftar) return;
+
+        $daftar = $peserta->daftar;
+        $nilais = $peserta->nilais()->get();
+
+        $updateData = [];
+        for ($sem = 1; $sem <= 6; $sem++) {
+            $semNilais = $nilais->where('semester', $sem);
+            $avgSem = $semNilais->count() > 0 ? $semNilais->avg('nilai') : 0;
+            $updateData["avg_semester_{$sem}"] = round($avgSem, 2);
+        }
+
+        $realAvg = $nilais->count() > 0 ? $nilais->avg('nilai') : 0;
+        $updateData['rata_rata_nilai'] = round($realAvg, 2);
+
+        $daftar->update($updateData);
     }
 
     /**
