@@ -2797,40 +2797,77 @@ class AdminController extends Controller
         }
     }
 
-    public function exportExcel(\App\Services\GoogleSheetService $sheetService)
+    public function exportExcel(\Illuminate\Http\Request $request, \App\Services\GoogleSheetService $sheetService)
     {
-        // Sync to Google Sheet as requested
+        // 1. Prevent timeouts & memory crashes
+        @set_time_limit(300);
+        @ini_set('memory_limit', '512M');
+        \Illuminate\Support\Facades\DB::disableQueryLog();
+
+        // 2. Trigger Google Sheet sync asynchronously in background so download starts immediately
         try {
-            $sheetService->syncAll();
-        } catch(\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('GSheet Sync failed during export: '.$e->getMessage());
+            if (class_exists(\App\Jobs\SyncGoogleSheetJob::class)) {
+                \App\Jobs\SyncGoogleSheetJob::dispatch();
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Async GSheet Sync dispatch failed: ' . $e->getMessage());
         }
 
         $fileName = 'Database_Seleksi_Administrasi_' . date('Y-m-d_H-i') . '.csv';
+
+        // 3. Query all applicants with required relationships
         $pendaftars = \App\Models\Akun::where('role', 'pendaftar')
-            ->with(['peserta.daftar', 'peserta.nilais.matpel', 'peserta.berkas', 'peserta.sertifikats', 'peserta.penilaianAkademiks', 'peserta.penilaianMentors'])
+            ->with([
+                'peserta.daftar',
+                'peserta.nilais.matpel',
+                'peserta.berkas',
+                'peserta.sertifikats',
+                'peserta.penilaianAkademiks',
+                'peserta.penilaianMentors',
+            ])
             ->get();
 
-        // 1. Definisikan Mapel Core & Cari Mapel Tambahan yang ada nilainya
+        // 4. Definisikan Mapel Core & Cari Mapel Tambahan yang ada nilainya
         $coreNames = ['Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'Informatika'];
         $coreMatpels = \App\Models\Matpel::whereIn('nama', $coreNames)->get()->sortBy(function ($m) use ($coreNames) {
             return array_search($m->nama, $coreNames);
         });
 
-        $allUsedMatpelIds = \App\Models\Nilai::whereIn('peserta_id', $pendaftars->pluck('peserta.id'))->pluck('matpel_id')->unique();
+        $allUsedMatpelIds = \App\Models\Nilai::whereIn('peserta_id', $pendaftars->pluck('peserta.id')->filter())->pluck('matpel_id')->unique();
         $additionalMatpels = \App\Models\Matpel::whereIn('id', $allUsedMatpelIds)
             ->whereNotIn('nama', $coreNames)
             ->get();
 
         $orderedMatpels = $coreMatpels->concat($additionalMatpels);
 
-        // 2. Definisikan Column Headers
+        // 5. Definisikan Column Headers Lengkap
         $columns = [
-            'Nama Lengkap', 'Email', 'Jenis Kelamin', 'Nomor HP', 'NISN', 'Asal Sekolah', 'Minat Prodi 1', 'Minat Prodi 2', 'Wilayah (Jabodetabek)',
-            'Kode Referral', 'Catatan Dosen', 'Catatan Mentor'
+            'No',
+            'Status Seleksi Administrasi',
+            'Progres Berkas',
+            'Tanggal Pendaftaran',
+            'Nama Lengkap',
+            'Email',
+            'Jenis Kelamin',
+            'Nomor HP / WhatsApp',
+            'NISN',
+            'Asal Sekolah',
+            'Provinsi',
+            'Kabupaten / Kota',
+            'Wilayah (Jabodetabek)',
+            'Tempat, Tanggal Lahir',
+            'Tahun Lulus',
+            'Telepon Sekolah',
+            'No HP Guru BK',
+            'Minat Prodi 1',
+            'Minat Prodi 2',
+            'Sumber Informasi',
+            'Kode Referral',
+            'Catatan Dosen',
+            'Catatan Mentor',
         ];
 
-        // Detail Semester 1-5 sesuai request "nilai S1 apa aja terus ada avgnya"
+        // Detail Nilai Semester 1-5 + Rata-rata
         for ($sem = 1; $sem <= 5; $sem++) {
             foreach ($orderedMatpels as $mp) {
                 $columns[] = "S{$sem} - {$mp->nama}";
@@ -2841,7 +2878,35 @@ class AdminController extends Controller
         $columns[] = "TOTAL NILAI (S1-S5)";
         $columns[] = "RATA RATA AKADEMIK (S1-S5)";
 
-        // Calculate max certificates
+        // Berkas Utama
+        $berkasColumns = [
+            'FOTO',
+            'RAPOR S1',
+            'RAPOR S2',
+            'RAPOR S3',
+            'RAPOR S4',
+            'RAPOR S5',
+            'RAPOR S6',
+            'IJAZAH / SKL',
+            'PERSONAL STATEMENT',
+            'SURAT REKOMENDASI',
+            'STUDY PLAN',
+            'SURAT BUTA WARNA (DKV)',
+            'PORTOFOLIO (DKV)',
+            'LINK VIDEO MOTIVASI',
+            'LINK VIDEO MOTIVASI TIKTOK',
+            'LINK INSTAGRAM',
+            'LINK TIKTOK',
+            'LINK TWIBBON',
+            'BUKTI FOLLOW IG BEASISWA',
+            'BUKTI FOLLOW IG MNCU',
+            'BUKTI FOLLOW TIKTOK BEASISWA',
+            'BUKTI FOLLOW TIKTOK MNCU',
+            'BUKTI FOLLOW IG MNC NATION',
+            'BUKTI FOLLOW IG THE ARETE GEN',
+        ];
+
+        // Sertifikat Prestasi (Dinamis sesuai data terbanyak peserta)
         $maxSertifikatCount = 0;
         foreach ($pendaftars as $user) {
             $peserta = $user->peserta;
@@ -2852,7 +2917,7 @@ class AdminController extends Controller
                 }
             }
         }
-        $maxSertifikatCount = max(3, $maxSertifikatCount); // Minimum 3 columns for certificates
+        $maxSertifikatCount = max(3, $maxSertifikatCount);
 
         $sertifikatColumns = [];
         for ($i = 1; $i <= $maxSertifikatCount; $i++) {
@@ -2860,121 +2925,233 @@ class AdminController extends Controller
             $sertifikatColumns[] = "SERTIFIKAT {$i} (LINK)";
         }
 
-        // Data Berkas & Links
-        $berkasColumns = [
-            'FOTO', 'RAPOR S1', 'RAPOR S2', 'RAPOR S3', 'RAPOR S4', 'RAPOR S5',
-            'IJAZAH', 'PERSONAL STATEMENT', 'SURAT BUTA WARNA (DKV)', 'PORTOFOLIO (DKV)',
+        // Status Ujian & Beasiswa
+        $extraColumns = [
+            'STATUS SELEKSI UJIAN (CBT)',
+            'NOMINAL BEASISWA',
+            'STATUS WAWANCARA BOD',
         ];
 
-        $columns = array_merge($columns, $berkasColumns, $sertifikatColumns);
+        $columns = array_merge($columns, $berkasColumns, $sertifikatColumns, $extraColumns);
 
-        $headers = [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        ];
+        // 6. Generate CSV via Temp File to compute Content-Length and prevent cut streams
+        $tempFile = tempnam(sys_get_temp_dir(), 'export_seleksi_admin_');
+        $file = fopen($tempFile, 'w+');
 
-        $callback = function () use ($pendaftars, $columns, $orderedMatpels, $maxSertifikatCount) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
+        // Add UTF-8 BOM so Microsoft Excel renders UTF-8 characters seamlessly
+        fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
-            foreach ($pendaftars as $user) {
-                $peserta = $user->peserta;
-                $daftar = $peserta?->daftar;
-                $berkas = $peserta?->berkas;
-                $nilais = $peserta?->nilais ?? collect();
+        $delimiter = $request->get('delimiter', ';');
+        if (!in_array($delimiter, [';', ','])) {
+            $delimiter = ';';
+        }
 
-                // A. Data Identitas
-                $row = [
-                    $user->nama,
-                    $user->email,
-                    $peserta?->jenis_kelamin ?? '-',
-                    $peserta?->no_whatsapp ?: ($daftar?->no_wa ?: '-'),
-                    $peserta?->nisn ?? '-',
-                    $daftar?->asal_sekolah ?? '-',
-                    explode(' | ', $peserta?->pilihan_prodi ?? '')[0] ?? '-',
-                    explode(' | ', $peserta?->pilihan_prodi ?? '')[1] ?? '-',
-                    (function($kab) {
-                        $kab = strtolower($kab ?? '');
-                        $cities = ['jakarta', 'bogor', 'depok', 'tangerang', 'bekasi'];
-                        foreach ($cities as $c) if (str_contains($kab, $c)) return "JABODETABEK";
-                        return "DI LUAR JABODETABEK";
-                    })($peserta?->kabupaten ?? null),
-                    $daftar?->kode_referral ?? '-',
-                    $peserta?->penilaianAkademiks->first()?->catatan ?? '-',
-                    $peserta?->penilaianMentors->first()?->catatan ?? '-',
-                ];
+        fputcsv($file, $columns, $delimiter);
 
-                // B. Data Akademik Rinci (S1-S5)
-                $grandTotalAcademic = 0;
-                $totalMatpelCount = 0;
+        $no = 1;
+        foreach ($pendaftars as $user) {
+            $peserta = $user->peserta;
+            $daftar = $peserta?->daftar;
+            $berkas = $peserta?->berkas;
+            $nilais = $peserta?->nilais ?? collect();
 
-                for ($sem = 1; $sem <= 5; $sem++) {
-                    $semSum = 0;
-                    $semCount = 0;
+            // Status Seleksi Administrasi
+            $statusAdmin = match($daftar?->status) {
+                'lulus' => 'LULUS',
+                'tidak_lulus' => 'TIDAK LULUS',
+                default => 'MENUNGGU VERIFIKASI',
+            };
 
-                    foreach ($orderedMatpels as $mp) {
-                        $nilaiObj = $nilais->where('semester', $sem)->where('matpel_id', $mp->id)->first();
-                        $val = $nilaiObj ? $nilaiObj->nilai : 0;
+            // Progres Berkas
+            $progress = $peserta?->progress ?? 0;
+            if (!$peserta) {
+                $progressText = 'BELUM ISI BIODATA (0%)';
+            } elseif (!$user->email_verified_at) {
+                $progressText = 'BELUM VERIFIKASI EMAIL (OTP)';
+            } elseif ($progress < 100) {
+                $progressText = "BELUM LENGKAP ({$progress}%)";
+            } else {
+                $progressText = '100% LENGKAP';
+            }
 
-                        $row[] = $val > 0 ? $val : '-';
+            // Tanggal Pendaftaran
+            $tanggalDaftar = $daftar?->created_at ? $daftar->created_at->format('d/m/Y H:i') : ($user->created_at ? $user->created_at->format('d/m/Y H:i') : '-');
 
-                        if ($val > 0) {
-                            $semSum += $val;
-                            $semCount++;
-                            $grandTotalAcademic += $val;
-                            $totalMatpelCount++;
-                        }
+            // Format Email & NISN
+            $cleanEmail = $user->email;
+            if (str_starts_with($cleanEmail, 'deleted_')) {
+                $parts = explode('_', $cleanEmail, 3);
+                $cleanEmail = $parts[2] ?? $cleanEmail;
+            }
+
+            $cleanNisn = $peserta?->nisn ?? '-';
+            if (str_starts_with($cleanNisn, 'deleted_')) {
+                $parts = explode('_', $cleanNisn, 3);
+                $cleanNisn = $parts[2] ?? $cleanNisn;
+            }
+
+            // Wilayah Jabodetabek
+            $kabupaten = $peserta?->kabupaten ?: ($daftar?->kabupaten ?: '-');
+            $provinsi = $peserta?->provinsi ?: ($daftar?->provinsi ?: '-');
+            $kabLower = strtolower($kabupaten);
+            $cities = ['jakarta', 'bogor', 'depok', 'tangerang', 'bekasi'];
+            $wilayah = 'DI LUAR JABODETABEK';
+            foreach ($cities as $c) {
+                if (str_contains($kabLower, $c)) {
+                    $wilayah = 'JABODETABEK';
+                    break;
+                }
+            }
+
+            // Program Studi
+            $prodi1 = $peserta?->pilihan_prodi ?? '-';
+            $prodi2 = $peserta?->pilihan_prodi2 ?? '-';
+            if (str_contains($prodi1, ' | ')) {
+                $parts = explode(' | ', $prodi1);
+                $prodi1 = $parts[0] ?? $prodi1;
+                if ($prodi2 === '-' && isset($parts[1])) {
+                    $prodi2 = $parts[1];
+                }
+            }
+
+            // A. Data Identitas
+            $row = [
+                $no++,
+                $statusAdmin,
+                $progressText,
+                $tanggalDaftar,
+                $user->nama,
+                $cleanEmail,
+                $peserta?->jenis_kelamin ?? ($daftar?->jenis_kelamin ?? '-'),
+                $peserta?->no_whatsapp ?: ($daftar?->no_wa ?: '-'),
+                $cleanNisn,
+                $peserta?->nama_sekolah ?: ($daftar?->asal_sekolah ?: '-'),
+                $provinsi,
+                $kabupaten,
+                $wilayah,
+                $daftar?->ttl ?: ($peserta?->tgl_lahir ? date('d/m/Y', strtotime($peserta->tgl_lahir)) : '-'),
+                $peserta?->tahun_lulus ?: ($daftar?->tahun_lulus ?: '-'),
+                $peserta?->telp_sekolah ?? '-',
+                $peserta?->no_guru_bk ?? '-',
+                $prodi1,
+                $prodi2,
+                $daftar?->sumber_informasi ?? '-',
+                $daftar?->kode_referral ?? '-',
+                $peserta?->penilaianAkademiks->first()?->catatan ?? '-',
+                $peserta?->penilaianMentors->first()?->catatan ?? '-',
+            ];
+
+            // B. Data Akademik Rinci (S1-S5)
+            $grandTotalAcademic = 0;
+            $totalMatpelCount = 0;
+
+            for ($sem = 1; $sem <= 5; $sem++) {
+                $semSum = 0;
+                $semCount = 0;
+
+                foreach ($orderedMatpels as $mp) {
+                    $nilaiObj = $nilais->where('semester', $sem)->where('matpel_id', $mp->id)->first();
+                    $val = $nilaiObj ? $nilaiObj->nilai : 0;
+
+                    $row[] = $val > 0 ? $val : '-';
+
+                    if ($val > 0) {
+                        $semSum += $val;
+                        $semCount++;
+                        $grandTotalAcademic += $val;
+                        $totalMatpelCount++;
                     }
-                    // AVG Per Semester (Sesuai perhitungan di Web Dashboard)
+                }
+                
+                // Rata-rata semester (ambil dari daftar jika ada, atau hitung)
+                $avgSemField = "avg_semester_{$sem}";
+                if ($daftar && $daftar->$avgSemField > 0) {
+                    $row[] = number_format($daftar->$avgSemField, 2);
+                } else {
                     $row[] = $semCount > 0 ? number_format($semSum / $semCount, 2) : '0';
                 }
-
-                // C. Summary Akhir S1-S5
-                $row[] = number_format($grandTotalAcademic, 2);
-                $row[] = $totalMatpelCount > 0 ? number_format($grandTotalAcademic / $totalMatpelCount, 2) : '0';
-
-                // D. Link Berkas
-                $row[] = ($berkas && $berkas->foto) ? url('storage/' . $berkas->foto) : '-';
-                for ($s = 1; $s <= 5; $s++) {
-                    $field = "rapor{$s}";
-                    $row[] = ($berkas && $berkas->$field) ? url('storage/' . $berkas->$field) : '-';
-                }
-                $row[] = ($berkas && $berkas->ijazah) ? url('storage/' . $berkas->ijazah) : '-';
-                $row[] = ($berkas && $berkas->personal_statement) ? url('storage/' . $berkas->personal_statement) : '-';
-
-                // Khusus DKV: Surat Buta Warna & Portofolio
-                $isPesertaDkv = str_contains($peserta->pilihan_prodi ?? '', 'DKV');
-                if ($isPesertaDkv) {
-                    $row[] = ($berkas && $berkas->surat_buta_warna) ? url('storage/' . $berkas->surat_buta_warna) : 'BELUM UNGGAH';
-                    $row[] = ($berkas && $berkas->portfolio) ? (str_starts_with($berkas->portfolio, 'http') ? $berkas->portfolio : url('storage/' . $berkas->portfolio)) : 'BELUM UNGGAH';
-                }
-                else {
-                    $row[] = 'N/A';
-                    $row[] = 'N/A';
-                }
-
-                // Sertifikats
-                $sertifikats = $peserta?->sertifikats ?? collect();
-                for ($i = 0; $i < $maxSertifikatCount; $i++) {
-                    $sertifikatObj = $sertifikats->get($i);
-                    if ($sertifikatObj) {
-                        $row[] = $sertifikatObj->nama ?? '-';
-                        $row[] = $sertifikatObj->file ? url('storage/' . $sertifikatObj->file) : '-';
-                    } else {
-                        $row[] = '-';
-                        $row[] = '-';
-                    }
-                }
-
-                fputcsv($file, $row);
             }
-            fclose($file);
-        };
 
-        return response()->stream($callback, 200, $headers);
+            // C. Total & Rata-rata Akademik
+            $row[] = number_format($grandTotalAcademic, 2);
+            $totalAvg = ($daftar && $daftar->rata_rata_nilai > 0) 
+                ? number_format($daftar->rata_rata_nilai, 2) 
+                : ($totalMatpelCount > 0 ? number_format($grandTotalAcademic / $totalMatpelCount, 2) : '0');
+            $row[] = $totalAvg;
+
+            // D. Dokumen Berkas & Link
+            $row[] = ($berkas && $berkas->foto) ? (str_starts_with($berkas->foto, 'http') ? $berkas->foto : url('storage/' . $berkas->foto)) : '-';
+            for ($s = 1; $s <= 6; $s++) {
+                $field = "rapor{$s}";
+                $row[] = ($berkas && $berkas->$field) ? (str_starts_with($berkas->$field, 'http') ? $berkas->$field : url('storage/' . $berkas->$field)) : '-';
+            }
+            $row[] = ($berkas && $berkas->ijazah) ? (str_starts_with($berkas->ijazah, 'http') ? $berkas->ijazah : url('storage/' . $berkas->ijazah)) : '-';
+            $row[] = ($berkas && $berkas->personal_statement) ? (str_starts_with($berkas->personal_statement, 'http') ? $berkas->personal_statement : url('storage/' . $berkas->personal_statement)) : '-';
+            $row[] = ($berkas && $berkas->surat_rekom) ? (str_starts_with($berkas->surat_rekom, 'http') ? $berkas->surat_rekom : url('storage/' . $berkas->surat_rekom)) : '-';
+            $row[] = ($berkas && $berkas->study_plan) ? (str_starts_with($berkas->study_plan, 'http') ? $berkas->study_plan : url('storage/' . $berkas->study_plan)) : '-';
+
+            // Khusus DKV: Surat Buta Warna & Portofolio
+            $isPesertaDkv = str_contains($prodi1, 'DKV') || str_contains($prodi2, 'DKV');
+            if ($isPesertaDkv) {
+                $row[] = ($berkas && $berkas->surat_buta_warna) ? (str_starts_with($berkas->surat_buta_warna, 'http') ? $berkas->surat_buta_warna : url('storage/' . $berkas->surat_buta_warna)) : 'BELUM UNGGAH';
+                $row[] = ($berkas && $berkas->portfolio) ? (str_starts_with($berkas->portfolio, 'http') ? $berkas->portfolio : url('storage/' . $berkas->portfolio)) : 'BELUM UNGGAH';
+            } else {
+                $row[] = 'N/A';
+                $row[] = 'N/A';
+            }
+
+            // Video Motivasi & Sosmed
+            $row[] = $berkas?->motivasi_video ?: '-';
+            $row[] = $berkas?->motivasi_video_tiktok ?: '-';
+            $row[] = $peserta?->link_ig ?: '-';
+            $row[] = $peserta?->link_tiktok ?: '-';
+            $row[] = $peserta?->link_twibbon ?: '-';
+            $row[] = ($berkas && $berkas->bukti_follow_ig_beasiswamncu) ? url('storage/' . $berkas->bukti_follow_ig_beasiswamncu) : '-';
+            $row[] = ($berkas && $berkas->bukti_follow_ig_mncu) ? url('storage/' . $berkas->bukti_follow_ig_mncu) : '-';
+            $row[] = ($berkas && $berkas->bukti_follow_tiktok_beasiswamncu) ? url('storage/' . $berkas->bukti_follow_tiktok_beasiswamncu) : '-';
+            $row[] = ($berkas && $berkas->bukti_follow_tiktok_mncu) ? url('storage/' . $berkas->bukti_follow_tiktok_mncu) : '-';
+            $row[] = ($berkas && $berkas->bukti_follow_ig_mncunation) ? url('storage/' . $berkas->bukti_follow_ig_mncunation) : '-';
+            $row[] = ($berkas && $berkas->bukti_follow_ig_thearetegen) ? url('storage/' . $berkas->bukti_follow_ig_thearetegen) : '-';
+
+            // Sertifikat Prestasi
+            $sertifikats = $peserta?->sertifikats ?? collect();
+            for ($i = 0; $i < $maxSertifikatCount; $i++) {
+                $sertifikatObj = $sertifikats->get($i);
+                if ($sertifikatObj) {
+                    $row[] = $sertifikatObj->nama ?? '-';
+                    $row[] = $sertifikatObj->file ? (str_starts_with($sertifikatObj->file, 'http') ? $sertifikatObj->file : url('storage/' . $sertifikatObj->file)) : '-';
+                } else {
+                    $row[] = '-';
+                    $row[] = '-';
+                }
+            }
+
+            // Status Ujian & Beasiswa
+            $row[] = match($peserta?->status_seleksi_ujian) {
+                'lulus' => 'LULUS',
+                'tidak_lulus' => 'TIDAK LULUS',
+                default => 'MENUNGGU UJIAN / BELUM',
+            };
+            $row[] = $daftar?->nominal_beasiswa ? 'Rp ' . number_format($daftar->nominal_beasiswa, 0, ',', '.') : '-';
+            $row[] = $daftar?->status_wawancara_bod ?: '-';
+
+            fputcsv($file, $row, $delimiter);
+        }
+
+        fclose($file);
+
+        $fileSize = filesize($tempFile);
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Length' => (string) $fileSize,
+            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        return response()->download($tempFile, $fileName, $headers)->deleteFileAfterSend(true);
     }
 
     public function exportExcelWawancara(\App\Services\GoogleSheetService $sheetService)
