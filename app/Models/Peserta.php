@@ -95,6 +95,23 @@ class Peserta extends Model
      */
     public function getProgressAttribute(): int
     {
+        return self::calculateProgress(
+            $this->getAttributes(),
+            $this->berkas?->getAttributes(),
+            $this->nilais->countBy('semester')->all()
+        );
+    }
+
+    /**
+     * Progress calculation on plain attribute arrays, so bulk jobs (e.g. the admin export)
+     * can compute it without hydrating thousands of Eloquent models.
+     *
+     * @param  array<string, mixed>  $peserta  peserta attributes
+     * @param  array<string, mixed>|null  $berkas  berkas attributes (null = no berkas row)
+     * @param  array<int|string, int>  $nilaiCountBySemester  semester => number of grades entered
+     */
+    public static function calculateProgress(array $peserta, ?array $berkas, array $nilaiCountBySemester): int
+    {
         $totalPoints = 0;
         $earnedPoints = 0;
 
@@ -102,15 +119,14 @@ class Peserta extends Model
         $biodataFields = ['nama', 'nisn', 'no_whatsapp', 'tgl_lahir', 'jenis_kelamin', 'provinsi', 'kabupaten', 'nama_sekolah', 'tahun_lulus'];
         $totalPoints += count($biodataFields);
         foreach ($biodataFields as $field) {
-            if (!empty($this->$field)) $earnedPoints++;
+            if (!empty($peserta[$field])) $earnedPoints++;
         }
 
         // 2. Determine Max Semester (Alumni: 6, 2027: 5)
-        $tahunLulus = (int) ($this->tahun_lulus ?? 2027);
+        $tahunLulus = (int) ($peserta['tahun_lulus'] ?? 2027);
         $maxSemester = ($tahunLulus < 2027) ? 6 : 5;
 
         // 3. Berkas Points (Comprehensive & Dynamic)
-        $berkas = $this->berkas;
         $berkasFields = [
             'foto', 'personal_statement', 'study_plan', 'motivasi_video',
             'bukti_follow_ig_beasiswamncu', 'bukti_follow_ig_mncu', 
@@ -131,7 +147,7 @@ class Peserta extends Model
         }
 
         // Conditional: DKV must upload Color Blindness Certificate & Portfolio
-        if (str_contains($this->pilihan_prodi ?? '', 'Desain Komunikasi Visual')) {
+        if (str_contains($peserta['pilihan_prodi'] ?? '', 'Desain Komunikasi Visual')) {
             $berkasFields[] = 'surat_buta_warna';
             $berkasFields[] = 'portfolio';
         }
@@ -139,25 +155,24 @@ class Peserta extends Model
         $totalPoints += count($berkasFields);
         if ($berkas) {
             foreach ($berkasFields as $field) {
-                if (!empty($berkas->$field)) $earnedPoints++;
+                if (!empty($berkas[$field])) $earnedPoints++;
             }
         }
 
         // 4. Grades (Nilai) Input Points
         // We add 1 point per mandatory semester if grades are filled
         $totalPoints += $maxSemester;
-        $nilaisGrouped = $this->nilais->groupBy('semester');
         for ($i = 1; $i <= $maxSemester; $i++) {
-            if (isset($nilaisGrouped[$i]) && $nilaisGrouped[$i]->count() >= 3) {
+            if (($nilaiCountBySemester[$i] ?? 0) >= 3) {
                 $earnedPoints++;
             }
         }
 
         // 5. Sosmed/Twibbon Points
-        $sosmedFields = ['link_twibbon']; 
+        $sosmedFields = ['link_twibbon'];
         $totalPoints += count($sosmedFields);
         foreach ($sosmedFields as $field) {
-            if (!empty($this->$field)) $earnedPoints++;
+            if (!empty($peserta[$field])) $earnedPoints++;
         }
 
         return ($totalPoints > 0) ? (int) round(($earnedPoints / $totalPoints) * 100) : 0;

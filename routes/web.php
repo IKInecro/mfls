@@ -230,7 +230,11 @@ Route::middleware(['auth'])->group(function () {
             }
             );
 
-            Route::get('/admin/export', [App\Http\Controllers\AdminController::class, 'exportExcel'])->name('admin.export');
+            // Export seluruh data pribadi pendaftar: hanya role yang memang punya tombolnya
+            // (halaman Seleksi Administrasi & Seleksi Beasiswa), bukan mentor/dosen.
+            Route::get('/admin/export', [App\Http\Controllers\AdminController::class, 'exportExcel'])
+                ->middleware(['role:admin,panitia,akademik,palugada,email:dion@gmail.com|info@beasiswamncu.com', 'throttle:exports'])
+                ->name('admin.export');
             Route::get('/admin/export-wawancara', [App\Http\Controllers\AdminController::class, 'exportExcelWawancara'])->name('admin.export_wawancara');
             Route::get('/admin/sync-wawancara-sheet', [App\Http\Controllers\AdminController::class, 'syncWawancaraSheet'])->name('admin.sync_wawancara_sheet');
 

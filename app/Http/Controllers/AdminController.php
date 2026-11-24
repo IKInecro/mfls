@@ -3079,500 +3079,158 @@ class AdminController extends Controller
         }
     }
 
-    public function exportExcel(\Illuminate\Http\Request $request, \App\Services\GoogleSheetService $sheetService)
+    /**
+     * Export "Database Seleksi Administrasi" (all pendaftar) as XLSX (default) or CSV.
+     *
+     * Rows are streamed in chunks to a temp file (flat memory, a few seconds for thousands
+     * of applicants). The previous in-memory PhpSpreadsheet build needed ~100 s / 870 MB for
+     * 5,000 applicants, so the hosting killed the PHP worker and Cloudflare showed 502.
+     */
+    public function exportExcel(\Illuminate\Http\Request $request, \App\Services\Export\SeleksiAdministrasiExport $export)
     {
-        // 1. Prevent timeouts & memory crashes
-        @set_time_limit(300);
-        @ini_set('memory_limit', '1024M');
-        \Illuminate\Support\Facades\DB::disableQueryLog();
+        @set_time_limit(120);
+        DB::disableQueryLog();
 
-        // 2. Trigger Google Sheet sync asynchronously in background ONLY if queue is not sync
+        // Trigger Google Sheet sync asynchronously in background ONLY if queue is not sync
         try {
             if (config('queue.default') !== 'sync' && class_exists(\App\Jobs\SyncGoogleSheetJob::class)) {
                 \App\Jobs\SyncGoogleSheetJob::dispatch();
             }
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Async GSheet Sync dispatch failed: ' . $e->getMessage());
+            Log::warning('Async GSheet Sync dispatch failed: ' . $e->getMessage());
         }
 
-        $format = strtolower($request->get('format', 'xlsx'));
-        if (!in_array($format, ['xlsx', 'csv'])) {
+        $format = $request->query('format', 'xlsx');
+        $format = is_string($format) ? strtolower($format) : 'xlsx';
+        if (!in_array($format, ['xlsx', 'csv'], true)) {
             $format = 'xlsx';
         }
 
-        // 3. Query all applicants with required relationships
-        $pendaftars = \App\Models\Akun::where('role', 'pendaftar')
-            ->with([
-                'peserta.daftar',
-                'peserta.nilais.matpel',
-                'peserta.berkas',
-                'peserta.sertifikats',
-                'peserta.penilaianAkademiks',
-                'peserta.penilaianMentors',
-            ])
-            ->get();
+        $delimiter = $request->query('delimiter', ';');
+        if (!in_array($delimiter, [';', ','], true)) {
+            $delimiter = ';';
+        }
 
-        // 4. Definisikan Mapel Core & Cari Mapel Tambahan yang ada nilainya
-        $coreNames = ['Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'Informatika'];
-        $coreMatpels = \App\Models\Matpel::whereIn('nama', $coreNames)->get()->sortBy(function ($m) use ($coreNames) {
-            return array_search($m->nama, $coreNames);
-        });
+        // One export at a time: protects the shared-hosting worker pool from parallel
+        // heavy exports (double clicks, several admins). Waits briefly for the running one.
+        $lock = null;
+        try {
+            $lock = Cache::lock('export:seleksi-administrasi', 180);
+            $lock->block((int) config('exports.lock_wait_seconds', 20));
+        } catch (\Illuminate\Contracts\Cache\LockTimeoutException $e) {
+            return back()->with('error', 'Export data lain sedang diproses. Silakan coba lagi dalam beberapa saat.');
+        } catch (\Throwable $e) {
+            Log::warning('Export lock unavailable, continuing without lock: ' . $e->getMessage());
+            $lock = null;
+        }
 
-        $allUsedMatpelIds = \App\Models\Nilai::whereIn('peserta_id', $pendaftars->pluck('peserta.id')->filter())->pluck('matpel_id')->unique();
-        $additionalMatpels = \App\Models\Matpel::whereIn('id', $allUsedMatpelIds)
-            ->whereNotIn('nama', $coreNames)
-            ->get();
+        $startedAt = microtime(true);
+        try {
+            [$path, $format, $rowCount] = $this->buildSeleksiAdministrasiFile($export, $format, $delimiter);
+        } finally {
+            $lock?->release();
+        }
 
-        $orderedMatpels = $coreMatpels->concat($additionalMatpels);
+        Log::info('Export seleksi administrasi', [
+            'user_id' => auth()->id(),
+            'format' => $format,
+            'rows' => $rowCount,
+            'duration_ms' => (int) round((microtime(true) - $startedAt) * 1000),
+            'peak_memory_mb' => round(memory_get_peak_usage(true) / 1048576, 1),
+        ]);
 
-        // 5. Definisikan Column Headers Lengkap
-        $columns = [
-            'No',
-            'Status Seleksi Administrasi',
-            'Progres Berkas',
-            'Tanggal Pendaftaran',
-            'Nama Lengkap',
-            'Email',
-            'Jenis Kelamin',
-            'Nomor HP / WhatsApp',
-            'NISN',
-            'Asal Sekolah',
-            'Provinsi',
-            'Kabupaten / Kota',
-            'Wilayah (Jabodetabek)',
-            'Tempat, Tanggal Lahir',
-            'Tahun Lulus',
-            'Telepon Sekolah',
-            'No HP Guru BK',
-            'Minat Prodi 1',
-            'Minat Prodi 2',
-            'Sumber Informasi',
-            'Kode Referral',
-            'Catatan Dosen',
-            'Catatan Mentor',
+        try {
+            $this->logAktivitas(
+                'Ekspor Data Seleksi Administrasi',
+                'Akun',
+                null,
+                "Mengekspor {$rowCount} data pendaftar (" . strtoupper($format) . ')'
+            );
+        } catch (\Throwable $e) {
+            Log::warning('Failed to record export activity: ' . $e->getMessage());
+        }
+
+        $fileName = 'Database_Seleksi_Administrasi_' . now()->format('Y-m-d_H-i') . '.' . $format;
+        $headers = [
+            'Content-Type' => $format === 'xlsx'
+                ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                : 'text/csv; charset=UTF-8',
+            'Content-Length' => (string) filesize($path),
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
         ];
 
-        // Detail Nilai Semester 1-5 + Rata-rata
-        for ($sem = 1; $sem <= 5; $sem++) {
-            foreach ($orderedMatpels as $mp) {
-                $columns[] = "S{$sem} - {$mp->nama}";
-            }
-            $columns[] = "Rata Rata S{$sem}";
-        }
+        $response = response()->download($path, $fileName, $headers)->deleteFileAfterSend(true);
+        // Contains personal data: never cache (browser, proxies, Cloudflare). Set after
+        // construction because BinaryFileResponse marks itself "public" by default.
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 
-        $columns[] = "TOTAL NILAI (S1-S5)";
-        $columns[] = "RATA RATA AKADEMIK (S1-S5)";
+        return $response;
+    }
 
-        // Berkas Utama
-        $berkasColumns = [
-            'FOTO',
-            'RAPOR S1',
-            'RAPOR S2',
-            'RAPOR S3',
-            'RAPOR S4',
-            'RAPOR S5',
-            'RAPOR S6',
-            'IJAZAH / SKL',
-            'PERSONAL STATEMENT',
-            'SURAT REKOMENDASI',
-            'STUDY PLAN',
-            'SURAT BUTA WARNA (DKV)',
-            'PORTOFOLIO (DKV)',
-            'LINK VIDEO MOTIVASI',
-            'LINK VIDEO MOTIVASI TIKTOK',
-            'LINK INSTAGRAM',
-            'LINK TIKTOK',
-            'LINK TWIBBON',
-            'BUKTI FOLLOW IG BEASISWA',
-            'BUKTI FOLLOW IG MNCU',
-            'BUKTI FOLLOW TIKTOK BEASISWA',
-            'BUKTI FOLLOW TIKTOK MNCU',
-            'BUKTI FOLLOW IG MNC NATION',
-            'BUKTI FOLLOW IG THE ARETE GEN',
-        ];
-
-        // Sertifikat Prestasi (Dinamis sesuai data terbanyak peserta)
-        $maxSertifikatCount = 0;
-        foreach ($pendaftars as $user) {
-            $peserta = $user->peserta;
-            if ($peserta && $peserta->sertifikats) {
-                $count = $peserta->sertifikats->count();
-                if ($count > $maxSertifikatCount) {
-                    $maxSertifikatCount = $count;
-                }
-            }
-        }
-        $maxSertifikatCount = max(3, $maxSertifikatCount);
-
-        $sertifikatColumns = [];
-        for ($i = 1; $i <= $maxSertifikatCount; $i++) {
-            $sertifikatColumns[] = "SERTIFIKAT {$i} (NAMA)";
-            $sertifikatColumns[] = "SERTIFIKAT {$i} (LINK)";
-        }
-
-        // Status Ujian & Beasiswa
-        $extraColumns = [
-            'STATUS SELEKSI UJIAN (CBT)',
-            'NOMINAL BEASISWA',
-            'STATUS WAWANCARA BOD',
-        ];
-
-        $columns = array_merge($columns, $berkasColumns, $sertifikatColumns, $extraColumns);
-
-        // 6. Siapkan Data Rows untuk Export (Rapi & Terstruktur)
-        $rows = [];
-        $no = 1;
-        foreach ($pendaftars as $user) {
-            $peserta = $user->peserta;
-            $daftar = $peserta?->daftar;
-            $berkas = $peserta?->berkas;
-            $nilais = $peserta?->nilais ?? collect();
-            $nilaisKeyed = $nilais->keyBy(fn($n) => $n->semester . '_' . $n->matpel_id);
-
-            // Status Seleksi Administrasi
-            $statusAdmin = match($daftar?->status) {
-                'lulus' => 'LULUS',
-                'tidak_lulus' => 'TIDAK LULUS',
-                default => 'MENUNGGU VERIFIKASI',
-            };
-
-            // Progres Berkas
-            $progress = $peserta?->progress ?? 0;
-            if (!$peserta) {
-                $progressText = 'BELUM ISI BIODATA (0%)';
-            } elseif (!$user->email_verified_at) {
-                $progressText = 'BELUM VERIFIKASI EMAIL (OTP)';
-            } elseif ($progress < 100) {
-                $progressText = "BELUM LENGKAP ({$progress}%)";
-            } else {
-                $progressText = '100% LENGKAP';
-            }
-
-            // Tanggal Pendaftaran
-            $tanggalDaftar = $daftar?->created_at ? $daftar->created_at->format('d/m/Y H:i') : ($user->created_at ? $user->created_at->format('d/m/Y H:i') : '-');
-
-            // Format Email & NISN
-            $cleanEmail = $user->email;
-            if (str_starts_with($cleanEmail, 'deleted_')) {
-                $parts = explode('_', $cleanEmail, 3);
-                $cleanEmail = $parts[2] ?? $cleanEmail;
-            }
-
-            $cleanNisn = $peserta?->nisn ?? '-';
-            if (str_starts_with($cleanNisn, 'deleted_')) {
-                $parts = explode('_', $cleanNisn, 3);
-                $cleanNisn = $parts[2] ?? $cleanNisn;
-            }
-
-            // Wilayah Jabodetabek
-            $kabupaten = $peserta?->kabupaten ?: ($daftar?->kabupaten ?: '-');
-            $provinsi = $peserta?->provinsi ?: ($daftar?->provinsi ?: '-');
-            $kabLower = strtolower($kabupaten);
-            $cities = ['jakarta', 'bogor', 'depok', 'tangerang', 'bekasi'];
-            $wilayah = 'DI LUAR JABODETABEK';
-            foreach ($cities as $c) {
-                if (str_contains($kabLower, $c)) {
-                    $wilayah = 'JABODETABEK';
-                    break;
-                }
-            }
-
-            // Program Studi
-            $prodi1 = $peserta?->pilihan_prodi ?? '-';
-            $prodi2 = $peserta?->pilihan_prodi2 ?? '-';
-            if (str_contains($prodi1, ' | ')) {
-                $parts = explode(' | ', $prodi1);
-                $prodi1 = $parts[0] ?? $prodi1;
-                if ($prodi2 === '-' && isset($parts[1])) {
-                    $prodi2 = $parts[1];
-                }
-            }
-
-            // A. Data Identitas
-            $row = [
-                $no++,
-                $statusAdmin,
-                $progressText,
-                $tanggalDaftar,
-                $user->nama,
-                $cleanEmail,
-                $peserta?->jenis_kelamin ?? ($daftar?->jenis_kelamin ?? '-'),
-                $peserta?->no_whatsapp ?: ($daftar?->no_wa ?: '-'),
-                $cleanNisn,
-                $peserta?->nama_sekolah ?: ($daftar?->asal_sekolah ?: '-'),
-                $provinsi,
-                $kabupaten,
-                $wilayah,
-                $daftar?->ttl ?: ($peserta?->tgl_lahir ? date('d/m/Y', strtotime($peserta->tgl_lahir)) : '-'),
-                $peserta?->tahun_lulus ?: ($daftar?->tahun_lulus ?: '-'),
-                $peserta?->telp_sekolah ?? '-',
-                $peserta?->no_guru_bk ?? '-',
-                $prodi1,
-                $prodi2,
-                $daftar?->sumber_informasi ?? '-',
-                $daftar?->kode_referral ?? '-',
-                $peserta?->penilaianAkademiks->first()?->catatan ?? '-',
-                $peserta?->penilaianMentors->first()?->catatan ?? '-',
-            ];
-
-            // B. Data Akademik Rinci (S1-S5)
-            $grandTotalAcademic = 0;
-            $totalMatpelCount = 0;
-
-            for ($sem = 1; $sem <= 5; $sem++) {
-                $semSum = 0;
-                $semCount = 0;
-
-                foreach ($orderedMatpels as $mp) {
-                    $nilaiObj = $nilaisKeyed->get("{$sem}_{$mp->id}");
-                    $val = $nilaiObj ? $nilaiObj->nilai : 0;
-
-                    $row[] = $val > 0 ? (float) $val : '-';
-
-                    if ($val > 0) {
-                        $semSum += $val;
-                        $semCount++;
-                        $grandTotalAcademic += $val;
-                        $totalMatpelCount++;
-                    }
-                }
-                
-                // Rata-rata semester (ambil dari daftar jika ada, atau hitung)
-                $avgSemField = "avg_semester_{$sem}";
-                if ($daftar && $daftar->$avgSemField > 0) {
-                    $row[] = round((float) $daftar->$avgSemField, 2);
-                } else {
-                    $row[] = $semCount > 0 ? round($semSum / $semCount, 2) : 0;
-                }
-            }
-
-            // C. Total & Rata-rata Akademik
-            $row[] = round($grandTotalAcademic, 2);
-            $totalAvg = ($daftar && $daftar->rata_rata_nilai > 0) 
-                ? round((float) $daftar->rata_rata_nilai, 2) 
-                : ($totalMatpelCount > 0 ? round($grandTotalAcademic / $totalMatpelCount, 2) : 0);
-            $row[] = $totalAvg;
-
-            // D. Dokumen Berkas & Link
-            $row[] = ($berkas && $berkas->foto) ? (str_starts_with($berkas->foto, 'http') ? $berkas->foto : url('storage/' . $berkas->foto)) : '-';
-            for ($s = 1; $s <= 6; $s++) {
-                $field = "rapor{$s}";
-                $row[] = ($berkas && $berkas->$field) ? (str_starts_with($berkas->$field, 'http') ? $berkas->$field : url('storage/' . $berkas->$field)) : '-';
-            }
-            $row[] = ($berkas && $berkas->ijazah) ? (str_starts_with($berkas->ijazah, 'http') ? $berkas->ijazah : url('storage/' . $berkas->ijazah)) : '-';
-            $row[] = ($berkas && $berkas->personal_statement) ? (str_starts_with($berkas->personal_statement, 'http') ? $berkas->personal_statement : url('storage/' . $berkas->personal_statement)) : '-';
-            $row[] = ($berkas && $berkas->surat_rekom) ? (str_starts_with($berkas->surat_rekom, 'http') ? $berkas->surat_rekom : url('storage/' . $berkas->surat_rekom)) : '-';
-            $row[] = ($berkas && $berkas->study_plan) ? (str_starts_with($berkas->study_plan, 'http') ? $berkas->study_plan : url('storage/' . $berkas->study_plan)) : '-';
-
-            // Khusus DKV: Surat Buta Warna & Portofolio
-            $isPesertaDkv = str_contains($prodi1, 'DKV') || str_contains($prodi2, 'DKV');
-            if ($isPesertaDkv) {
-                $row[] = ($berkas && $berkas->surat_buta_warna) ? (str_starts_with($berkas->surat_buta_warna, 'http') ? $berkas->surat_buta_warna : url('storage/' . $berkas->surat_buta_warna)) : 'BELUM UNGGAH';
-                $row[] = ($berkas && $berkas->portfolio) ? (str_starts_with($berkas->portfolio, 'http') ? $berkas->portfolio : url('storage/' . $berkas->portfolio)) : 'BELUM UNGGAH';
-            } else {
-                $row[] = 'N/A';
-                $row[] = 'N/A';
-            }
-
-            // Video Motivasi & Sosmed
-            $row[] = $berkas?->motivasi_video ?: '-';
-            $row[] = $berkas?->motivasi_video_tiktok ?: '-';
-            $row[] = $peserta?->link_ig ?: '-';
-            $row[] = $peserta?->link_tiktok ?: '-';
-            $row[] = $peserta?->link_twibbon ?: '-';
-            $row[] = ($berkas && $berkas->bukti_follow_ig_beasiswamncu) ? url('storage/' . $berkas->bukti_follow_ig_beasiswamncu) : '-';
-            $row[] = ($berkas && $berkas->bukti_follow_ig_mncu) ? url('storage/' . $berkas->bukti_follow_ig_mncu) : '-';
-            $row[] = ($berkas && $berkas->bukti_follow_tiktok_beasiswamncu) ? url('storage/' . $berkas->bukti_follow_tiktok_beasiswamncu) : '-';
-            $row[] = ($berkas && $berkas->bukti_follow_tiktok_mncu) ? url('storage/' . $berkas->bukti_follow_tiktok_mncu) : '-';
-            $row[] = ($berkas && $berkas->bukti_follow_ig_mncunation) ? url('storage/' . $berkas->bukti_follow_ig_mncunation) : '-';
-            $row[] = ($berkas && $berkas->bukti_follow_ig_thearetegen) ? url('storage/' . $berkas->bukti_follow_ig_thearetegen) : '-';
-
-            // Sertifikat Prestasi
-            $sertifikats = $peserta?->sertifikats ?? collect();
-            for ($i = 0; $i < $maxSertifikatCount; $i++) {
-                $sertifikatObj = $sertifikats->get($i);
-                if ($sertifikatObj) {
-                    $row[] = $sertifikatObj->nama ?? '-';
-                    $row[] = $sertifikatObj->file ? (str_starts_with($sertifikatObj->file, 'http') ? $sertifikatObj->file : url('storage/' . $sertifikatObj->file)) : '-';
-                } else {
-                    $row[] = '-';
-                    $row[] = '-';
-                }
-            }
-
-            // Status Ujian & Beasiswa
-            $row[] = match($peserta?->status_seleksi_ujian) {
-                'lulus' => 'LULUS',
-                'tidak_lulus' => 'TIDAK LULUS',
-                default => 'MENUNGGU UJIAN / BELUM',
-            };
-            $row[] = $daftar?->nominal_beasiswa ? 'Rp ' . number_format($daftar->nominal_beasiswa, 0, ',', '.') : '-';
-            $row[] = $daftar?->status_wawancara_bod ?: '-';
-
-            $rows[] = $row;
-        }
-
-        // ==========================================
-        // OPSI 1: FORMAT EXCEL ASLI (.XLSX) - RAPI, CEPAT & MEMORY SAFE
-        // ==========================================
-        $canUsePhpSpreadsheet = class_exists(\PhpOffice\PhpSpreadsheet\Spreadsheet::class) 
-            && extension_loaded('zip') 
-            && extension_loaded('xml');
-
-        if ($format === 'xlsx' && $canUsePhpSpreadsheet) {
-            try {
-                $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-                $sheet = $spreadsheet->getActiveSheet();
-                $sheet->setTitle('Seleksi Administrasi');
-
-                // 1. Bulk populate data via fromArray (100x lebih cepat daripada looping setCellValue satu per satu)
-                $sheet->fromArray($columns, null, 'A1');
-                $sheet->fromArray($rows, null, 'A2');
-
-                $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($columns));
-                $lastRow = max(1, count($rows) + 1);
-
-                // 2. Styling Header: Navy Blue MNC, Teks Putih Tebal, Row Height 28pt
-                $sheet->getStyle("A1:{$lastColumn}1")->applyFromArray([
-                    'font' => [
-                        'bold' => true,
-                        'color' => ['rgb' => 'FFFFFF'],
-                        'size' => 10,
-                        'name' => 'Calibri',
-                    ],
-                    'fill' => [
-                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                        'startColor' => ['rgb' => '0B1120'],
-                    ],
-                    'alignment' => [
-                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-                    ],
-                ]);
-                $sheet->getRowDimension(1)->setRowHeight(28);
-
-                // 3. Styling Data Rows (Single call): Border tipis & font Calibri
-                if ($lastRow >= 2) {
-                    $sheet->getStyle("A2:{$lastColumn}{$lastRow}")->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                                'color' => ['rgb' => 'CBD5E1'],
-                            ],
-                        ],
-                        'font' => [
-                            'size' => 10,
-                            'name' => 'Calibri',
-                        ],
-                        'alignment' => [
-                            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-                        ],
-                    ]);
-
-                    // Format kolom identitas (HP, NISN, Guru BK, Referral) sebagai Text agar 0 di depan tidak terpotong
-                    $sheet->getStyle("G2:I{$lastRow}")->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
-                    $sheet->getStyle("P2:Q{$lastRow}")->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
-                }
-
-                // 4. Freeze Panes (Header baris 1 tetap beku di atas saat scroll 1000 orang)
-                $sheet->freezePane('A2');
-
-                // 5. Aktifkan AutoFilter Excel di semua kolom
-                $sheet->setAutoFilter("A1:{$lastColumn}{$lastRow}");
-
-                // 6. Atur lebar kolom default & kunci kolom utama tanpa autoSize
-                // (Catatan: setAutoSize kalkulasi font per cell memicu 502 Bad Gateway / timeout di hosting production)
-                $sheet->getDefaultColumnDimension()->setWidth(18);
-                $sheet->getColumnDimension('A')->setWidth(8);  // No
-                $sheet->getColumnDimension('B')->setWidth(26); // Status Seleksi
-                $sheet->getColumnDimension('C')->setWidth(16); // Progres Berkas
-                $sheet->getColumnDimension('D')->setWidth(20); // Tanggal Daftar
-                $sheet->getColumnDimension('E')->setWidth(30); // Nama Lengkap
-                $sheet->getColumnDimension('F')->setWidth(28); // Email
-                $sheet->getColumnDimension('H')->setWidth(22); // No HP/WA
-                $sheet->getColumnDimension('I')->setWidth(18); // NISN
-                $sheet->getColumnDimension('J')->setWidth(32); // Asal Sekolah
-                $sheet->getColumnDimension('K')->setWidth(20); // Provinsi
-                $sheet->getColumnDimension('L')->setWidth(22); // Kabupaten
-                $sheet->getColumnDimension('M')->setWidth(16); // Wilayah
-                $sheet->getColumnDimension('N')->setWidth(25); // TTL
-                $sheet->getColumnDimension('O')->setWidth(14); // Tahun Lulus
-                $sheet->getColumnDimension('R')->setWidth(24); // Minat Prodi 1
-                $sheet->getColumnDimension('S')->setWidth(24); // Minat Prodi 2
-                $sheet->getColumnDimension('T')->setWidth(20); // Sumber Info
-                $sheet->getColumnDimension('U')->setWidth(18); // Referral
-                $sheet->getColumnDimension('V')->setWidth(30); // Catatan Dosen
-                $sheet->getColumnDimension('W')->setWidth(30); // Catatan Mentor
-
-                // 7. Simpan file sementara di storage lokal aplikasi (kebal open_basedir restriction)
-                $tempDir = storage_path('framework/cache');
-                if (!is_dir($tempDir) || !is_writable($tempDir)) {
-                    $tempDir = sys_get_temp_dir();
-                }
-                $tempFile = tempnam($tempDir, 'export_admin_xlsx_');
-
-                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-                $writer->setPreCalculateFormulas(false);
-                $writer->save($tempFile);
-
-                $fileSize = filesize($tempFile);
-                $fileName = 'Database_Seleksi_Administrasi_' . date('Y-m-d_H-i') . '.xlsx';
-
-                $headers = [
-                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    'Content-Length' => (string) $fileSize,
-                    'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
-                    'Pragma' => 'no-cache',
-                    'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-                    'Expires' => '0',
-                ];
-
-                return response()->download($tempFile, $fileName, $headers)->deleteFileAfterSend(true);
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::warning('XLSX export failed, fallback to CSV: ' . $e->getMessage());
-                // Fallback otomatis ke CSV di bawah
-            }
-        }
-
-        // ==========================================
-        // OPSI 2 / FALLBACK: FORMAT CSV (.CSV) DENGAN UTF-8 BOM
-        // ==========================================
+    /**
+     * Write the export to a temp file. Falls back to CSV if the XLSX build fails.
+     *
+     * @return array{0: string, 1: string, 2: int} [path, format, data row count]
+     */
+    private function buildSeleksiAdministrasiFile(\App\Services\Export\SeleksiAdministrasiExport $export, string $format, string $delimiter): array
+    {
+        // Local app storage (works under open_basedir), system temp as fallback.
         $tempDir = storage_path('framework/cache');
         if (!is_dir($tempDir) || !is_writable($tempDir)) {
             $tempDir = sys_get_temp_dir();
         }
-        $fileName = 'Database_Seleksi_Administrasi_' . date('Y-m-d_H-i') . '.csv';
-        $tempFile = tempnam($tempDir, 'export_seleksi_admin_');
-        $file = fopen($tempFile, 'w+');
+        $this->purgeStaleExportFiles($tempDir);
 
-        // Add UTF-8 BOM so Microsoft Excel renders UTF-8 characters seamlessly
-        fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+        if ($format === 'xlsx' && class_exists(\ZipArchive::class)) {
+            $path = tempnam($tempDir, 'export_admin_xlsx_');
+            try {
+                $writer = new \App\Support\Export\XlsxStreamWriter('Seleksi Administrasi', $tempDir);
+                $writer->open($export->columns(), $export->columnWidths());
+                foreach ($export->rows() as $row) {
+                    $writer->addRow($row);
+                }
+                $writer->close($path);
 
-        $delimiter = $request->get('delimiter', ';');
-        if (!in_array($delimiter, [';', ','])) {
-            $delimiter = ';';
+                return [$path, 'xlsx', $writer->rowCount()];
+            } catch (\Throwable $e) {
+                @unlink($path);
+                Log::warning('XLSX export failed, fallback to CSV: ' . $e->getMessage(), ['exception' => $e]);
+            }
         }
 
-        fputcsv($file, $columns, $delimiter);
-
-        foreach ($rows as $rowData) {
-            fputcsv($file, $rowData, $delimiter);
+        $path = tempnam($tempDir, 'export_seleksi_admin_');
+        try {
+            $csv = new \App\Support\Export\CsvStreamWriter($path, $delimiter);
+            $csv->addRow($export->columns());
+            foreach ($export->rows() as $row) {
+                $csv->addRow($row);
+            }
+            $csv->close();
+        } catch (\Throwable $e) {
+            @unlink($path);
+            throw $e;
         }
 
-        fclose($file);
+        return [$path, 'csv', $csv->rowCount() - 1];
+    }
 
-        $fileSize = filesize($tempFile);
+    /**
+     * Remove export temp files left behind by killed/crashed requests (e.g. the earlier
+     * 502s). They contain applicant personal data, so they must not linger on disk.
+     */
+    private function purgeStaleExportFiles(string $dir): void
+    {
+        $prefixes = ['export_admin_xlsx_', 'export_seleksi_admin_', 'xlsx_sheet_', 'xlsx_strings_', 'xlsx_sst_'];
+        $cutoff = time() - 3600;
 
-        $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Length' => (string) $fileSize,
-            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0',
-        ];
-
-        return response()->download($tempFile, $fileName, $headers)->deleteFileAfterSend(true);
+        foreach ($prefixes as $prefix) {
+            foreach (glob($dir . DIRECTORY_SEPARATOR . $prefix . '*') ?: [] as $file) {
+                if (is_file($file) && @filemtime($file) < $cutoff) {
+                    @unlink($file);
+                }
+            }
+        }
     }
 
     public function exportExcelWawancara(\App\Services\GoogleSheetService $sheetService)

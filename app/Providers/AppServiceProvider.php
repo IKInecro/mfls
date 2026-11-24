@@ -27,6 +27,12 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
+        // Heavy data exports: 10 per minute per user (own bucket, not shared with other throttles).
+        \Illuminate\Support\Facades\RateLimiter::for('exports', function (\Illuminate\Http\Request $request) {
+            return \Illuminate\Cache\RateLimiting\Limit::perMinute(10)
+                ->by('export:' . ($request->user()?->getAuthIdentifier() ?? $request->ip()));
+        });
+
         // Register Google Sheets Sync Observers
         \App\Models\Akun::observe(\App\Observers\GoogleSheetObserver::class);
         \App\Models\Peserta::observe(\App\Observers\GoogleSheetObserver::class);
