@@ -252,6 +252,7 @@
     @else
         <!-- Helper function for resolving files array & type -->
         @php
+            $allPayloads = [];
             $parseDocFiles = function($rawValue) {
                 if (empty($rawValue)) return [];
                 $decoded = json_decode($rawValue, true);
@@ -415,6 +416,7 @@
                     }
 
                     $totalUploadedDocs = count($candidateDocumentsPayload['docs']);
+                    $allPayloads[$user->id] = $candidateDocumentsPayload;
                 @endphp
 
                 <!-- Applicant Card -->
@@ -530,11 +532,11 @@
 
                             <div class="flex items-center gap-2 pt-1">
                                 <button type="button" onclick="openCandidateInspectionModal({{ $user->id }})"
-                                        class="flex-1 px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs hover:shadow transition-all flex items-center justify-center gap-1.5">
+                                        class="flex-1 px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs hover:shadow transition-all flex items-center justify-center gap-1.5 cursor-pointer">
                                     <span class="iconify text-base" data-icon="solar:eye-bold"></span>
                                     <span>Inspeksi Dokumen</span>
                                 </button>
-                                <a href="{{ route('admin.pendaftar.show', $user->id) }}" target="_blank"
+                                <a href="{{ route('admin.pendaftar.show', $user->id) }}"
                                    class="p-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-slate-900 transition-all shadow-xs"
                                    title="Buka Halaman Detail Verifikasi">
                                     <span class="iconify text-base" data-icon="solar:arrow-right-up-linear"></span>
@@ -696,7 +698,7 @@
 
                             <!-- Video Motivasi (External Link) -->
                             @if(!empty($berkas->motivasi_video) || !empty($berkas->motivasi_video_tiktok))
-                                <a href="{{ route('admin.video_motivasi.index', ['search' => $user->nama]) }}" target="_blank"
+                                <a href="{{ route('admin.video_motivasi.index', ['search' => $user->nama]) }}"
                                    class="px-2.5 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-semibold hover:bg-indigo-100 hover:scale-105 transition-all flex items-center gap-1.5">
                                     <span class="iconify text-indigo-600" data-icon="solar:videocamera-record-bold"></span>
                                     <span>Video Motivasi</span>
@@ -857,10 +859,10 @@
                                 <td class="py-3 px-4 text-center">
                                     <div class="flex items-center justify-center gap-1.5">
                                         <button type="button" onclick="openCandidateInspectionModal({{ $user->id }})"
-                                                class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all" title="Buka Semua Dokumen">
+                                                class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all cursor-pointer" title="Buka Semua Dokumen">
                                             <span class="iconify text-base" data-icon="solar:eye-bold"></span>
                                         </button>
-                                        <a href="{{ route('admin.pendaftar.show', $user->id) }}" target="_blank"
+                                        <a href="{{ route('admin.pendaftar.show', $user->id) }}"
                                            class="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all" title="Verifikasi">
                                             <span class="iconify text-base" data-icon="solar:arrow-right-up-linear"></span>
                                         </a>
@@ -928,7 +930,7 @@
                         <span class="iconify text-base" data-icon="solar:download-bold"></span>
                         <span class="hidden sm:inline">Unduh</span>
                     </a>
-                    <a id="btn-modal-verify-pendaftar" href="#" target="_blank"
+                    <a id="btn-modal-verify-pendaftar" href="#"
                        class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/30 transition-all flex items-center gap-1.5">
                         <span class="iconify text-base" data-icon="solar:shield-check-bold"></span>
                         <span class="hidden md:inline">Verifikasi Pendaftar</span>
@@ -1030,6 +1032,11 @@
 
 </div>
 
+<!-- DATA STORE FOR FAST MODAL INSPECTION -->
+<script>
+    window.candidateBerkasStore = {!! json_encode($allPayloads ?? []) !!};
+</script>
+
 <!-- INLINE JAVASCRIPT FOR SPA COMPATIBILITY & PREVIEWER MODAL -->
 <script>
 (function() {
@@ -1051,14 +1058,14 @@
         if (viewMode === 'matrix') {
             cardsEl.classList.add('hidden');
             matrixEl.classList.remove('hidden');
-            btnMatrix.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-white text-slate-800 shadow-xs";
-            btnCards.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 text-slate-500 hover:text-slate-800";
+            btnMatrix.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-white text-slate-800 shadow-xs cursor-pointer";
+            btnCards.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 text-slate-500 hover:text-slate-800 cursor-pointer";
             localStorage.setItem('mfls_berkas_view', 'matrix');
         } else {
             matrixEl.classList.add('hidden');
             cardsEl.classList.remove('hidden');
-            btnCards.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-white text-slate-800 shadow-xs";
-            btnMatrix.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 text-slate-500 hover:text-slate-800";
+            btnCards.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-white text-slate-800 shadow-xs cursor-pointer";
+            btnMatrix.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 text-slate-500 hover:text-slate-800 cursor-pointer";
             localStorage.setItem('mfls_berkas_view', 'cards');
         }
     };
@@ -1071,36 +1078,40 @@
 
     // Open Full Inspection Modal for a Candidate
     window.openCandidateInspectionModal = function(candidateId, initialDocKey) {
-        const cardElem = document.getElementById('card-applicant-' + candidateId);
-        if (!cardElem) return;
-
-        try {
-            const data = JSON.parse(cardElem.getAttribute('data-json'));
-            if (!data || !data.docs || data.docs.length === 0) {
-                alert('Pendaftar ini belum mengunggah dokumen apapun untuk diinspeksi.');
-                return;
-            }
-
-            activeCandidateData = data;
-            
-            // Set initial document index
-            activeDocIndex = 0;
-            if (initialDocKey) {
-                const foundIndex = activeCandidateData.docs.findIndex(d => d.key === initialDocKey);
-                if (foundIndex !== -1) {
-                    activeDocIndex = foundIndex;
+        let data = (window.candidateBerkasStore && window.candidateBerkasStore[candidateId]) ? window.candidateBerkasStore[candidateId] : null;
+        if (!data) {
+            const cardElem = document.getElementById('card-applicant-' + candidateId);
+            if (cardElem) {
+                try {
+                    data = JSON.parse(cardElem.getAttribute('data-json'));
+                } catch (e) {
+                    console.error('Failed to parse candidate JSON payload', e);
                 }
             }
-            activeFileIndex = 0;
+        }
 
-            renderCandidateModal();
-            const modal = document.getElementById('berkas-preview-modal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
+        if (!data) {
+            console.warn('Data pendaftar tidak ditemukan untuk ID:', candidateId);
+            return;
+        }
+
+        activeCandidateData = data;
+        
+        // Set initial document index
+        activeDocIndex = 0;
+        if (initialDocKey && activeCandidateData.docs && activeCandidateData.docs.length > 0) {
+            const foundIndex = activeCandidateData.docs.findIndex(d => d.key === initialDocKey);
+            if (foundIndex !== -1) {
+                activeDocIndex = foundIndex;
             }
-        } catch (e) {
-            console.error('Failed to parse candidate JSON payload', e);
+        }
+        activeFileIndex = 0;
+
+        renderCandidateModal();
+        const modal = document.getElementById('berkas-preview-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
         }
     };
 
@@ -1138,11 +1149,29 @@
         const tabsBar = document.getElementById('modal-doc-tabs-bar');
         tabsBar.innerHTML = '';
 
+        if (!activeCandidateData.docs || activeCandidateData.docs.length === 0) {
+            tabsBar.innerHTML = '<span class="text-xs text-slate-500 py-1 font-bold">Pendaftar ini belum mengunggah dokumen apapun.</span>';
+            document.getElementById('modal-active-doc-title').textContent = 'Belum Ada Dokumen';
+            document.getElementById('modal-file-counter').textContent = '0 File';
+
+            // Sembunyikan viewer dan tampilkan empty state
+            document.getElementById('viewer-pdf-container').classList.add('hidden');
+            document.getElementById('viewer-image-container').classList.add('hidden');
+            document.getElementById('viewer-external-container').classList.add('hidden');
+            document.getElementById('viewer-empty-container').classList.remove('hidden');
+            document.getElementById('btn-modal-open-new-tab').classList.add('hidden');
+            document.getElementById('btn-modal-download-file').classList.add('hidden');
+            return;
+        }
+
+        document.getElementById('btn-modal-open-new-tab').classList.remove('hidden');
+        document.getElementById('btn-modal-download-file').classList.remove('hidden');
+
         activeCandidateData.docs.forEach((doc, idx) => {
             const btn = document.createElement('button');
             btn.type = 'button';
             const isActive = idx === activeDocIndex;
-            btn.className = `px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 ${
+            btn.className = `px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
                 isActive ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
             }`;
             
@@ -1156,6 +1185,12 @@
                 activeFileIndex = 0;
                 renderCandidateModal();
             };
+            tabsBar.appendChild(btn);
+        });
+
+        // Render Active Document File
+        renderActiveDocFile();
+    }
             tabsBar.appendChild(btn);
         });
 

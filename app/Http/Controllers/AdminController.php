@@ -3227,6 +3227,7 @@ class AdminController extends Controller
             $daftar = $peserta?->daftar;
             $berkas = $peserta?->berkas;
             $nilais = $peserta?->nilais ?? collect();
+            $nilaisKeyed = $nilais->keyBy(fn($n) => $n->semester . '_' . $n->matpel_id);
 
             // Status Seleksi Administrasi
             $statusAdmin = match($daftar?->status) {
@@ -3323,7 +3324,7 @@ class AdminController extends Controller
                 $semCount = 0;
 
                 foreach ($orderedMatpels as $mp) {
-                    $nilaiObj = $nilais->where('semester', $sem)->where('matpel_id', $mp->id)->first();
+                    $nilaiObj = $nilaisKeyed->get("{$sem}_{$mp->id}");
                     $val = $nilaiObj ? $nilaiObj->nilai : 0;
 
                     $row[] = $val > 0 ? (float) $val : '-';
