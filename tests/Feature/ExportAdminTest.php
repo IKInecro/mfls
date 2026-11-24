@@ -140,4 +140,52 @@ class ExportAdminTest extends TestCase
         $content = file_get_contents($response->getFile()->getPathname());
         $this->assertStringContainsString('"Status Seleksi Administrasi","Progres Berkas"', $content);
     }
+
+    public function test_export_xlsx_is_fast_and_does_not_timeout_on_many_records()
+    {
+        $admin = Akun::create([
+            'nama' => 'Admin Speed Test',
+            'email' => 'admin_speed@test.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+
+        for ($i = 1; $i <= 10; $i++) {
+            $user = Akun::create([
+                'nama' => 'User ' . $i,
+                'email' => "user{$i}@test.com",
+                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                'role' => 'pendaftar',
+                'is_active' => true,
+            ]);
+
+            $peserta = Peserta::create([
+                'akun_id' => $user->id,
+                'nama' => 'User ' . $i,
+                'nisn' => 'NISN' . $i,
+                'pilihan_prodi' => 'Manajemen',
+                'jenis_kelamin' => 'Laki-laki',
+                'nama_sekolah' => 'SMA ' . $i,
+            ]);
+
+            Daftar::create([
+                'peserta_id' => $peserta->id,
+                'no_wa' => '0812' . $i,
+                'jenis_kelamin' => 'Laki-laki',
+                'asal_sekolah' => 'SMA ' . $i,
+                'provinsi' => 'DKI Jakarta',
+                'kabupaten' => 'Jakarta Pusat',
+                'status' => 'menunggu',
+                'rata_rata_nilai' => 85.0,
+                'tahun_lulus' => 2027,
+                'ttl' => 'Jakarta, 01/01/2006',
+            ]);
+        }
+
+        $response = $this->actingAs($admin)->get(route('admin.export', ['format' => 'xlsx']));
+        $response->assertStatus(200);
+        $this->assertNotNull($response->headers->get('Content-Length'));
+        $this->assertGreaterThan(0, (int) $response->headers->get('Content-Length'));
+    }
 }

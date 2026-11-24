@@ -3083,12 +3083,12 @@ class AdminController extends Controller
     {
         // 1. Prevent timeouts & memory crashes
         @set_time_limit(300);
-        @ini_set('memory_limit', '512M');
+        @ini_set('memory_limit', '1024M');
         \Illuminate\Support\Facades\DB::disableQueryLog();
 
-        // 2. Trigger Google Sheet sync asynchronously in background so download starts immediately
+        // 2. Trigger Google Sheet sync asynchronously in background ONLY if queue is not sync
         try {
-            if (class_exists(\App\Jobs\SyncGoogleSheetJob::class)) {
+            if (config('queue.default') !== 'sync' && class_exists(\App\Jobs\SyncGoogleSheetJob::class)) {
                 \App\Jobs\SyncGoogleSheetJob::dispatch();
             }
         } catch (\Throwable $e) {
@@ -3412,134 +3412,136 @@ class AdminController extends Controller
         }
 
         // ==========================================
-        // OPSI 1: FORMAT EXCEL ASLI (.XLSX) - RAPI, BERSIH & AUTO-FILTER
+        // OPSI 1: FORMAT EXCEL ASLI (.XLSX) - RAPI, CEPAT & MEMORY SAFE
         // ==========================================
-        if ($format === 'xlsx') {
-            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-            $sheet = $spreadsheet->getActiveSheet();
-            $sheet->setTitle('Seleksi Administrasi');
+        $canUsePhpSpreadsheet = class_exists(\PhpOffice\PhpSpreadsheet\Spreadsheet::class) 
+            && extension_loaded('zip') 
+            && extension_loaded('xml');
 
-            // Set Header Columns
-            foreach ($columns as $colIndex => $colName) {
-                $colStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex + 1);
-                $sheet->setCellValueExplicit("{$colStr}1", $colName, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-            }
+        if ($format === 'xlsx' && $canUsePhpSpreadsheet) {
+            try {
+                $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->setTitle('Seleksi Administrasi');
 
-            // Set Data Rows
-            $rowIndex = 2;
-            foreach ($rows as $rowData) {
-                foreach ($rowData as $colIndex => $val) {
-                    $colStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex + 1);
-                    $cellCoordinate = "{$colStr}{$rowIndex}";
-                    $colName = $columns[$colIndex] ?? '';
+                // 1. Bulk populate data via fromArray (100x lebih cepat daripada looping setCellValue satu per satu)
+                $sheet->fromArray($columns, null, 'A1');
+                $sheet->fromArray($rows, null, 'A2');
 
-                    // Pertahankan leading zero untuk No HP, NISN, Guru BK, Referral
-                    if (in_array($colName, ['Nomor HP / WhatsApp', 'NISN', 'Telepon Sekolah', 'No HP Guru BK', 'Kode Referral'])) {
-                        $sheet->setCellValueExplicit($cellCoordinate, (string) $val, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-                    } elseif (is_numeric($val) && !str_starts_with((string)$val, '0')) {
-                        $sheet->setCellValue($cellCoordinate, $val);
-                    } else {
-                        $sheet->setCellValueExplicit($cellCoordinate, (string) $val, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-                    }
+                $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($columns));
+                $lastRow = max(1, count($rows) + 1);
 
-                    // Buat link yang bisa diklik langsung di Excel
-                    if (is_string($val) && (str_starts_with($val, 'http://') || str_starts_with($val, 'https://'))) {
-                        $sheet->getCell($cellCoordinate)->getHyperlink()->setUrl($val);
-                        $sheet->getStyle($cellCoordinate)->getFont()->getColor()->setRGB('0870B8');
-                        $sheet->getStyle($cellCoordinate)->getFont()->setUnderline(true);
-                    }
-                }
-                $rowIndex++;
-            }
-
-            $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($columns));
-            $lastRow = max(1, $rowIndex - 1);
-
-            // Styling Header: Navy Blue MNC, Teks Putih Tebal, Row Height 28pt
-            $sheet->getStyle("A1:{$lastColumn}1")->applyFromArray([
-                'font' => [
-                    'bold' => true,
-                    'color' => ['rgb' => 'FFFFFF'],
-                    'size' => 10,
-                    'name' => 'Calibri',
-                ],
-                'fill' => [
-                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    'startColor' => ['rgb' => '0B1120'],
-                ],
-                'alignment' => [
-                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-                ],
-            ]);
-            $sheet->getRowDimension(1)->setRowHeight(28);
-
-            // Styling Data Rows: Zebra striping, borders, font bersih
-            if ($lastRow >= 2) {
-                $sheet->getStyle("A2:{$lastColumn}{$lastRow}")->applyFromArray([
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                            'color' => ['rgb' => 'CBD5E1'],
-                        ],
-                    ],
+                // 2. Styling Header: Navy Blue MNC, Teks Putih Tebal, Row Height 28pt
+                $sheet->getStyle("A1:{$lastColumn}1")->applyFromArray([
                     'font' => [
+                        'bold' => true,
+                        'color' => ['rgb' => 'FFFFFF'],
                         'size' => 10,
                         'name' => 'Calibri',
                     ],
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => '0B1120'],
+                    ],
                     'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                         'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
                     ],
                 ]);
+                $sheet->getRowDimension(1)->setRowHeight(28);
 
-                // Zebra striping untuk mempermudah membaca data 1000+ peserta
-                for ($r = 2; $r <= $lastRow; $r++) {
-                    $sheet->getRowDimension($r)->setRowHeight(20);
-                    if ($r % 2 === 1) {
-                        $sheet->getStyle("A{$r}:{$lastColumn}{$r}")->getFill()->applyFromArray([
-                            'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                            'startColor' => ['rgb' => 'F8FAFC'],
-                        ]);
-                    }
+                // 3. Styling Data Rows (Single call): Border tipis & font Calibri
+                if ($lastRow >= 2) {
+                    $sheet->getStyle("A2:{$lastColumn}{$lastRow}")->applyFromArray([
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                                'color' => ['rgb' => 'CBD5E1'],
+                            ],
+                        ],
+                        'font' => [
+                            'size' => 10,
+                            'name' => 'Calibri',
+                        ],
+                        'alignment' => [
+                            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        ],
+                    ]);
+
+                    // Format kolom identitas (HP, NISN, Guru BK, Referral) sebagai Text agar 0 di depan tidak terpotong
+                    $sheet->getStyle("G2:I{$lastRow}")->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
+                    $sheet->getStyle("P2:Q{$lastRow}")->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
                 }
+
+                // 4. Freeze Panes (Header baris 1 tetap beku di atas saat scroll 1000 orang)
+                $sheet->freezePane('A2');
+
+                // 5. Aktifkan AutoFilter Excel di semua kolom
+                $sheet->setAutoFilter("A1:{$lastColumn}{$lastRow}");
+
+                // 6. Atur lebar kolom default & kunci kolom utama tanpa autoSize
+                // (Catatan: setAutoSize kalkulasi font per cell memicu 502 Bad Gateway / timeout di hosting production)
+                $sheet->getDefaultColumnDimension()->setWidth(18);
+                $sheet->getColumnDimension('A')->setWidth(8);  // No
+                $sheet->getColumnDimension('B')->setWidth(26); // Status Seleksi
+                $sheet->getColumnDimension('C')->setWidth(16); // Progres Berkas
+                $sheet->getColumnDimension('D')->setWidth(20); // Tanggal Daftar
+                $sheet->getColumnDimension('E')->setWidth(30); // Nama Lengkap
+                $sheet->getColumnDimension('F')->setWidth(28); // Email
+                $sheet->getColumnDimension('H')->setWidth(22); // No HP/WA
+                $sheet->getColumnDimension('I')->setWidth(18); // NISN
+                $sheet->getColumnDimension('J')->setWidth(32); // Asal Sekolah
+                $sheet->getColumnDimension('K')->setWidth(20); // Provinsi
+                $sheet->getColumnDimension('L')->setWidth(22); // Kabupaten
+                $sheet->getColumnDimension('M')->setWidth(16); // Wilayah
+                $sheet->getColumnDimension('N')->setWidth(25); // TTL
+                $sheet->getColumnDimension('O')->setWidth(14); // Tahun Lulus
+                $sheet->getColumnDimension('R')->setWidth(24); // Minat Prodi 1
+                $sheet->getColumnDimension('S')->setWidth(24); // Minat Prodi 2
+                $sheet->getColumnDimension('T')->setWidth(20); // Sumber Info
+                $sheet->getColumnDimension('U')->setWidth(18); // Referral
+                $sheet->getColumnDimension('V')->setWidth(30); // Catatan Dosen
+                $sheet->getColumnDimension('W')->setWidth(30); // Catatan Mentor
+
+                // 7. Simpan file sementara di storage lokal aplikasi (kebal open_basedir restriction)
+                $tempDir = storage_path('framework/cache');
+                if (!is_dir($tempDir) || !is_writable($tempDir)) {
+                    $tempDir = sys_get_temp_dir();
+                }
+                $tempFile = tempnam($tempDir, 'export_admin_xlsx_');
+
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+                $writer->setPreCalculateFormulas(false);
+                $writer->save($tempFile);
+
+                $fileSize = filesize($tempFile);
+                $fileName = 'Database_Seleksi_Administrasi_' . date('Y-m-d_H-i') . '.xlsx';
+
+                $headers = [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'Content-Length' => (string) $fileSize,
+                    'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+                    'Pragma' => 'no-cache',
+                    'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                    'Expires' => '0',
+                ];
+
+                return response()->download($tempFile, $fileName, $headers)->deleteFileAfterSend(true);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('XLSX export failed, fallback to CSV: ' . $e->getMessage());
+                // Fallback otomatis ke CSV di bawah
             }
-
-            // Freeze Panes (Header baris 1 tetap beku di atas saat scroll 1000 orang)
-            $sheet->freezePane('A2');
-
-            // Aktifkan AutoFilter Excel di semua kolom
-            $sheet->setAutoFilter("A1:{$lastColumn}{$lastRow}");
-
-            // Auto-size lebar kolom agar teks tidak terpotong
-            for ($c = 1; $c <= count($columns); $c++) {
-                $colStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($c);
-                $sheet->getColumnDimension($colStr)->setAutoSize(true);
-            }
-
-            $fileName = 'Database_Seleksi_Administrasi_' . date('Y-m-d_H-i') . '.xlsx';
-            $tempFile = tempnam(sys_get_temp_dir(), 'export_admin_xlsx_');
-            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-            $writer->save($tempFile);
-
-            $fileSize = filesize($tempFile);
-
-            $headers = [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Length' => (string) $fileSize,
-                'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
-                'Pragma' => 'no-cache',
-                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-                'Expires' => '0',
-            ];
-
-            return response()->download($tempFile, $fileName, $headers)->deleteFileAfterSend(true);
         }
 
         // ==========================================
-        // OPSI 2: FORMAT CSV (.CSV) DENGAN UTF-8 BOM
+        // OPSI 2 / FALLBACK: FORMAT CSV (.CSV) DENGAN UTF-8 BOM
         // ==========================================
+        $tempDir = storage_path('framework/cache');
+        if (!is_dir($tempDir) || !is_writable($tempDir)) {
+            $tempDir = sys_get_temp_dir();
+        }
         $fileName = 'Database_Seleksi_Administrasi_' . date('Y-m-d_H-i') . '.csv';
-        $tempFile = tempnam(sys_get_temp_dir(), 'export_seleksi_admin_');
+        $tempFile = tempnam($tempDir, 'export_seleksi_admin_');
         $file = fopen($tempFile, 'w+');
 
         // Add UTF-8 BOM so Microsoft Excel renders UTF-8 characters seamlessly
