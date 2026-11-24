@@ -472,6 +472,206 @@ class AdminController extends Controller
         ));
     }
 
+    /**
+     * Tampilkan List & Monitoring Berkas Pendaftar Lengkap
+     */
+    public function indexBerkasPendaftar(Request $request)
+    {
+        if (in_array(auth()->user()->role, ['mentor', 'dosen'])) {
+            return abort(403);
+        }
+
+        $query = Akun::where('role', 'pendaftar')
+            ->with(['peserta.daftar', 'peserta.berkas', 'peserta.sertifikats']);
+
+        // Search Keyword
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhereHas('peserta', function ($qp) use ($search) {
+                        $qp->where('no_hp', 'like', "%{$search}%")
+                            ->orWhere('no_whatsapp', 'like', "%{$search}%")
+                            ->orWhere('nisn', 'like', "%{$search}%")
+                            ->orWhere('nama_sekolah', 'like', "%{$search}%")
+                            ->orWhere('pilihan_prodi', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('peserta.daftar', function ($qd) use ($search) {
+                        $qd->where('asal_sekolah', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Filter Program Studi
+        if ($request->filled('prodi')) {
+            $prodi = $request->prodi;
+            $query->whereHas('peserta', function ($q) use ($prodi) {
+                $q->where('pilihan_prodi', 'like', "%{$prodi}%");
+            });
+        }
+
+        // Filter Status Kelengkapan Berkas
+        $status = $request->get('status', 'all');
+        if ($status === 'lengkap') {
+            $query->whereHas('peserta.berkas', function ($q) {
+                $q->whereNotNull('foto')->where('foto', '!=', '')
+                    ->whereNotNull('rapor1')->where('rapor1', '!=', '')
+                    ->whereNotNull('rapor2')->where('rapor2', '!=', '')
+                    ->whereNotNull('rapor3')->where('rapor3', '!=', '')
+                    ->whereNotNull('rapor4')->where('rapor4', '!=', '')
+                    ->whereNotNull('rapor5')->where('rapor5', '!=', '')
+                    ->whereNotNull('ijazah')->where('ijazah', '!=', '')
+                    ->whereNotNull('personal_statement')->where('personal_statement', '!=', '')
+                    ->whereNotNull('study_plan')->where('study_plan', '!=', '');
+            });
+        } elseif ($status === 'belum_lengkap') {
+            $query->where(function ($q) {
+                $q->whereDoesntHave('peserta.berkas')
+                    ->orWhereHas('peserta.berkas', function ($qb) {
+                        $qb->whereNull('foto')->orWhere('foto', '')
+                            ->orWhereNull('rapor1')->orWhere('rapor1', '')
+                            ->orWhereNull('rapor2')->orWhere('rapor2', '')
+                            ->orWhereNull('rapor3')->orWhere('rapor3', '')
+                            ->orWhereNull('rapor4')->orWhere('rapor4', '')
+                            ->orWhereNull('rapor5')->orWhere('rapor5', '')
+                            ->orWhereNull('ijazah')->orWhere('ijazah', '')
+                            ->orWhereNull('personal_statement')->orWhere('personal_statement', '')
+                            ->orWhereNull('study_plan')->orWhere('study_plan', '');
+                    });
+            });
+        } elseif ($status === 'ada_sertifikat') {
+            $query->whereHas('peserta.sertifikats');
+        } elseif ($status === 'tanpa_sertifikat') {
+            $query->whereDoesntHave('peserta.sertifikats');
+        } elseif ($status === 'dkv_khusus') {
+            $query->whereHas('peserta', function ($q) {
+                $q->where('pilihan_prodi', 'like', '%DKV%')
+                    ->orWhere('pilihan_prodi', 'like', '%Desain Komunikasi Visual%');
+            });
+        } elseif ($status === 'dkv_lengkap') {
+            $query->whereHas('peserta', function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('pilihan_prodi', 'like', '%DKV%')
+                        ->orWhere('pilihan_prodi', 'like', '%Desain Komunikasi Visual%');
+                })->whereHas('berkas', function ($qb) {
+                    $qb->whereNotNull('surat_buta_warna')->where('surat_buta_warna', '!=', '')
+                        ->whereNotNull('portfolio')->where('portfolio', '!=', '');
+                });
+            });
+        } elseif ($status === 'dkv_belum_lengkap') {
+            $query->whereHas('peserta', function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('pilihan_prodi', 'like', '%DKV%')
+                        ->orWhere('pilihan_prodi', 'like', '%Desain Komunikasi Visual%');
+                })->where(function ($sub2) {
+                    $sub2->whereDoesntHave('berkas')
+                        ->orWhereHas('berkas', function ($qb) {
+                            $qb->whereNull('surat_buta_warna')->orWhere('surat_buta_warna', '')
+                                ->orWhereNull('portfolio')->orWhere('portfolio', '');
+                        });
+                });
+            });
+        }
+
+        // Filter Spesifik Dokumen
+        if ($request->filled('dokumen')) {
+            $doc = $request->dokumen;
+            if ($doc === 'foto') {
+                $query->whereHas('peserta.berkas', fn($q) => $q->whereNotNull('foto')->where('foto', '!=', ''));
+            } elseif ($doc === 'rapor') {
+                $query->whereHas('peserta.berkas', fn($q) => $q->whereNotNull('rapor1')->where('rapor1', '!=', ''));
+            } elseif ($doc === 'ijazah') {
+                $query->whereHas('peserta.berkas', fn($q) => $q->whereNotNull('ijazah')->where('ijazah', '!=', ''));
+            } elseif ($doc === 'personal_statement') {
+                $query->whereHas('peserta.berkas', fn($q) => $q->whereNotNull('personal_statement')->where('personal_statement', '!=', ''));
+            } elseif ($doc === 'study_plan') {
+                $query->whereHas('peserta.berkas', fn($q) => $q->whereNotNull('study_plan')->where('study_plan', '!=', ''));
+            } elseif ($doc === 'buta_warna') {
+                $query->whereHas('peserta.berkas', fn($q) => $q->whereNotNull('surat_buta_warna')->where('surat_buta_warna', '!=', ''));
+            } elseif ($doc === 'portfolio') {
+                $query->whereHas('peserta.berkas', fn($q) => $q->whereNotNull('portfolio')->where('portfolio', '!=', ''));
+            } elseif ($doc === 'sertifikat') {
+                $query->whereHas('peserta.sertifikats');
+            } elseif ($doc === 'rekomendasi') {
+                $query->whereHas('peserta.berkas', fn($q) => $q->whereNotNull('surat_rekomendasi_sekolah')->where('surat_rekomendasi_sekolah', '!=', ''));
+            }
+        }
+
+        // Stats calculation
+        $totalPendaftar = Akun::where('role', 'pendaftar')->count();
+        $totalLengkap = Akun::where('role', 'pendaftar')
+            ->whereHas('peserta.berkas', function ($q) {
+                $q->whereNotNull('foto')->where('foto', '!=', '')
+                    ->whereNotNull('rapor1')->where('rapor1', '!=', '')
+                    ->whereNotNull('rapor2')->where('rapor2', '!=', '')
+                    ->whereNotNull('rapor3')->where('rapor3', '!=', '')
+                    ->whereNotNull('rapor4')->where('rapor4', '!=', '')
+                    ->whereNotNull('rapor5')->where('rapor5', '!=', '')
+                    ->whereNotNull('ijazah')->where('ijazah', '!=', '')
+                    ->whereNotNull('personal_statement')->where('personal_statement', '!=', '')
+                    ->whereNotNull('study_plan')->where('study_plan', '!=', '');
+            })->count();
+        $totalBelumLengkap = $totalPendaftar - $totalLengkap;
+        $totalAdaSertifikat = Akun::where('role', 'pendaftar')->whereHas('peserta.sertifikats')->count();
+        $totalDkv = Akun::where('role', 'pendaftar')
+            ->whereHas('peserta', function ($q) {
+                $q->where('pilihan_prodi', 'like', '%DKV%')
+                    ->orWhere('pilihan_prodi', 'like', '%Desain Komunikasi Visual%');
+            })->count();
+        $totalDkvLengkap = Akun::where('role', 'pendaftar')
+            ->whereHas('peserta', function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('pilihan_prodi', 'like', '%DKV%')
+                        ->orWhere('pilihan_prodi', 'like', '%Desain Komunikasi Visual%');
+                })->whereHas('berkas', function ($qb) {
+                    $qb->whereNotNull('surat_buta_warna')->where('surat_buta_warna', '!=', '')
+                        ->whereNotNull('portfolio')->where('portfolio', '!=', '');
+                });
+            })->count();
+
+        // Sorting
+        $sort = $request->get('sort', 'latest');
+        if ($sort === 'oldest') {
+            $query->oldest();
+        } elseif ($sort === 'nama_asc') {
+            $query->orderBy('nama', 'asc');
+        } elseif ($sort === 'nama_desc') {
+            $query->orderBy('nama', 'desc');
+        } else {
+            $query->latest();
+        }
+
+        $perPage = (int) $request->get('per_page', 15);
+        if (!in_array($perPage, [10, 15, 25, 50, 100])) {
+            $perPage = 15;
+        }
+
+        $pendaftars = $query->paginate($perPage)->withQueryString();
+
+        $prodiList = [
+            'Sains Komunikasi',
+            'Desain Komunikasi Visual (DKV)',
+            'Manajemen',
+            'Akuntansi',
+            'Sistem Informasi',
+            'Pendidikan Bahasa Inggris',
+            'Pendidikan Matematika',
+            'Ilmu Komputer'
+        ];
+
+        return view('admin.berkas.index', compact(
+            'pendaftars',
+            'totalPendaftar',
+            'totalLengkap',
+            'totalBelumLengkap',
+            'totalAdaSertifikat',
+            'totalDkv',
+            'totalDkvLengkap',
+            'prodiList'
+        ));
+    }
+
     // --- SISTEM DATABASE TERPUSAT: BEASISWA ---
     public function indexBeasiswa(Request $request)
     {

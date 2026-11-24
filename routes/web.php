@@ -154,6 +154,9 @@ Route::middleware(['auth'])->group(function () {
             // Video Motivasi Submissions Monitoring
             Route::get('/admin/video-motivasi', [App\Http\Controllers\AdminController::class, 'indexVideoMotivasi'])->name('admin.video_motivasi.index');
 
+            // Monitoring & Inspeksi Berkas Pendaftar
+            Route::get('/admin/berkas-pendaftar', [App\Http\Controllers\AdminController::class, 'indexBerkasPendaftar'])->name('admin.berkas.index');
+
             // Seleksi Beasiswa (Email Restricted)
             Route::middleware(['role:admin,akademik,palugada,email:dion@gmail.com|info@beasiswamncu.com'])->group(
                 function () {
