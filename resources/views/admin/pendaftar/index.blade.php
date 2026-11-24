@@ -251,13 +251,19 @@
                 </a>
             </div>
 
-            <!-- Export CSV Button (Direct Download) -->
-            <div>
-                <a href="{{ route('admin.export', request()->all()) }}" 
+            <!-- Export Options: XLSX (Rapi, Auto-Filter, Styling) & CSV -->
+            <div class="flex items-center gap-2">
+                <a href="{{ route('admin.export', array_merge(request()->all(), ['format' => 'xlsx'])) }}" 
                    class="px-5 py-2.5 bg-emerald-600 text-white rounded-2xl text-xs font-black shadow-md shadow-emerald-500/20 hover:bg-emerald-700 transition-all uppercase tracking-wider flex items-center gap-2"
-                   title="Download Rekap CSV dengan ukuran file pasti">
-                    <span class="iconify text-lg" data-icon="solar:file-download-bold"></span>
-                    <span>Export Excel / CSV</span>
+                   title="Download Rekap Rapi Excel (.xlsx) dengan Auto-Filter, Freeze Panes & Format Kolom Rapi">
+                    <span class="iconify text-lg" data-icon="solar:file-spreadsheet-bold"></span>
+                    <span>Export Excel (.xlsx)</span>
+                </a>
+                <a href="{{ route('admin.export', array_merge(request()->all(), ['format' => 'csv'])) }}" 
+                   class="px-4 py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 rounded-2xl text-xs font-black transition-all uppercase tracking-wider flex items-center gap-1.5"
+                   title="Download Rekap CSV mentah dengan UTF-8 BOM">
+                    <span class="iconify text-base text-slate-500" data-icon="solar:document-text-bold"></span>
+                    <span>CSV</span>
                 </a>
             </div>
         </div>

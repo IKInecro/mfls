@@ -84,13 +84,22 @@ class ExportAdminTest extends TestCase
             'portfolio' => 'https://drive.google.com/budi_portfolio',
         ]);
 
-        $response = $this->actingAs($admin)->get(route('admin.export'));
+        // 1. Test Default XLSX Export
+        $responseXlsx = $this->actingAs($admin)->get(route('admin.export'));
+        $responseXlsx->assertStatus(200);
+        $this->assertNotNull($responseXlsx->headers->get('Content-Length'));
+        $this->assertGreaterThan(0, (int) $responseXlsx->headers->get('Content-Length'));
+        $this->assertStringContainsString('spreadsheetml.sheet', $responseXlsx->headers->get('Content-Type'));
+        $this->assertStringContainsString('.xlsx', $responseXlsx->headers->get('Content-Disposition'));
+
+        // 2. Test CSV Export (format=csv)
+        $response = $this->actingAs($admin)->get(route('admin.export', ['format' => 'csv']));
 
         $response->assertStatus(200);
         $this->assertNotNull($response->headers->get('Content-Length'));
         $this->assertGreaterThan(0, (int) $response->headers->get('Content-Length'));
         $this->assertStringContainsString('text/csv', $response->headers->get('Content-Type'));
-        $this->assertStringContainsString('Database_Seleksi_Administrasi_', $response->headers->get('Content-Disposition'));
+        $this->assertStringContainsString('.csv', $response->headers->get('Content-Disposition'));
 
         $content = file_get_contents($response->getFile()->getPathname());
         // Check for UTF-8 BOM
@@ -125,7 +134,7 @@ class ExportAdminTest extends TestCase
             'is_active' => true,
         ]);
 
-        $response = $this->actingAs($admin)->get(route('admin.export', ['delimiter' => ',']));
+        $response = $this->actingAs($admin)->get(route('admin.export', ['format' => 'csv', 'delimiter' => ',']));
 
         $response->assertStatus(200);
         $content = file_get_contents($response->getFile()->getPathname());

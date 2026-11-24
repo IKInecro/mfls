@@ -2870,7 +2870,10 @@ class AdminController extends Controller
             \Illuminate\Support\Facades\Log::warning('Async GSheet Sync dispatch failed: ' . $e->getMessage());
         }
 
-        $fileName = 'Database_Seleksi_Administrasi_' . date('Y-m-d_H-i') . '.csv';
+        $format = strtolower($request->get('format', 'xlsx'));
+        if (!in_array($format, ['xlsx', 'csv'])) {
+            $format = 'xlsx';
+        }
 
         // 3. Query all applicants with required relationships
         $pendaftars = \App\Models\Akun::where('role', 'pendaftar')
@@ -2991,20 +2994,8 @@ class AdminController extends Controller
 
         $columns = array_merge($columns, $berkasColumns, $sertifikatColumns, $extraColumns);
 
-        // 6. Generate CSV via Temp File to compute Content-Length and prevent cut streams
-        $tempFile = tempnam(sys_get_temp_dir(), 'export_seleksi_admin_');
-        $file = fopen($tempFile, 'w+');
-
-        // Add UTF-8 BOM so Microsoft Excel renders UTF-8 characters seamlessly
-        fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
-
-        $delimiter = $request->get('delimiter', ';');
-        if (!in_array($delimiter, [';', ','])) {
-            $delimiter = ';';
-        }
-
-        fputcsv($file, $columns, $delimiter);
-
+        // 6. Siapkan Data Rows untuk Export (Rapi & Terstruktur)
+        $rows = [];
         $no = 1;
         foreach ($pendaftars as $user) {
             $peserta = $user->peserta;
@@ -3110,7 +3101,7 @@ class AdminController extends Controller
                     $nilaiObj = $nilais->where('semester', $sem)->where('matpel_id', $mp->id)->first();
                     $val = $nilaiObj ? $nilaiObj->nilai : 0;
 
-                    $row[] = $val > 0 ? $val : '-';
+                    $row[] = $val > 0 ? (float) $val : '-';
 
                     if ($val > 0) {
                         $semSum += $val;
@@ -3123,17 +3114,17 @@ class AdminController extends Controller
                 // Rata-rata semester (ambil dari daftar jika ada, atau hitung)
                 $avgSemField = "avg_semester_{$sem}";
                 if ($daftar && $daftar->$avgSemField > 0) {
-                    $row[] = number_format($daftar->$avgSemField, 2);
+                    $row[] = round((float) $daftar->$avgSemField, 2);
                 } else {
-                    $row[] = $semCount > 0 ? number_format($semSum / $semCount, 2) : '0';
+                    $row[] = $semCount > 0 ? round($semSum / $semCount, 2) : 0;
                 }
             }
 
             // C. Total & Rata-rata Akademik
-            $row[] = number_format($grandTotalAcademic, 2);
+            $row[] = round($grandTotalAcademic, 2);
             $totalAvg = ($daftar && $daftar->rata_rata_nilai > 0) 
-                ? number_format($daftar->rata_rata_nilai, 2) 
-                : ($totalMatpelCount > 0 ? number_format($grandTotalAcademic / $totalMatpelCount, 2) : '0');
+                ? round((float) $daftar->rata_rata_nilai, 2) 
+                : ($totalMatpelCount > 0 ? round($grandTotalAcademic / $totalMatpelCount, 2) : 0);
             $row[] = $totalAvg;
 
             // D. Dokumen Berkas & Link
@@ -3192,7 +3183,152 @@ class AdminController extends Controller
             $row[] = $daftar?->nominal_beasiswa ? 'Rp ' . number_format($daftar->nominal_beasiswa, 0, ',', '.') : '-';
             $row[] = $daftar?->status_wawancara_bod ?: '-';
 
-            fputcsv($file, $row, $delimiter);
+            $rows[] = $row;
+        }
+
+        // ==========================================
+        // OPSI 1: FORMAT EXCEL ASLI (.XLSX) - RAPI, BERSIH & AUTO-FILTER
+        // ==========================================
+        if ($format === 'xlsx') {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->setTitle('Seleksi Administrasi');
+
+            // Set Header Columns
+            foreach ($columns as $colIndex => $colName) {
+                $colStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex + 1);
+                $sheet->setCellValueExplicit("{$colStr}1", $colName, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            }
+
+            // Set Data Rows
+            $rowIndex = 2;
+            foreach ($rows as $rowData) {
+                foreach ($rowData as $colIndex => $val) {
+                    $colStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex + 1);
+                    $cellCoordinate = "{$colStr}{$rowIndex}";
+                    $colName = $columns[$colIndex] ?? '';
+
+                    // Pertahankan leading zero untuk No HP, NISN, Guru BK, Referral
+                    if (in_array($colName, ['Nomor HP / WhatsApp', 'NISN', 'Telepon Sekolah', 'No HP Guru BK', 'Kode Referral'])) {
+                        $sheet->setCellValueExplicit($cellCoordinate, (string) $val, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                    } elseif (is_numeric($val) && !str_starts_with((string)$val, '0')) {
+                        $sheet->setCellValue($cellCoordinate, $val);
+                    } else {
+                        $sheet->setCellValueExplicit($cellCoordinate, (string) $val, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                    }
+
+                    // Buat link yang bisa diklik langsung di Excel
+                    if (is_string($val) && (str_starts_with($val, 'http://') || str_starts_with($val, 'https://'))) {
+                        $sheet->getCell($cellCoordinate)->getHyperlink()->setUrl($val);
+                        $sheet->getStyle($cellCoordinate)->getFont()->getColor()->setRGB('0870B8');
+                        $sheet->getStyle($cellCoordinate)->getFont()->setUnderline(true);
+                    }
+                }
+                $rowIndex++;
+            }
+
+            $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($columns));
+            $lastRow = max(1, $rowIndex - 1);
+
+            // Styling Header: Navy Blue MNC, Teks Putih Tebal, Row Height 28pt
+            $sheet->getStyle("A1:{$lastColumn}1")->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'color' => ['rgb' => 'FFFFFF'],
+                    'size' => 10,
+                    'name' => 'Calibri',
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '0B1120'],
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+            $sheet->getRowDimension(1)->setRowHeight(28);
+
+            // Styling Data Rows: Zebra striping, borders, font bersih
+            if ($lastRow >= 2) {
+                $sheet->getStyle("A2:{$lastColumn}{$lastRow}")->applyFromArray([
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                            'color' => ['rgb' => 'CBD5E1'],
+                        ],
+                    ],
+                    'font' => [
+                        'size' => 10,
+                        'name' => 'Calibri',
+                    ],
+                    'alignment' => [
+                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+
+                // Zebra striping untuk mempermudah membaca data 1000+ peserta
+                for ($r = 2; $r <= $lastRow; $r++) {
+                    $sheet->getRowDimension($r)->setRowHeight(20);
+                    if ($r % 2 === 1) {
+                        $sheet->getStyle("A{$r}:{$lastColumn}{$r}")->getFill()->applyFromArray([
+                            'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                            'startColor' => ['rgb' => 'F8FAFC'],
+                        ]);
+                    }
+                }
+            }
+
+            // Freeze Panes (Header baris 1 tetap beku di atas saat scroll 1000 orang)
+            $sheet->freezePane('A2');
+
+            // Aktifkan AutoFilter Excel di semua kolom
+            $sheet->setAutoFilter("A1:{$lastColumn}{$lastRow}");
+
+            // Auto-size lebar kolom agar teks tidak terpotong
+            for ($c = 1; $c <= count($columns); $c++) {
+                $colStr = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($c);
+                $sheet->getColumnDimension($colStr)->setAutoSize(true);
+            }
+
+            $fileName = 'Database_Seleksi_Administrasi_' . date('Y-m-d_H-i') . '.xlsx';
+            $tempFile = tempnam(sys_get_temp_dir(), 'export_admin_xlsx_');
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $writer->save($tempFile);
+
+            $fileSize = filesize($tempFile);
+
+            $headers = [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Length' => (string) $fileSize,
+                'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+                'Pragma' => 'no-cache',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Expires' => '0',
+            ];
+
+            return response()->download($tempFile, $fileName, $headers)->deleteFileAfterSend(true);
+        }
+
+        // ==========================================
+        // OPSI 2: FORMAT CSV (.CSV) DENGAN UTF-8 BOM
+        // ==========================================
+        $fileName = 'Database_Seleksi_Administrasi_' . date('Y-m-d_H-i') . '.csv';
+        $tempFile = tempnam(sys_get_temp_dir(), 'export_seleksi_admin_');
+        $file = fopen($tempFile, 'w+');
+
+        // Add UTF-8 BOM so Microsoft Excel renders UTF-8 characters seamlessly
+        fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        $delimiter = $request->get('delimiter', ';');
+        if (!in_array($delimiter, [';', ','])) {
+            $delimiter = ';';
+        }
+
+        fputcsv($file, $columns, $delimiter);
+
+        foreach ($rows as $rowData) {
+            fputcsv($file, $rowData, $delimiter);
         }
 
         fclose($file);
