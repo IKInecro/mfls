@@ -171,22 +171,68 @@ class AdminController extends Controller
         if (auth()->user()->role === 'mentor')
             return abort(403);
 
-        $query = Akun::where('role', 'pendaftar')
-            ->with(['peserta.daftar', 'peserta.nilais', 'peserta.berkas']);
+        $baseQuery = Akun::where('role', 'pendaftar')
+            ->with(['peserta.daftar', 'peserta.nilais', 'peserta.berkas', 'peserta.sertifikats']);
 
+        // Hitung statistik global untuk badge filter cepat
+        $allAkuns = (clone $baseQuery)->get();
+        $counts = [
+            'total' => $allAkuns->count(),
+            'lengkap' => $allAkuns->filter(fn($p) => ($p->peserta->progress ?? 0) >= 100)->count(),
+            'belum_lengkap' => $allAkuns->filter(fn($p) => ($p->peserta->progress ?? 0) < 100)->count(),
+            'menunggu' => $allAkuns->filter(fn($p) => in_array($p->peserta?->daftar?->status, ['menunggu', null, '']))->count(),
+            'lulus' => $allAkuns->filter(fn($p) => ($p->peserta?->daftar?->status ?? '') === 'lulus')->count(),
+            'palugada' => $allAkuns->filter(fn($p) => ($p->peserta?->daftar?->status ?? '') === 'diajukan_palugada')->count(),
+            'tidak_lulus' => $allAkuns->filter(fn($p) => ($p->peserta?->daftar?->status ?? '') === 'tidak_lulus')->count(),
+        ];
+
+        $query = clone $baseQuery;
+
+        // 1. Filter Pencarian Cepat
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhereHas('peserta', function ($q2) use ($search) {
+                        $q2->where('nisn', 'like', "%{$search}%")
+                            ->orWhere('no_whatsapp', 'like', "%{$search}%")
+                            ->orWhere('nama_sekolah', 'like', "%{$search}%")
+                            ->orWhere('kabupaten', 'like', "%{$search}%")
+                            ->orWhere('provinsi', 'like', "%{$search}%");
+                    })
                     ->orWhereHas('peserta.daftar', function ($q2) use ($search) {
-                    $q2->where('asal_sekolah', 'like', "%{$search}%")
-                        ->orWhere('kode_referral', 'like', "%{$search}%");
-                }
-                );
+                        $q2->where('asal_sekolah', 'like', "%{$search}%")
+                            ->orWhere('kode_referral', 'like', "%{$search}%")
+                            ->orWhere('no_wa', 'like', "%{$search}%");
+                    });
             });
         }
 
+        // 2. Filter Status Seleksi Administrasi
+        if ($request->filled('status')) {
+            $status = $request->status;
+            if ($status === 'menunggu') {
+                $query->whereHas('peserta.daftar', function ($q) {
+                    $q->whereIn('status', ['menunggu', ''])->orWhereNull('status');
+                });
+            } else {
+                $query->whereHas('peserta.daftar', function ($q) use ($status) {
+                    $q->where('status', $status);
+                });
+            }
+        }
+
+        // 3. Filter Program Studi
+        if ($request->filled('prodi')) {
+            $prodi = $request->prodi;
+            $query->whereHas('peserta', function ($q) use ($prodi) {
+                $q->where('pilihan_prodi', 'like', "%{$prodi}%")
+                  ->orWhere('pilihan_prodi2', 'like', "%{$prodi}%");
+            });
+        }
+
+        // 4. Filter Tanggal Pendaftaran
         if ($request->filled('from_date')) {
             $query->whereDate('created_at', '>=', $request->from_date);
         }
@@ -195,46 +241,57 @@ class AdminController extends Controller
             $query->whereDate('created_at', '<=', $request->to_date);
         }
 
+        // 5. Filter Nilai Minimum
         if ($request->filled('filter_nilai')) {
             $query->whereHas('peserta.daftar', function ($q) use ($request) {
                 $q->where('rata_rata_nilai', '>=', $request->filter_nilai);
             });
         }
 
-        // Sorting Logic
-        if ($request->get('sort') === 'nilai_high') {
-            $query->join('peserta', 'akun.id', '=', 'peserta.akun_id')
-                ->join('daftar', 'peserta.id', '=', 'daftar.peserta_id')
-                ->orderBy('daftar.rata_rata_nilai', 'desc')
-                ->select('akun.*');
-        }
-        elseif ($request->get('sort') === 'nilai_low') {
-            $query->join('peserta', 'akun.id', '=', 'peserta.akun_id')
-                ->join('daftar', 'peserta.id', '=', 'daftar.peserta_id')
-                ->orderBy('daftar.rata_rata_nilai', 'asc')
-                ->select('akun.*');
-        }
-        else {
-            $query->latest();
-        }
-
         $pendaftars = $query->get();
 
-        // Urutkan berdasarkan Progress (100% di atas) lalu Nilai Rata-rata
-        $pendaftars = $pendaftars->sort(function ($a, $b) {
-            $progA = $a->peserta->progress ?? 0;
-            $progB = $b->peserta->progress ?? 0;
-
-            if ($progA == $progB) {
-                $nilaiA = $a->peserta && $a->peserta->daftar ? $a->peserta->daftar->rata_rata_nilai : 0;
-                $nilaiB = $b->peserta && $b->peserta->daftar ? $b->peserta->daftar->rata_rata_nilai : 0;
-                return $nilaiB <=> $nilaiA; // Nilai tinggi di atas
+        // 6. Filter Progress Dokumen (Collection filtering karena progress adalah accessor dinamis)
+        if ($request->filled('progress')) {
+            if ($request->progress === '100') {
+                $pendaftars = $pendaftars->filter(fn($p) => ($p->peserta->progress ?? 0) >= 100);
+            } elseif ($request->progress === 'under100') {
+                $pendaftars = $pendaftars->filter(fn($p) => ($p->peserta->progress ?? 0) < 100);
             }
+        }
 
-            return $progB <=> $progA; // Progress tinggi di atas
-        });
+        // 7. Fleksibilitas Pengurutan (Sorting)
+        $sort = $request->get('sort', 'priority');
+        if ($sort === 'nilai_high') {
+            $pendaftars = $pendaftars->sortByDesc(fn($p) => $p->peserta?->daftar?->rata_rata_nilai ?? 0);
+        } elseif ($sort === 'nilai_low') {
+            $pendaftars = $pendaftars->sortBy(fn($p) => $p->peserta?->daftar?->rata_rata_nilai ?? 0);
+        } elseif ($sort === 'name_asc') {
+            $pendaftars = $pendaftars->sortBy(fn($p) => strtolower($p->nama));
+        } elseif ($sort === 'name_desc') {
+            $pendaftars = $pendaftars->sortByDesc(fn($p) => strtolower($p->nama));
+        } elseif ($sort === 'latest') {
+            $pendaftars = $pendaftars->sortByDesc(fn($p) => $p->created_at);
+        } elseif ($sort === 'oldest') {
+            $pendaftars = $pendaftars->sortBy(fn($p) => $p->created_at);
+        } elseif ($sort === 'progress_high') {
+            $pendaftars = $pendaftars->sortByDesc(fn($p) => $p->peserta->progress ?? 0);
+        } else {
+            // Default: Prioritas (Progress 100% di atas, lalu Rata-rata Nilai Tertinggi)
+            $pendaftars = $pendaftars->sort(function ($a, $b) {
+                $progA = $a->peserta->progress ?? 0;
+                $progB = $b->peserta->progress ?? 0;
 
-        return view('admin.pendaftar.index', compact('pendaftars'));
+                if ($progA == $progB) {
+                    $nilaiA = $a->peserta && $a->peserta->daftar ? $a->peserta->daftar->rata_rata_nilai : 0;
+                    $nilaiB = $b->peserta && $b->peserta->daftar ? $b->peserta->daftar->rata_rata_nilai : 0;
+                    return $nilaiB <=> $nilaiA;
+                }
+
+                return $progB <=> $progA;
+            });
+        }
+
+        return view('admin.pendaftar.index', compact('pendaftars', 'counts'));
     }
 
     public function indexPalugada(Request $request)
