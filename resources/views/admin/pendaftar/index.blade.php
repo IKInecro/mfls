@@ -1,6 +1,10 @@
 @extends('layouts.admin')
 
 @section('content')
+@php
+    $isDetailed = request('view') === 'detailed';
+@endphp
+
 <!-- Header & Quick Metrics -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
     <!-- Total Pendaftar -->
@@ -12,7 +16,7 @@
                 <span class="iconify text-[#0870B8] text-lg" data-icon="solar:users-group-rounded-bold"></span>
                 Total Pendaftar
             </span>
-            <span class="text-[10px] font-black bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full border border-blue-500/30">Semua</span>
+            <span class="text-[10px] font-black bg-blue-500/20 text-blue-300 px-2.5 py-0.5 rounded-full border border-blue-500/30">Semua</span>
         </div>
         <p class="text-3xl font-black mt-3 text-white tracking-tight">{{ $counts['total'] ?? $pendaftars->count() }}</p>
         <p class="text-[11px] font-bold text-slate-400 mt-2 flex items-center gap-1">
@@ -29,7 +33,7 @@
                 <span class="iconify text-amber-500 text-lg" data-icon="solar:clock-circle-bold"></span>
                 Menunggu
             </span>
-            <span class="text-[10px] font-black bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Perlu Cek</span>
+            <span class="text-[10px] font-black bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-full">Perlu Cek</span>
         </div>
         <p class="text-3xl font-black text-slate-800 mt-3 tracking-tight">{{ $counts['menunggu'] ?? 0 }}</p>
         <p class="text-[11px] font-bold text-amber-600 mt-2">Belum Diverifikasi</p>
@@ -44,7 +48,7 @@
                 <span class="iconify text-emerald-500 text-lg" data-icon="solar:check-circle-bold"></span>
                 Lolos Seleksi
             </span>
-            <span class="text-[10px] font-black bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Lulus</span>
+            <span class="text-[10px] font-black bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full">Lulus</span>
         </div>
         <p class="text-3xl font-black text-slate-800 mt-3 tracking-tight">{{ $counts['lulus'] ?? 0 }}</p>
         <p class="text-[11px] font-bold text-emerald-600 mt-2">Administrasi Terverifikasi</p>
@@ -59,7 +63,7 @@
                 <span class="iconify text-[#0870B8] text-lg" data-icon="solar:document-bold"></span>
                 Berkas Lengkap
             </span>
-            <span class="text-[10px] font-black bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">100%</span>
+            <span class="text-[10px] font-black bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full">100%</span>
         </div>
         <p class="text-3xl font-black text-slate-800 mt-3 tracking-tight">{{ $counts['lengkap'] ?? 0 }}</p>
         <p class="text-[11px] font-bold text-[#0870B8] mt-2">Semua Berkas Terunggah</p>
@@ -70,7 +74,7 @@
 <div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/40 border border-slate-100 overflow-hidden">
     
     <!-- Quick Status Tabs -->
-    <div class="px-8 pt-6 pb-2 border-b border-slate-100 flex items-center gap-2 overflow-x-auto scrollbar-none">
+    <div class="px-6 md:px-8 pt-6 pb-2 border-b border-slate-100 flex items-center gap-2 overflow-x-auto scrollbar-none">
         @php
             $activeStatus = request('status');
             $activeProgress = request('progress');
@@ -133,6 +137,9 @@
             @endif
             @if(request('progress'))
                 <input type="hidden" name="progress" value="{{ request('progress') }}">
+            @endif
+            @if(request('view'))
+                <input type="hidden" name="view" value="{{ request('view') }}">
             @endif
 
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -224,41 +231,34 @@
             </div>
         </form>
 
-        <!-- View Switcher & Action Buttons -->
+        <!-- View Mode Switcher & Export CSV -->
         <div class="mt-6 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
-            <!-- Mode Switcher -->
-            <div class="flex items-center gap-2 bg-slate-100/80 p-1 rounded-2xl border border-slate-200/60">
-                <button type="button" onclick="setViewMode('compact')" id="btnViewCompact" 
-                        class="px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 text-white bg-[#0870B8] shadow-sm">
+            <!-- View Mode Switcher: Clickable Links + Instant JS Switch -->
+            <div class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/80">
+                <a href="{{ route('admin.pendaftar.index', array_merge(request()->query(), ['view' => 'compact'])) }}" 
+                   id="btnViewCompact"
+                   onclick="switchView(event, 'compact')" 
+                   class="px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 {{ !$isDetailed ? 'bg-[#0870B8] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
                     <span class="iconify text-base" data-icon="solar:widget-bold"></span>
                     <span>Tampilan Fleksibel (Ringkas)</span>
-                </button>
-                <button type="button" onclick="setViewMode('detailed')" id="btnViewDetailed" 
-                        class="px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 text-slate-600 hover:text-slate-900">
+                </a>
+                <a href="{{ route('admin.pendaftar.index', array_merge(request()->query(), ['view' => 'detailed'])) }}" 
+                   id="btnViewDetailed"
+                   onclick="switchView(event, 'detailed')" 
+                   class="px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 {{ $isDetailed ? 'bg-[#0870B8] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
                     <span class="iconify text-base" data-icon="solar:list-bold"></span>
                     <span>Tampilan Rinci (S1-S5)</span>
-                </button>
+                </a>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-2.5 flex-wrap">
-                @if(auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || in_array(auth()->user()->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
-                <button type="button" onclick="bulkSendCertificates()" 
-                        class="px-5 py-2.5 bg-[#0870B8] text-white rounded-2xl text-xs font-black shadow-md shadow-blue-500/20 hover:bg-[#065A96] transition-all uppercase tracking-wider flex items-center gap-2">
-                    <span class="iconify text-lg" data-icon="solar:letter-send-bold"></span>
-                    <span>Kirim Sertifikat Massal</span>
-                </button>
-                @endif
-
-                <!-- Export CSV Button -->
-                <div class="relative inline-block" id="exportDropdownContainer">
-                    <a href="{{ route('admin.export', request()->all()) }}" 
-                       class="px-5 py-2.5 bg-emerald-600 text-white rounded-2xl text-xs font-black shadow-md shadow-emerald-500/20 hover:bg-emerald-700 transition-all uppercase tracking-wider flex items-center gap-2"
-                       title="Download Rekap Excel / CSV">
-                        <span class="iconify text-lg" data-icon="solar:file-download-bold"></span>
-                        <span>Export Excel / CSV</span>
-                    </a>
-                </div>
+            <!-- Export CSV Button (Direct Download) -->
+            <div>
+                <a href="{{ route('admin.export', request()->all()) }}" 
+                   class="px-5 py-2.5 bg-emerald-600 text-white rounded-2xl text-xs font-black shadow-md shadow-emerald-500/20 hover:bg-emerald-700 transition-all uppercase tracking-wider flex items-center gap-2"
+                   title="Download Rekap CSV dengan ukuran file pasti">
+                    <span class="iconify text-lg" data-icon="solar:file-download-bold"></span>
+                    <span>Export Excel / CSV</span>
+                </a>
             </div>
         </div>
     </div>
@@ -268,26 +268,23 @@
         <table class="w-full text-left border-collapse" id="pendaftarTable">
             <thead>
                 <tr class="bg-slate-50/70 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100">
-                    @if(auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || in_array(auth()->user()->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
-                    <th class="px-5 py-5 text-center w-12">
-                        <input type="checkbox" id="selectAll" class="w-4 h-4 rounded text-[#0870B8] focus:ring-[#0870B8] border-slate-300 cursor-pointer">
-                    </th>
-                    @endif
                     <th class="px-6 py-5 min-w-[280px]">Kandidat</th>
                     <th class="px-5 py-5 min-w-[170px]">Minat Program Studi</th>
 
                     <!-- Semester Columns (Toggled by View Mode) -->
-                    <th class="col-sem px-3 py-5 text-center hidden">S1</th>
-                    <th class="col-sem px-3 py-5 text-center hidden">S2</th>
-                    <th class="col-sem px-3 py-5 text-center hidden">S3</th>
-                    <th class="col-sem px-3 py-5 text-center hidden">S4</th>
-                    <th class="col-sem px-3 py-5 text-center hidden">S5</th>
+                    <th class="col-sem px-3.5 py-5 text-center text-slate-500 font-black min-w-[65px] {{ $isDetailed ? '' : 'hidden' }}" style="{{ $isDetailed ? 'display: table-cell;' : 'display: none;' }}">S1</th>
+                    <th class="col-sem px-3.5 py-5 text-center text-slate-500 font-black min-w-[65px] {{ $isDetailed ? '' : 'hidden' }}" style="{{ $isDetailed ? 'display: table-cell;' : 'display: none;' }}">S2</th>
+                    <th class="col-sem px-3.5 py-5 text-center text-slate-500 font-black min-w-[65px] {{ $isDetailed ? '' : 'hidden' }}" style="{{ $isDetailed ? 'display: table-cell;' : 'display: none;' }}">S3</th>
+                    <th class="col-sem px-3.5 py-5 text-center text-slate-500 font-black min-w-[65px] {{ $isDetailed ? '' : 'hidden' }}" style="{{ $isDetailed ? 'display: table-cell;' : 'display: none;' }}">S4</th>
+                    <th class="col-sem px-3.5 py-5 text-center text-slate-500 font-black min-w-[65px] {{ $isDetailed ? '' : 'hidden' }}" style="{{ $isDetailed ? 'display: table-cell;' : 'display: none;' }}">S5</th>
 
-                    <th class="px-5 py-5 text-center min-w-[150px]">Nilai Rapor</th>
+                    <th class="px-5 py-5 text-center min-w-[130px]">
+                        <span id="labelNilaiHeader">{{ $isDetailed ? 'AVG' : 'Nilai Rapor' }}</span>
+                    </th>
                     <th class="px-5 py-5 text-center min-w-[190px]">Kelengkapan Berkas</th>
-                    <th class="px-4 py-5 text-center min-w-[160px]">Video &amp; Medsos</th>
+                    <th class="px-4 py-5 text-center min-w-[150px]">Video &amp; Medsos</th>
                     <th class="px-5 py-5 text-center min-w-[130px]">Status Seleksi</th>
-                    <th class="px-6 py-5 text-right min-w-[170px]">Aksi</th>
+                    <th class="px-6 py-5 text-right min-w-[160px]">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -312,13 +309,6 @@
                     $avgTotal = $daftar?->rata_rata_nilai ?? 0;
                 @endphp
                 <tr class="hover:bg-blue-50/30 transition-colors group">
-                    @if(auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || in_array(auth()->user()->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
-                    <td class="px-5 py-4 text-center">
-                        <input type="checkbox" name="selected_ids[]" value="{{ $akun->id }}" 
-                               class="row-checkbox w-4 h-4 rounded text-[#0870B8] focus:ring-[#0870B8] border-slate-300 cursor-pointer">
-                    </td>
-                    @endif
-
                     <!-- Kandidat Column -->
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3.5">
@@ -411,29 +401,29 @@
                         @endif
                     </td>
 
-                    <!-- Detailed Semester Columns (Hidden by default) -->
+                    <!-- Detailed Semester Columns -->
                     @for($sem = 1; $sem <= 5; $sem++)
-                    <td class="col-sem px-3 py-4 text-center hidden">
-                        @php
-                            $avgSem = $daftar->{"avg_semester_{$sem}"} ?? 0;
-                            $colorSem = $avgSem >= 90 ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 
-                                       ($avgSem >= 80 ? 'bg-blue-100 text-blue-700 border-blue-200' : 
-                                       ($avgSem >= 70 ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-500 border-slate-200'));
-                        @endphp
-                        <span class="inline-block px-2 py-1 {{ $colorSem }} rounded-lg text-[10px] font-black border">
+                    @php
+                        $avgSem = $daftar->{"avg_semester_{$sem}"} ?? 0;
+                        $colorSem = $avgSem >= 90 ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 
+                                   ($avgSem >= 80 ? 'bg-blue-100 text-blue-800 border-blue-200' : 
+                                   ($avgSem >= 70 ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200'));
+                    @endphp
+                    <td class="col-sem px-3.5 py-4 text-center {{ $isDetailed ? '' : 'hidden' }}" style="{{ $isDetailed ? 'display: table-cell;' : 'display: none;' }}">
+                        <span class="inline-block px-2.5 py-1 {{ $colorSem }} rounded-lg text-xs font-black border">
                             {{ $avgSem > 0 ? number_format($avgSem, 1) : '-' }}
                         </span>
                     </td>
                     @endfor
 
-                    <!-- Nilai Rapor (Compact + Detailed Hybrid) -->
+                    <!-- Nilai Rapor / AVG Column -->
                     <td class="px-5 py-4 text-center">
                         <div class="inline-flex flex-col items-center">
                             <span class="inline-block px-3 py-1 bg-amber-50 text-amber-800 rounded-xl text-xs font-black border border-amber-200/80 shadow-xs">
-                                AVG: {{ number_format($avgTotal, 1) }}
+                                {{ number_format($avgTotal, 1) }}
                             </span>
-                            <!-- Semester Mini Strip (in Compact view) -->
-                            <div class="sem-strip flex items-center gap-1 mt-1.5" title="Nilai S1 s/d S5">
+                            <!-- Semester Mini Strip (Visible in Compact view) -->
+                            <div class="sem-strip flex items-center gap-1 mt-1.5 {{ $isDetailed ? 'hidden' : '' }}" title="Nilai S1 s/d S5">
                                 @for($s = 1; $s <= 5; $s++)
                                     @php
                                         $valS = $daftar->{"avg_semester_{$s}"} ?? 0;
@@ -578,7 +568,7 @@
                                 <span class="iconify text-base" data-icon="solar:folder-with-files-bold"></span>
                             </a>
 
-                            <!-- Kirim Sertifikat Email -->
+                            <!-- Kirim Sertifikat Email Individu -->
                             <form action="{{ route('admin.pendaftar.send_certificate', $akun->id) }}" method="POST" class="inline">
                                 @csrf
                                 <button type="submit" onclick="return confirm('Kirim sertifikat ke email {{ $akun->email }}?')" 
@@ -644,57 +634,6 @@
     </div>
 </div>
 
-<!-- Floating Action Bar for Selected Candidates -->
-<div id="floatingBulkBar" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#0B1120] text-white px-6 py-3.5 rounded-3xl shadow-2xl border border-slate-800 z-50 hidden flex items-center gap-5 transition-all">
-    <div class="flex items-center gap-2 text-xs font-bold">
-        <span class="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-[10px] font-black" id="selectedCountBadge">0</span>
-        <span>Kandidat dipilih</span>
-    </div>
-    <div class="h-4 w-px bg-slate-800"></div>
-    <button type="button" onclick="bulkSendCertificates()" 
-            class="px-4 py-2 bg-[#0870B8] text-white rounded-xl text-xs font-black hover:bg-blue-600 transition-all flex items-center gap-1.5 uppercase tracking-wider">
-        <span class="iconify text-base" data-icon="solar:letter-send-bold"></span>
-        <span>Kirim Sertifikat Massal</span>
-    </button>
-    <button type="button" onclick="deselectAll()" 
-            class="text-xs text-slate-400 hover:text-white font-bold transition-colors">
-        Batal
-    </button>
-</div>
-
-<!-- Modal Progress Pengiriman Sertifikat -->
-@if(auth()->user()->role === 'admin' || auth()->user()->role === 'panitia' || in_array(auth()->user()->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
-<div id="progressModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-100">
-        <div class="p-8 text-center">
-            <div class="w-16 h-16 bg-blue-50 text-[#0870B8] rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <span class="iconify text-3xl animate-spin" data-icon="solar:restart-bold"></span>
-            </div>
-            <h3 class="text-xl font-black text-slate-800 mb-2">Mengirim Sertifikat...</h3>
-            <p class="text-slate-500 text-xs font-semibold mb-8">Mohon tunggu, sedang memproses pengiriman sertifikat.</p>
-            
-            <div class="relative pt-1">
-                <div class="flex mb-2 items-center justify-between">
-                    <div>
-                        <span class="text-xs font-black inline-block py-1 px-2.5 uppercase rounded-full text-[#0870B8] bg-blue-50 border border-blue-200" id="progressText">
-                            0%
-                        </span>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-xs font-black inline-block text-[#0870B8]" id="progressCount">
-                            0 / 0
-                        </span>
-                    </div>
-                </div>
-                <div class="overflow-hidden h-2.5 mb-4 text-xs flex rounded-full bg-slate-100">
-                    <div id="progressBar" style="width:0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-[#0870B8] transition-all duration-500"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endif
-
 {{-- Form Reset Password --}}
 @if(auth()->user()->role === 'admin' || in_array(auth()->user()->email, ['dept.adminis@mfls.com', 'info@beasiswamncu.com']))
 <form id="resetPasswordForm" method="POST" style="display:none;">
@@ -704,205 +643,96 @@
 </form>
 @endif
 
-@push('scripts')
+<!-- Direct inline script so it ALWAYS executes whether on page load or via SPA router -->
 <script>
-// 1. View Mode Switcher (Fleksibel / Ringkas vs Rinci)
-function setViewMode(mode) {
+// 1. View Mode Switcher (Fleksibel / Ringkas vs Rinci S1-S5)
+function switchView(event, mode) {
+    if (event) {
+        event.preventDefault();
+    }
+
     const semCols = document.querySelectorAll('.col-sem');
     const semStrips = document.querySelectorAll('.sem-strip');
+    const labelNilaiHeader = document.getElementById('labelNilaiHeader');
     const btnCompact = document.getElementById('btnViewCompact');
     const btnDetailed = document.getElementById('btnViewDetailed');
 
     if (mode === 'detailed') {
-        semCols.forEach(col => col.classList.remove('hidden'));
-        semStrips.forEach(strip => strip.classList.add('hidden'));
-        
-        btnDetailed.classList.add('bg-[#0870B8]', 'text-white', 'shadow-sm');
-        btnDetailed.classList.remove('text-slate-600');
-        btnCompact.classList.remove('bg-[#0870B8]', 'text-white', 'shadow-sm');
-        btnCompact.classList.add('text-slate-600');
+        // Tampilkan kolom S1 - S5
+        semCols.forEach(el => {
+            el.style.display = 'table-cell';
+            el.classList.remove('hidden');
+        });
+        semStrips.forEach(el => el.classList.add('hidden'));
+        if (labelNilaiHeader) labelNilaiHeader.innerText = 'AVG';
+
+        if (btnDetailed) {
+            btnDetailed.className = 'px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 bg-[#0870B8] text-white shadow-sm';
+        }
+        if (btnCompact) {
+            btnCompact.className = 'px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 text-slate-600 hover:text-slate-900';
+        }
     } else {
-        semCols.forEach(col => col.classList.add('hidden'));
-        semStrips.forEach(strip => strip.classList.remove('hidden'));
-        
-        btnCompact.classList.add('bg-[#0870B8]', 'text-white', 'shadow-sm');
-        btnCompact.classList.remove('text-slate-600');
-        btnDetailed.classList.remove('bg-[#0870B8]', 'text-white', 'shadow-sm');
-        btnDetailed.classList.add('text-slate-600');
+        // Mode Ringkas (Sembunyikan kolom S1 - S5)
+        semCols.forEach(el => {
+            el.style.display = 'none';
+            el.classList.add('hidden');
+        });
+        semStrips.forEach(el => el.classList.remove('hidden'));
+        if (labelNilaiHeader) labelNilaiHeader.innerText = 'Nilai Rapor';
+
+        if (btnCompact) {
+            btnCompact.className = 'px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 bg-[#0870B8] text-white shadow-sm';
+        }
+        if (btnDetailed) {
+            btnDetailed.className = 'px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 text-slate-600 hover:text-slate-900';
+        }
     }
-    localStorage.setItem('adminPendaftarViewMode', mode);
+
+    // Persist choice to localStorage and URL
+    try {
+        localStorage.setItem('adminPendaftarViewMode', mode);
+        const url = new URL(window.location.href);
+        url.searchParams.set('view', mode);
+        window.history.replaceState({}, '', url.toString());
+
+        // Update hidden view input in filterForm
+        const filterForm = document.getElementById('filterForm');
+        if (filterForm) {
+            let viewInput = filterForm.querySelector('input[name="view"]');
+            if (!viewInput) {
+                viewInput = document.createElement('input');
+                viewInput.type = 'hidden';
+                viewInput.name = 'view';
+                filterForm.appendChild(viewInput);
+            }
+            viewInput.value = mode;
+        }
+    } catch (e) {
+        console.warn('Could not update URL or localStorage:', e);
+    }
 }
 
-// Restore saved view mode
-document.addEventListener('DOMContentLoaded', () => {
-    const savedMode = localStorage.getItem('adminPendaftarViewMode') || 'compact';
-    setViewMode(savedMode);
-});
+// Inisialisasi Mode Tampilan saat dimuat
+(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewFromUrl = urlParams.get('view');
+    const savedView = viewFromUrl || localStorage.getItem('adminPendaftarViewMode') || 'compact';
+    switchView(null, savedView);
+})();
 
-// 2. Toggle Advanced Filters
+// 2. Toggle Advanced Filter Panel
 function toggleAdvancedFilters() {
     const panel = document.getElementById('advancedFilterPanel');
-    panel.classList.toggle('hidden');
-}
-
-// 3. Selection & Floating Bulk Bar
-const selectAllCheckbox = document.getElementById('selectAll');
-const rowCheckboxes = document.querySelectorAll('.row-checkbox');
-const floatingBulkBar = document.getElementById('floatingBulkBar');
-const selectedCountBadge = document.getElementById('selectedCountBadge');
-
-function updateBulkBar() {
-    const selected = document.querySelectorAll('.row-checkbox:checked').length;
-    if (selected > 0) {
-        floatingBulkBar.classList.remove('hidden');
-        selectedCountBadge.innerText = selected;
-    } else {
-        floatingBulkBar.classList.add('hidden');
+    if (panel) {
+        panel.classList.toggle('hidden');
     }
 }
 
-if (selectAllCheckbox) {
-    selectAllCheckbox.addEventListener('change', function() {
-        rowCheckboxes.forEach(cb => cb.checked = this.checked);
-        updateBulkBar();
-    });
-}
-
-rowCheckboxes.forEach(cb => {
-    cb.addEventListener('change', () => {
-        updateBulkBar();
-        if (selectAllCheckbox) {
-            selectAllCheckbox.checked = Array.from(rowCheckboxes).every(c => c.checked);
-        }
-    });
-});
-
-function deselectAll() {
-    if (selectAllCheckbox) selectAllCheckbox.checked = false;
-    rowCheckboxes.forEach(cb => cb.checked = false);
-    updateBulkBar();
-}
-
-// 4. Bulk Send Certificate Logic
-let progressInterval;
-
-function bulkSendCertificates() {
-    const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
-    const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.value);
-
-    if (selectedIds.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Pilih Pendaftar',
-            text: 'Silakan centang setidaknya satu pendaftar untuk mengirim sertifikat massal.'
-        });
-        return;
-    }
-
-    Swal.fire({
-        title: 'Konfirmasi Kirim Sertifikat',
-        text: `Kirim sertifikat ke ${selectedIds.length} pendaftar yang dipilih?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Kirim Sekarang',
-        cancelButtonText: 'Batal',
-        confirmButtonColor: '#0870B8'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const modal = document.getElementById('progressModal');
-            if(modal) modal.classList.remove('hidden');
-            
-            document.getElementById('progressBar').style.width = '0%';
-            document.getElementById('progressCount').innerText = `0 / ${selectedIds.length}`;
-            document.getElementById('progressText').innerText = '0%';
-
-            fetch("{{ route('admin.pendaftar.bulk_send_certificate') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ selected_ids: selectedIds })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    localStorage.setItem('activeCertBatchId', data.batch_id);
-                    startPolling(data.batch_id);
-                } else {
-                    if(modal) modal.classList.add('hidden');
-                    Swal.fire('Error', data.message || 'Gagal memulai pengiriman.', 'error');
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                if(modal) modal.classList.add('hidden');
-                Swal.fire('Error', 'Terjadi kesalahan sistem.', 'error');
-            });
-        }
-    });
-}
-
-function startPolling(batchId) {
-    if (progressInterval) clearInterval(progressInterval);
-    
-    progressInterval = setInterval(() => {
-        fetch(`{{ route('admin.pendaftar.bulk_send_progress') }}?batch_id=${batchId}`, {
-            headers: { 'Accept': 'application/json' }
-        })
-        .then(res => {
-            if (res.status === 404) {
-                clearInterval(progressInterval);
-                localStorage.removeItem('activeCertBatchId');
-                const modal = document.getElementById('progressModal');
-                if(modal) modal.classList.add('hidden');
-                return null;
-            }
-            return res.json();
-        })
-        .then(data => {
-            if (!data) return;
-
-            const percentage = data.percentage || 0;
-            document.getElementById('progressBar').style.width = `${percentage}%`;
-            document.getElementById('progressCount').innerText = `${data.current} / ${data.total}`;
-            document.getElementById('progressText').innerText = `${percentage}%`;
-
-            if (data.status === 'completed' || data.current >= data.total) {
-                clearInterval(progressInterval);
-                localStorage.removeItem('activeCertBatchId');
-                setTimeout(() => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Selesai!',
-                        text: 'Semua sertifikat telah berhasil dikirim ke antrean.',
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#0870B8'
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                }, 1000);
-            }
-        })
-        .catch(err => console.error('Polling error:', err));
-    }, 2000);
-}
-
-// Auto resume batch polling on load
-document.addEventListener('DOMContentLoaded', () => {
-    const savedBatchId = localStorage.getItem('activeCertBatchId');
-    if (savedBatchId) {
-        const modal = document.getElementById('progressModal');
-        if(modal) modal.classList.remove('hidden');
-        startPolling(savedBatchId);
-    }
-});
-
-// 5. Reset Password Confirmation
+// 3. Reset Password Confirmation Dialog
 function confirmResetPassword(userId, name) {
     Swal.fire({
-        title: 'Reset Password',
+        title: 'Reset Password Akun',
         text: `Masukkan password baru untuk akun ${name}:`,
         input: 'password',
         inputPlaceholder: 'Minimal 6 karakter',
@@ -920,12 +750,13 @@ function confirmResetPassword(userId, name) {
     }).then((result) => {
         if (result.isConfirmed) {
             const form = document.getElementById('resetPasswordForm');
-            form.action = `/admin/user/${userId}/reset-password`;
-            document.getElementById('resetPasswordInput').value = result.value;
-            form.submit();
+            if (form) {
+                form.action = `/admin/user/${userId}/reset-password`;
+                document.getElementById('resetPasswordInput').value = result.value;
+                form.submit();
+            }
         }
     });
 }
 </script>
-@endpush
 @endsection

@@ -86,5 +86,14 @@ class SeleksiAdministrasiLayoutTest extends TestCase
         $responseMgt = $this->actingAs($admin)->get(route('admin.pendaftar.index', ['prodi' => 'Manajemen']));
         $responseMgt->assertStatus(200);
         $responseMgt->assertDontSee('Siti Aminah');
+
+        // Verify "Kirim Sertifikat Massal" is removed
+        $response->assertDontSee('Kirim Sertifikat Massal');
+
+        // Verify View Mode Toggle
+        $responseDetailed = $this->actingAs($admin)->get(route('admin.pendaftar.index', ['view' => 'detailed']));
+        $responseDetailed->assertStatus(200);
+        $responseDetailed->assertSee('Tampilan Rinci (S1-S5)');
+        $responseDetailed->assertSee('display: table-cell;', false);
     }
 }
