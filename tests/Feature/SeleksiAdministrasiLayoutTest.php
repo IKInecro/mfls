@@ -96,4 +96,75 @@ class SeleksiAdministrasiLayoutTest extends TestCase
         $responseDetailed->assertSee('Tampilan Rinci (S1-S5)');
         $responseDetailed->assertSee('display: table-cell;', false);
     }
+
+    public function test_seleksi_administrasi_paginates_pendaftar_to_prevent_browser_lag()
+    {
+        $admin = Akun::create([
+            'nama' => 'Admin Tester',
+            'email' => 'admin_page@test.com',
+            'password' => Hash::make('password123'),
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+
+        // Buat 30 pendaftar
+        for ($i = 1; $i <= 30; $i++) {
+            $user = Akun::create([
+                'nama' => 'Peserta Ke ' . $i,
+                'email' => 'peserta' . $i . '@test.com',
+                'password' => Hash::make('password123'),
+                'role' => 'pendaftar',
+                'is_active' => true,
+            ]);
+
+            $peserta = Peserta::create([
+                'akun_id' => $user->id,
+                'nama' => 'Peserta Ke ' . $i,
+                'nisn' => 'NISN' . str_pad($i, 5, '0', STR_PAD_LEFT),
+                'pilihan_prodi' => 'Manajemen',
+                'jenis_kelamin' => 'Laki-laki',
+                'nama_sekolah' => 'SMA ' . $i,
+            ]);
+
+            Daftar::create([
+                'peserta_id' => $peserta->id,
+                'no_wa' => '0812345678' . $i,
+                'jenis_kelamin' => 'Laki-laki',
+                'asal_sekolah' => 'SMA ' . $i,
+                'provinsi' => 'DKI Jakarta',
+                'kabupaten' => 'Jakarta Selatan',
+                'status' => 'menunggu',
+                'rata_rata_nilai' => 80 + ($i % 10),
+                'tahun_lulus' => 2027,
+                'ttl' => 'Jakarta, 01/01/2006',
+            ]);
+        }
+
+        // Default 25 per page: page 1 harus memuat 25 items
+        $response = $this->actingAs($admin)->get(route('admin.pendaftar.index'));
+        $response->assertStatus(200);
+        $pendaftars = $response->viewData('pendaftars');
+        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $pendaftars);
+        $this->assertEquals(25, $pendaftars->perPage());
+        $this->assertEquals(30, $pendaftars->total());
+        $this->assertEquals(25, $pendaftars->count());
+        $this->assertEquals(2, $pendaftars->lastPage());
+
+        $response->assertSee('25 per hal');
+        $response->assertSee('50 per hal');
+        $response->assertSee('100 per hal');
+
+        // Test custom per_page = 50
+        $response50 = $this->actingAs($admin)->get(route('admin.pendaftar.index', ['per_page' => 50]));
+        $response50->assertStatus(200);
+        $pendaftars50 = $response50->viewData('pendaftars');
+        $this->assertEquals(50, $pendaftars50->perPage());
+        $this->assertEquals(30, $pendaftars50->count());
+
+        // Test page 2 pada default 25 per page (sisa 5 pendaftar)
+        $responsePage2 = $this->actingAs($admin)->get(route('admin.pendaftar.index', ['page' => 2]));
+        $responsePage2->assertStatus(200);
+        $pendaftarsPage2 = $responsePage2->viewData('pendaftars');
+        $this->assertEquals(5, $pendaftarsPage2->count());
+    }
 }

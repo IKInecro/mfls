@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AdminController extends Controller
 {
@@ -291,7 +292,31 @@ class AdminController extends Controller
             });
         }
 
-        return view('admin.pendaftar.index', compact('pendaftars', 'counts'));
+        // 8. Pagination (Default 25 per halaman, opsi 25 / 50 / 100 agar ringan dan tidak lag di laptop)
+        $perPage = (int) $request->get('per_page', 25);
+        if (!in_array($perPage, [10, 25, 50, 100, 200])) {
+            $perPage = 25;
+        }
+
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $totalItems = $pendaftars->count();
+        $currentPageItems = $pendaftars->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $paginatedPendaftars = new LengthAwarePaginator(
+            $currentPageItems,
+            $totalItems,
+            $perPage,
+            $currentPage,
+            [
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
+                'query' => $request->query()
+            ]
+        );
+
+        return view('admin.pendaftar.index', [
+            'pendaftars' => $paginatedPendaftars,
+            'counts' => $counts
+        ]);
     }
 
     public function indexPalugada(Request $request)

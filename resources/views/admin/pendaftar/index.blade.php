@@ -184,6 +184,15 @@
                         <option value="progress_high" {{ request('sort') == 'progress_high' ? 'selected' : '' }}>📁 Berkas Paling Lengkap</option>
                     </select>
 
+                    <!-- Limit Per Halaman (Pencegah Lag Laptop) -->
+                    <select name="per_page" onchange="document.getElementById('filterForm').submit()" 
+                            class="px-4 py-3 bg-slate-50 border border-slate-200/80 rounded-2xl text-xs font-bold text-slate-700 focus:bg-white focus:border-[#0870B8] focus:ring-4 focus:ring-blue-500/10 outline-none transition-all cursor-pointer">
+                        <option value="25" {{ request('per_page', 25) == 25 ? 'selected' : '' }}>📄 25 per hal</option>
+                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>📄 50 per hal</option>
+                        <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>📄 100 per hal</option>
+                        <option value="200" {{ request('per_page') == 200 ? 'selected' : '' }}>📄 200 per hal</option>
+                    </select>
+
                     <!-- Toggle Advanced Filters -->
                     <button type="button" onclick="toggleAdvancedFilters()" 
                             class="px-4 py-3 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-2xl text-xs font-bold text-slate-600 transition-all flex items-center gap-2">
@@ -195,7 +204,7 @@
                     </button>
 
                     <!-- Reset Filter Button -->
-                    @if(request()->hasAny(['search', 'status', 'prodi', 'from_date', 'to_date', 'filter_nilai', 'progress', 'sort']))
+                    @if(request()->hasAny(['search', 'status', 'prodi', 'from_date', 'to_date', 'filter_nilai', 'progress', 'sort', 'per_page']))
                     <a href="{{ route('admin.pendaftar.index') }}" 
                        class="px-4 py-3 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-2xl text-xs font-black transition-all flex items-center gap-1.5" 
                        title="Reset Semua Filter">
@@ -628,14 +637,19 @@
         </table>
     </div>
 
-    <!-- Table Footer Info -->
-    <div class="p-6 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-bold text-slate-500">
+    <!-- Table Footer Info & Pagination -->
+    <div class="p-6 border-t border-slate-100 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs font-bold text-slate-500">
         <div>
-            Menampilkan <span class="text-slate-800">{{ $pendaftars->count() }}</span> dari total <span class="text-slate-800">{{ $counts['total'] ?? $pendaftars->count() }}</span> pendaftar
+            Menampilkan <span class="text-slate-800">{{ $pendaftars->firstItem() ?? 0 }}</span> - <span class="text-slate-800">{{ $pendaftars->lastItem() ?? 0 }}</span> dari total <span class="text-slate-800">{{ $pendaftars->total() }}</span> pendaftar (Halaman {{ $pendaftars->currentPage() }} dari {{ $pendaftars->lastPage() }})
         </div>
-        <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-            <span>Data tersinkronisasi realtime</span>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span>Data tersinkronisasi realtime</span>
+            </div>
+            <div>
+                {{ $pendaftars->links() }}
+            </div>
         </div>
     </div>
 </div>
