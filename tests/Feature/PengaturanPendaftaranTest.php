@@ -268,4 +268,43 @@ class PengaturanPendaftaranTest extends TestCase
         $response->assertSee('Helpdesk MFLS Batch 3');
         $response->assertSee('Butuh Bantuan?');
     }
+
+    public function test_admin_bisa_edit_link_komunitas_whatsapp_dan_tercermin_di_landing_page_dan_dashboard(): void
+    {
+        $admin = $this->admin();
+        $pendaftar = $this->pendaftar();
+
+        $customGrup = 'https://chat.whatsapp.com/GrupBaruBatch3Test123';
+        $customSaluran = 'https://whatsapp.com/channel/SaluranBaruTest456';
+        $customHelpdesk = 'https://wa.me/6281299998888';
+
+        // 1. Simpan perubahan link lewat dashboard admin
+        $response = $this->actingAs($admin)->post('/admin/pengaturan/pendaftaran', [
+            'mode' => 'buka',
+            'link_wa_grup' => $customGrup,
+            'link_wa_saluran' => $customSaluran,
+            'link_wa_helpdesk' => $customHelpdesk,
+        ]);
+
+        $response->assertSessionHas('success');
+
+        $pengaturan = PengaturanPendaftaran::instance();
+        $this->assertEquals($customGrup, $pengaturan->link_wa_grup);
+        $this->assertEquals($customSaluran, $pengaturan->link_wa_saluran);
+        $this->assertEquals($customHelpdesk, $pengaturan->link_wa_helpdesk);
+
+        // 2. Landing page menampilkan link baru
+        $landing = $this->get('/');
+        $landing->assertOk();
+        $landing->assertSee($customGrup);
+        $landing->assertSee($customSaluran);
+        $landing->assertSee($customHelpdesk);
+
+        // 3. Dashboard pendaftar menampilkan link baru
+        $dash = $this->actingAs($pendaftar)->get('/pendaftar/dashboard');
+        $dash->assertOk();
+        $dash->assertSee($customGrup);
+        $dash->assertSee($customSaluran);
+        $dash->assertSee($customHelpdesk);
+    }
 }

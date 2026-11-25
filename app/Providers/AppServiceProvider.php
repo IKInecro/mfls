@@ -33,6 +33,11 @@ class AppServiceProvider extends ServiceProvider
                 ->by('export:' . ($request->user()?->getAuthIdentifier() ?? $request->ip()));
         });
 
+        // Share dynamic WhatsApp links and settings across views
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
+            $view->with('pengaturanApp', \App\Models\PengaturanPendaftaran::instance());
+        });
+
         // Register Google Sheets Sync Observers
         \App\Models\Akun::observe(\App\Observers\GoogleSheetObserver::class);
         \App\Models\Peserta::observe(\App\Observers\GoogleSheetObserver::class);

@@ -404,7 +404,7 @@
         if (event) {
             try { event.preventDefault(); event.stopPropagation(); } catch (err) {}
         }
-        const url = customUrl || 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F';
+        const url = customUrl || '{{ $pengaturanApp->getWaGrupUrl() }}';
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         if (isMobile) {
             window.location.href = url;
@@ -418,7 +418,7 @@
         if (event) {
             try { event.preventDefault(); event.stopPropagation(); } catch (err) {}
         }
-        const url = customUrl || 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F';
+        const url = customUrl || '{{ $pengaturanApp->getWaGrupUrl() }}';
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(url).then(function() {
                 showWhatsAppCopyToast();

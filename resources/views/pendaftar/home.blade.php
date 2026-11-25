@@ -103,7 +103,7 @@
                         </a>
                     @endif
 
-                    <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-slate-700 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-sm transition-all duration-200">
+                    <a href="{{ $pengaturan->getWaSaluranUrl() }}" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-slate-700 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-sm transition-all duration-200">
                         <span class="iconify text-emerald-600 text-lg" data-icon="solar:chat-round-dots-bold"></span>
                         <span>Gabung Saluran WhatsApp</span>
                     </a>
@@ -1284,15 +1284,15 @@
                 </div>
 
                 <div class="relative z-10 pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                    <a href="https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F" 
-                       onclick="return openWhatsAppGroup(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')"
+                    <a href="{{ $pengaturan->getWaGrupUrl() }}" 
+                       onclick="return openWhatsAppGroup(event, '{{ $pengaturan->getWaGrupUrl() }}')"
                        class="inline-flex items-center justify-center gap-2.5 flex-1 px-5 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-white hover:bg-emerald-50 shadow-lg shadow-emerald-950/40 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
                         <span class="iconify text-lg text-emerald-600" data-icon="solar:chat-round-dots-bold"></span>
                         <span>Gabung Grup WA Batch 3</span>
                         <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
                     <button type="button"
-                            onclick="return copyWhatsAppGroupLink(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')"
+                            onclick="return copyWhatsAppGroupLink(event, '{{ $pengaturan->getWaGrupUrl() }}')"
                             title="Salin Link Grup WA"
                             class="inline-flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-xl text-sm font-bold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all duration-200 cursor-pointer">
                         <span class="iconify text-base" data-icon="solar:copy-bold"></span>
@@ -1332,7 +1332,7 @@
                 </div>
 
                 <div class="relative z-10 pt-2">
-                    <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" target="_blank" rel="noopener noreferrer"
+                    <a href="{{ $pengaturan->getWaSaluranUrl() }}" target="_blank" rel="noopener noreferrer"
                        class="inline-flex items-center justify-center gap-2.5 w-full px-5 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 shadow-lg shadow-emerald-950/40 hover:-translate-y-0.5 transition-all duration-200">
                         <span class="iconify text-lg" data-icon="solar:chat-round-dots-bold"></span>
                         <span>Gabung Saluran WhatsApp Resmi</span>
@@ -1372,7 +1372,7 @@
                 </div>
 
                 <div class="relative z-10 pt-2">
-                    <a href="https://wa.me/6287867813183?text=Halo%20Admin%20MFLS,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20dan%20seleksi%20beasiswa" target="_blank" rel="noopener noreferrer"
+                    <a href="{{ $pengaturan->getWaHelpdeskUrl() }}" target="_blank" rel="noopener noreferrer"
                        class="inline-flex items-center justify-center gap-2.5 w-full px-5 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 shadow-lg shadow-blue-950/40 hover:-translate-y-0.5 transition-all duration-200">
                         <span class="iconify text-lg" data-icon="solar:chat-round-dots-bold"></span>
                         <span>Chat WhatsApp Admin</span>
@@ -1958,7 +1958,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <div class="space-y-2">
                 <!-- WhatsApp Live Chat Admin -->
-                <a href="https://wa.me/6287867813183?text=Halo%20Admin%20MFLS%20Batch%203,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20dan%20seleksi%20beasiswa" 
+                <a href="{{ $pengaturan->getWaHelpdeskUrl() }}" 
                    target="_blank" rel="noopener noreferrer"
                    class="group flex items-center justify-between p-3 rounded-xl bg-white hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-300 transition-all duration-200 shadow-xs">
                     <div class="flex items-center gap-2.5">
@@ -1967,14 +1967,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <div class="text-left">
                             <span class="block text-xs font-bold text-slate-800 group-hover:text-emerald-700">Chat WhatsApp Admin</span>
-                            <span class="block text-[10px] text-slate-500 font-medium">0878-6781-3183 (Online)</span>
+                            <span class="block text-[10px] text-slate-500 font-medium">Bantuan & Pendampingan</span>
                         </div>
                     </div>
                     <span class="iconify text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all text-sm" data-icon="solar:arrow-right-bold"></span>
                 </a>
 
                 <!-- Saluran WhatsApp Resmi -->
-                <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" 
+                <a href="{{ $pengaturan->getWaSaluranUrl() }}" 
                    target="_blank" rel="noopener noreferrer"
                    class="group flex items-center justify-between p-3 rounded-xl bg-white hover:bg-teal-50 border border-slate-200/80 hover:border-teal-300 transition-all duration-200 shadow-xs">
                     <div class="flex items-center gap-2.5">
@@ -2078,7 +2078,7 @@ function openWhatsAppGroup(event, customUrl) {
     if (event) {
         try { event.preventDefault(); event.stopPropagation(); } catch (err) {}
     }
-    const url = customUrl || 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F';
+    const url = customUrl || '{{ $pengaturan->getWaGrupUrl() }}';
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     if (isMobile) {
         window.location.href = url;
@@ -2092,7 +2092,7 @@ function copyWhatsAppGroupLink(event, customUrl) {
     if (event) {
         try { event.preventDefault(); event.stopPropagation(); } catch (err) {}
     }
-    const url = customUrl || 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F';
+    const url = customUrl || '{{ $pengaturan->getWaGrupUrl() }}';
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(url).then(function() {
             showWhatsAppCopyToast();

@@ -84,6 +84,77 @@
         </div>
 
         <div class="pt-4 border-t border-slate-100">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <span class="iconify text-[#25D366] text-lg" data-icon="logos:whatsapp-icon"></span>
+                    Link Komunitas WhatsApp (Landing Page & Dashboard)
+                </h3>
+                <span class="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">Dinamis & Anti-Kadaluwarsa</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+                Tautan grup WhatsApp sering berganti karena kapasitas penuh atau link invite kadaluwarsa (expired). Anda dapat memperbarui link di sini agar seluruh tombol di Landing Page dan Dashboard peserta otomatis mengikuti.
+            </p>
+
+            <div class="space-y-4">
+                <div>
+                    <label for="link_wa_grup" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                        <span>Link Undangan Grup WhatsApp Peserta</span>
+                        <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Grup Batch</span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <span class="iconify text-base" data-icon="solar:users-group-two-rounded-bold-duotone"></span>
+                        </div>
+                        <input type="url" id="link_wa_grup" name="link_wa_grup"
+                            value="{{ old('link_wa_grup', $pengaturan->link_wa_grup ?? '') }}"
+                            placeholder="https://chat.whatsapp.com/..."
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-white focus:bg-white border {{ $errors->has('link_wa_grup') ? 'border-rose-500' : 'border-slate-200' }} focus:border-[#0870B8] rounded-xl text-xs sm:text-sm font-medium outline-none focus:ring-4 focus:ring-blue-500/10 transition-all">
+                    </div>
+                    @error('link_wa_grup') <p class="text-rose-500 text-xs mt-1.5 font-semibold">{{ $message }}</p> @enderror
+                    <p class="text-[11px] text-slate-400 mt-1">Kosongkan jika ingin memakai URL default: <code class="text-slate-600 bg-slate-100 px-1 py-0.5 rounded text-[10px]">{{ \App\Models\PengaturanPendaftaran::defaultWhatsAppLinks()['grup'] }}</code></p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="link_wa_saluran" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                            <span>Link Saluran Resmi WhatsApp</span>
+                            <span class="text-[10px] font-semibold text-teal-600 bg-teal-50 px-2 py-0.5 rounded">Channel</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <span class="iconify text-base" data-icon="solar:broadcast-bold-duotone"></span>
+                            </div>
+                            <input type="url" id="link_wa_saluran" name="link_wa_saluran"
+                                value="{{ old('link_wa_saluran', $pengaturan->link_wa_saluran ?? '') }}"
+                                placeholder="https://whatsapp.com/channel/..."
+                                class="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-white focus:bg-white border {{ $errors->has('link_wa_saluran') ? 'border-rose-500' : 'border-slate-200' }} focus:border-[#0870B8] rounded-xl text-xs sm:text-sm font-medium outline-none focus:ring-4 focus:ring-blue-500/10 transition-all">
+                        </div>
+                        @error('link_wa_saluran') <p class="text-rose-500 text-xs mt-1.5 font-semibold">{{ $message }}</p> @enderror
+                        <p class="text-[11px] text-slate-400 mt-1">Default: <code class="text-slate-600 bg-slate-100 px-1 py-0.5 rounded text-[10px]">https://whatsapp.com/channel/...</code></p>
+                    </div>
+
+                    <div>
+                        <label for="link_wa_helpdesk" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                            <span>Link Chat Helpdesk Admin</span>
+                            <span class="text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">Direct CS</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <span class="iconify text-base" data-icon="solar:chat-round-call-bold-duotone"></span>
+                            </div>
+                            <input type="url" id="link_wa_helpdesk" name="link_wa_helpdesk"
+                                value="{{ old('link_wa_helpdesk', $pengaturan->link_wa_helpdesk ?? '') }}"
+                                placeholder="https://wa.me/62..."
+                                class="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-white focus:bg-white border {{ $errors->has('link_wa_helpdesk') ? 'border-rose-500' : 'border-slate-200' }} focus:border-[#0870B8] rounded-xl text-xs sm:text-sm font-medium outline-none focus:ring-4 focus:ring-blue-500/10 transition-all">
+                        </div>
+                        @error('link_wa_helpdesk') <p class="text-rose-500 text-xs mt-1.5 font-semibold">{{ $message }}</p> @enderror
+                        <p class="text-[11px] text-slate-400 mt-1">Default: <code class="text-slate-600 bg-slate-100 px-1 py-0.5 rounded text-[10px]">https://wa.me/6287867813183</code></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100">
             <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-2">
                 <span class="iconify text-[#0870B8] text-lg" data-icon="solar:tuning-bold-duotone"></span>
                 Mode Operasional

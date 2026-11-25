@@ -13,6 +13,9 @@ class PengaturanPendaftaran extends Model
         'pendaftaran_selesai',
         'mode',
         'timeline',
+        'link_wa_grup',
+        'link_wa_saluran',
+        'link_wa_helpdesk',
     ];
 
     protected function casts(): array
@@ -22,6 +25,36 @@ class PengaturanPendaftaran extends Model
             'pendaftaran_selesai' => 'datetime',
             'timeline' => 'array',
         ];
+    }
+
+    public static function defaultWhatsAppLinks(): array
+    {
+        return [
+            'grup' => 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F',
+            'saluran' => 'https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D',
+            'helpdesk' => 'https://wa.me/6287867813183',
+        ];
+    }
+
+    public function getWaGrupUrl(): string
+    {
+        return !empty(trim((string)$this->link_wa_grup))
+            ? trim((string)$this->link_wa_grup)
+            : static::defaultWhatsAppLinks()['grup'];
+    }
+
+    public function getWaSaluranUrl(): string
+    {
+        return !empty(trim((string)$this->link_wa_saluran))
+            ? trim((string)$this->link_wa_saluran)
+            : static::defaultWhatsAppLinks()['saluran'];
+    }
+
+    public function getWaHelpdeskUrl(): string
+    {
+        return !empty(trim((string)$this->link_wa_helpdesk))
+            ? trim((string)$this->link_wa_helpdesk)
+            : static::defaultWhatsAppLinks()['helpdesk'];
     }
 
     /**

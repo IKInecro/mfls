@@ -169,8 +169,8 @@
             </div>
 
             <div class="shrink-0 w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                <a href="https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F" 
-                   onclick="return openWhatsAppGroup(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')"
+                <a href="{{ $pengaturanApp->getWaGrupUrl() }}" 
+                   onclick="return openWhatsAppGroup(event, '{{ $pengaturanApp->getWaGrupUrl() }}')"
                    class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-md hover:shadow-emerald-500/25 transition-all duration-200 active:scale-[0.98] group cursor-pointer">
                     <span class="iconify text-lg group-hover:scale-110 transition-transform" data-icon="solar:chat-round-dots-bold"></span>
                     <span>Masuk Grup WA Batch 3</span>
@@ -179,7 +179,7 @@
                     </svg>
                 </a>
                 <button type="button" 
-                        onclick="return copyWhatsAppGroupLink(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')"
+                        onclick="return copyWhatsAppGroupLink(event, '{{ $pengaturanApp->getWaGrupUrl() }}')"
                         title="Salin Tautan Grup WhatsApp"
                         class="inline-flex items-center justify-center gap-1.5 px-3.5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 transition-all duration-200 active:scale-[0.98] cursor-pointer">
                     <span class="iconify text-base" data-icon="solar:copy-bold"></span>
@@ -346,8 +346,8 @@
                 <div class="space-y-2 pt-1">
                     <!-- WhatsApp Group MFLS Batch 3 Link -->
                     <div class="flex items-center gap-1.5">
-                        <a href="https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F" 
-                           onclick="return openWhatsAppGroup(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')"
+                        <a href="{{ $pengaturanApp->getWaGrupUrl() }}" 
+                           onclick="return openWhatsAppGroup(event, '{{ $pengaturanApp->getWaGrupUrl() }}')"
                            class="flex-1 flex items-center gap-2.5 p-2.5 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 transition-all group cursor-pointer">
                             <div class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0">
                                 <span class="iconify text-lg" data-icon="logos:whatsapp-icon"></span>
@@ -364,7 +364,7 @@
                             </svg>
                         </a>
                         <button type="button" 
-                                onclick="return copyWhatsAppGroupLink(event, 'https://chat.whatsapp.com/C1tXaN3HwLVGnSzYa6bK2F')" 
+                                onclick="return copyWhatsAppGroupLink(event, '{{ $pengaturanApp->getWaGrupUrl() }}')" 
                                 title="Salin Link Grup WA"
                                 class="p-2.5 rounded-xl bg-emerald-50/70 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 transition-all cursor-pointer">
                             <span class="iconify text-base" data-icon="solar:copy-bold"></span>
@@ -372,7 +372,7 @@
                     </div>
 
                     <!-- WhatsApp Channel Link -->
-                    <a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" 
+                    <a href="{{ $pengaturanApp->getWaSaluranUrl() }}" 
                        target="_blank" 
                        rel="noopener noreferrer" 
                        class="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 hover:bg-blue-50/60 border border-slate-200/60 hover:border-blue-200 transition-all group">
@@ -420,11 +420,11 @@
                         Tim panitia seleksi siap membantu kendala formulir dan berkas Anda.
                     </p>
                 </div>
-                <a href="https://wa.me/6287867813183" 
+                <a href="{{ $pengaturanApp->getWaHelpdeskUrl() }}" 
                    target="_blank" 
                    rel="noopener noreferrer" 
                    class="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-xs active:scale-[0.98]">
-                    <span>Hubungi WhatsApp Admin (087867813183)</span>
+                    <span>Hubungi WhatsApp Admin</span>
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>

@@ -209,9 +209,9 @@
                     <div>
                         <h4 class="text-white font-bold mb-6">Bantuan & Komunitas</h4>
                         <ul class="space-y-3 text-sm">
-                            <li><a href="https://wa.me/6287867813183" target="_blank"
-                                    class="hover:text-primary-yellow transition-colors">WhatsApp Admin (087867813183)</a></li>
-                            <li><a href="https://whatsapp.com/channel/0029VbC0L7I6hENrmgrr9D3D" target="_blank"
+                            <li><a href="{{ $pengaturanApp->getWaHelpdeskUrl() }}" target="_blank"
+                                    class="hover:text-primary-yellow transition-colors">WhatsApp Admin</a></li>
+                            <li><a href="{{ $pengaturanApp->getWaSaluranUrl() }}" target="_blank"
                                     class="hover:text-primary-yellow transition-colors">Saluran WhatsApp MFLS</a></li>
                             <li><a href="https://www.instagram.com/beasiswamncu?cplk=NDVzMnB0ZzNuanR0" target="_blank"
                                     class="hover:text-primary-yellow transition-colors">Instagram @beasiswamncu</a></li>

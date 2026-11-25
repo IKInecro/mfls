@@ -23,11 +23,14 @@ class PengaturanController extends Controller
             'mode' => 'required|in:auto,buka,tutup',
             'pendaftaran_mulai' => ['required_unless:mode,buka,tutup', 'nullable', 'date'],
             'pendaftaran_selesai' => ['required_unless:mode,buka,tutup', 'nullable', 'date', 'after_or_equal:pendaftaran_mulai'],
+            'link_wa_grup' => ['nullable', 'url', 'max:500'],
+            'link_wa_saluran' => ['nullable', 'url', 'max:500'],
+            'link_wa_helpdesk' => ['nullable', 'url', 'max:500'],
         ]);
 
         PengaturanPendaftaran::instance()->update($validated);
 
-        return back()->with('success', 'Pengaturan pendaftaran berhasil disimpan.');
+        return back()->with('success', 'Pengaturan pendaftaran dan link komunitas berhasil disimpan.');
     }
 
     public function timeline()
